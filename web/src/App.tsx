@@ -480,6 +480,7 @@ export default function App() {
     });
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [dataTimestamp, setDataTimestamp] = useState<string | null>(null);
+    const [activeDiscoveryList, setActiveDiscoveryList] = useState<'movers' | 'gems' | 'underrated' | null>(null);
 
     const genres = ['All', 'Pop', 'R&B', 'Hip Hop', 'Country', 'Afrobeats', 'Indie', 'Alternative', 'Latin', 'K-Pop', 'Electronic'];
 
@@ -654,27 +655,27 @@ export default function App() {
         return { totalListeners, viralCount, arbitrageCount };
     }, [filteredArtists]);
 
-    // BIGGEST MOVERS TODAY - Artists with highest growth velocity
+    // BIGGEST MOVERS TODAY - Artists with highest growth velocity (TOP 25)
     const biggestMovers = useMemo(() => {
         return [...artists]
             .sort((a, b) => b.growthVelocity - a.growthVelocity)
-            .slice(0, 5);
+            .slice(0, 25);
     }, [artists]);
 
-    // HIDDEN GEMS - Lower-ranked artists with strong growth (the discoveries!)
+    // HIDDEN GEMS - Lower-ranked artists with strong growth (TOP 25)
     const hiddenGems = useMemo(() => {
         return [...artists]
             .filter(a => a.rank > 50) // Not in top 50 - these are the "hidden" ones
             .sort((a, b) => b.growthVelocity - a.growthVelocity)
-            .slice(0, 5);
+            .slice(0, 25);
     }, [artists]);
 
-    // ARBITRAGE OPPORTUNITIES - Lower-ranked artists with high power scores (underrated!)
+    // UNDERRATED - Lower-ranked artists with high power scores (TOP 25)
     const topArbitrage = useMemo(() => {
         return [...artists]
             .filter(a => a.rank > 30 && a.rank < 150) // Mid-tier ranks
             .sort((a, b) => b.powerScore - a.powerScore) // But highest power scores
-            .slice(0, 5);
+            .slice(0, 25);
     }, [artists]);
 
     return (
@@ -911,6 +912,71 @@ export default function App() {
                                 onOpenTikTok={openTikTok}
                                 onOpenInstagram={openInstagram}
                             />
+                        ) : activeDiscoveryList ? (
+                            /* FULL PAGE DISCOVERY LIST - Top 25 */
+                            <div className="max-w-4xl mx-auto animate-fade-in">
+                                <button
+                                    onClick={() => setActiveDiscoveryList(null)}
+                                    className="flex items-center gap-2 text-slate-400 hover:text-white mb-6 transition-colors"
+                                >
+                                    <X className="w-4 h-4" />
+                                    Back to Dashboard
+                                </button>
+
+                                <div className={`rounded-xl p-6 border ${activeDiscoveryList === 'movers' ? 'bg-gradient-to-br from-accent/10 to-transparent border-accent/30' :
+                                        activeDiscoveryList === 'gems' ? 'bg-gradient-to-br from-signal-purple/10 to-transparent border-signal-purple/30' :
+                                            'bg-gradient-to-br from-signal-green/10 to-transparent border-signal-green/30'
+                                    }`}>
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className={`p-2 rounded-lg ${activeDiscoveryList === 'movers' ? 'bg-accent/20' :
+                                                activeDiscoveryList === 'gems' ? 'bg-signal-purple/20' : 'bg-signal-green/20'
+                                            }`}>
+                                            {activeDiscoveryList === 'movers' ? <TrendingUp className="w-5 h-5 text-accent" /> :
+                                                activeDiscoveryList === 'gems' ? <Sparkles className="w-5 h-5 text-signal-purple" /> :
+                                                    <Target className="w-5 h-5 text-signal-green" />}
+                                        </div>
+                                        <div>
+                                            <h2 className="text-xl font-bold text-white">
+                                                {activeDiscoveryList === 'movers' ? '🔥 Top 25 Biggest Movers' :
+                                                    activeDiscoveryList === 'gems' ? '💎 Top 25 Hidden Gems' :
+                                                        '📈 Top 25 Underrated'}
+                                            </h2>
+                                            <p className="text-sm text-slate-400">Updated {dataTimestamp ? new Date(dataTimestamp).toLocaleString() : 'today'}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        {(activeDiscoveryList === 'movers' ? biggestMovers :
+                                            activeDiscoveryList === 'gems' ? hiddenGems : topArbitrage
+                                        ).map((artist, i) => (
+                                            <button
+                                                key={artist.id}
+                                                onClick={() => setSelectedArtist(artist)}
+                                                className="w-full flex items-center gap-4 p-4 rounded-lg bg-surface/50 hover:bg-surface transition-colors text-left border border-slate-800/50"
+                                            >
+                                                <span className={`text-lg font-bold w-8 ${activeDiscoveryList === 'movers' ? 'text-accent' :
+                                                        activeDiscoveryList === 'gems' ? 'text-signal-purple' : 'text-signal-green'
+                                                    }`}>
+                                                    {i + 1}
+                                                </span>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="text-base font-semibold text-white">{artist.name}</div>
+                                                    <div className="text-sm text-slate-500">
+                                                        {artist.genre} • {formatNumber(artist.monthlyListeners)} listeners
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <div className={`text-lg font-bold ${artist.growthVelocity >= 0 ? 'text-signal-green' : 'text-red-400'}`}>
+                                                        {artist.growthVelocity >= 0 ? '+' : ''}{artist.growthVelocity.toFixed(1)}%
+                                                    </div>
+                                                    <div className="text-xs text-slate-500">growth</div>
+                                                </div>
+                                                <ChevronRight className="w-5 h-5 text-slate-600" />
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
                         ) : activeTab === 'sonic-signals' ? (
                             <SonicSignals artists={filteredArtists.slice(0, 10)} />
                         ) : activeTab === 'about' ? (
@@ -975,14 +1041,11 @@ export default function App() {
                                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
                                     {/* Biggest Movers */}
                                     <div className="bg-gradient-to-br from-accent/10 to-transparent border border-accent/30 rounded-xl p-4">
-                                        <div className="flex items-center justify-between mb-3">
-                                            <div className="flex items-center gap-2">
-                                                <div className="p-1.5 bg-accent/20 rounded-lg">
-                                                    <TrendingUp className="w-4 h-4 text-accent" />
-                                                </div>
-                                                <h3 className="text-sm font-bold text-white">BIGGEST MOVERS</h3>
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <div className="p-1.5 bg-accent/20 rounded-lg">
+                                                <TrendingUp className="w-4 h-4 text-accent" />
                                             </div>
-                                            <span className="text-[10px] text-accent font-bold">TOP 5</span>
+                                            <h3 className="text-sm font-bold text-white">BIGGEST MOVERS</h3>
                                         </div>
                                         <div className="space-y-2">
                                             {biggestMovers.slice(0, 5).map((artist, i) => (
@@ -1002,18 +1065,21 @@ export default function App() {
                                                 </button>
                                             ))}
                                         </div>
+                                        <button
+                                            onClick={() => setActiveDiscoveryList('movers')}
+                                            className="w-full mt-3 pt-3 border-t border-accent/20 text-accent text-xs font-bold hover:underline flex items-center justify-center gap-1"
+                                        >
+                                            View Top 25 <ChevronRight className="w-3 h-3" />
+                                        </button>
                                     </div>
 
                                     {/* Hidden Gems */}
                                     <div className="bg-gradient-to-br from-signal-purple/10 to-transparent border border-signal-purple/30 rounded-xl p-4">
-                                        <div className="flex items-center justify-between mb-3">
-                                            <div className="flex items-center gap-2">
-                                                <div className="p-1.5 bg-signal-purple/20 rounded-lg">
-                                                    <Sparkles className="w-4 h-4 text-signal-purple" />
-                                                </div>
-                                                <h3 className="text-sm font-bold text-white">HIDDEN GEMS 💎</h3>
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <div className="p-1.5 bg-signal-purple/20 rounded-lg">
+                                                <Sparkles className="w-4 h-4 text-signal-purple" />
                                             </div>
-                                            <span className="text-[10px] text-signal-purple font-bold">TOP 5</span>
+                                            <h3 className="text-sm font-bold text-white">HIDDEN GEMS 💎</h3>
                                         </div>
                                         <div className="space-y-2">
                                             {hiddenGems.slice(0, 5).map((artist, i) => (
@@ -1033,18 +1099,21 @@ export default function App() {
                                                 </button>
                                             ))}
                                         </div>
+                                        <button
+                                            onClick={() => setActiveDiscoveryList('gems')}
+                                            className="w-full mt-3 pt-3 border-t border-signal-purple/20 text-signal-purple text-xs font-bold hover:underline flex items-center justify-center gap-1"
+                                        >
+                                            View Top 25 <ChevronRight className="w-3 h-3" />
+                                        </button>
                                     </div>
 
                                     {/* Underrated Artists */}
                                     <div className="bg-gradient-to-br from-signal-green/10 to-transparent border border-signal-green/30 rounded-xl p-4">
-                                        <div className="flex items-center justify-between mb-3">
-                                            <div className="flex items-center gap-2">
-                                                <div className="p-1.5 bg-signal-green/20 rounded-lg">
-                                                    <Target className="w-4 h-4 text-signal-green" />
-                                                </div>
-                                                <h3 className="text-sm font-bold text-white">UNDERRATED 📈</h3>
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <div className="p-1.5 bg-signal-green/20 rounded-lg">
+                                                <Target className="w-4 h-4 text-signal-green" />
                                             </div>
-                                            <span className="text-[10px] text-signal-green font-bold">TOP 5</span>
+                                            <h3 className="text-sm font-bold text-white">UNDERRATED 📈</h3>
                                         </div>
                                         <div className="space-y-2">
                                             {topArbitrage.slice(0, 5).map((artist, i) => (
@@ -1056,14 +1125,20 @@ export default function App() {
                                                     <span className="text-xs font-bold text-signal-green w-4">{i + 1}</span>
                                                     <div className="flex-1 min-w-0">
                                                         <div className="text-sm font-medium text-white truncate">{artist.name}</div>
-                                                        <div className="text-xs text-slate-500">{artist.genre}</div>
+                                                        <div className="text-xs text-slate-500">#{artist.rank} • {artist.genre}</div>
                                                     </div>
                                                     <div className="text-accent text-xs font-bold">
-                                                        {artist.conversionScore.toFixed(0)}% conv
+                                                        {artist.powerScore.toFixed(0)} PWR
                                                     </div>
                                                 </button>
                                             ))}
                                         </div>
+                                        <button
+                                            onClick={() => setActiveDiscoveryList('underrated')}
+                                            className="w-full mt-3 pt-3 border-t border-signal-green/20 text-signal-green text-xs font-bold hover:underline flex items-center justify-center gap-1"
+                                        >
+                                            View Top 25 <ChevronRight className="w-3 h-3" />
+                                        </button>
                                     </div>
                                 </div>
 

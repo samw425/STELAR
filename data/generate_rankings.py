@@ -610,16 +610,22 @@ class SoundScoutAlgorithm:
         return round(min(signal, 100), 1)
     
     @staticmethod
-    def calculate_growth_velocity(daily_millions: float, total_millions: float) -> float:
+    def calculate_growth_velocity(daily_millions: float, total_millions: float, daily_listener_change: int = 0, monthly_listeners: int = 0) -> float:
         """
         GROWTH VELOCITY (%)
         ===================
-        30-day momentum indicator.
+        Real-time momentum indicator based on ACTUAL daily listener changes.
         
-        Calculation: How does daily compare to expected average daily
-        Expected average = total / 365
-        Velocity = (actual daily / expected) - 1) * 100
+        If we have real Kworb data (daily_listener_change), use that.
+        Otherwise fall back to stream-based calculation.
         """
+        # PREFER real daily listener change data from Kworb
+        if daily_listener_change != 0 and monthly_listeners > 0:
+            # Calculate actual percentage change based on real data
+            velocity = (daily_listener_change / monthly_listeners) * 100 * 30  # Project to ~30 days
+            return round(velocity, 1)
+        
+        # Fallback to stream-based calculation
         if total_millions == 0:
             return 0.0
         
@@ -828,6 +834,10 @@ def generate_complete_rankings():
         streams = artist['total_streams_millions']
         daily = artist['daily_streams_millions']
         
+        # Use REAL monthly listeners from Kworb (not estimated!)
+        monthly_listeners = artist.get('monthly_listeners', int(streams * 1_000_000 / 50))
+        daily_listener_change = artist.get('daily_listener_change', 0)
+        
         # Get accurate classification
         genre = get_genre(name)
         country = get_country(name)
@@ -836,9 +846,6 @@ def generate_complete_rankings():
         # Generate social data (with variance for arbitrage)
         social = generate_social_followers(name, streams, daily)
         
-        # Estimate monthly listeners (roughly total / 50 months)
-        monthly_listeners = int(streams * 1_000_000 / 50)
-        
         # Calculate all proprietary scores
         power_score = algo.calculate_power_score(
             streams, daily,
@@ -846,7 +853,11 @@ def generate_complete_rankings():
             artist['rank']
         )
         
-        growth_velocity = algo.calculate_growth_velocity(daily, streams)
+        # Use REAL daily listener change from Kworb for accurate growth velocity
+        growth_velocity = algo.calculate_growth_velocity(
+            daily, streams,
+            daily_listener_change, monthly_listeners
+        )
         
         conversion_score = algo.calculate_conversion_score(
             monthly_listeners,
