@@ -1,0 +1,28 @@
+# SoundScout Deployment Configuration
+# For Cloudflare Pages
+
+# Build output directory
+/dist
+
+# Node modules
+node_modules/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Cache
+.cache/

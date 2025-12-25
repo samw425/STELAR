@@ -1,0 +1,189 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-slate-300 font-sans antialiased;
+  }
+
+  /* Selection styling */
+  ::selection {
+    @apply bg-accent/30 text-white;
+  }
+}
+
+@layer components {
+
+  /* Terminal scrollbar */
+  .terminal-scroll::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .terminal-scroll::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  .terminal-scroll::-webkit-scrollbar-thumb {
+    @apply bg-slate-800 rounded-full hover:bg-slate-700;
+  }
+
+  /* Glow effects */
+  .glow-red {
+    text-shadow: 0 0 10px rgba(220, 38, 38, 0.6);
+  }
+
+  .glow-green {
+    text-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+  }
+
+  /* Card gradient overlay */
+  .card-gradient {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0) 100%);
+  }
+
+  /* Sidebar nav item */
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-400 rounded-lg transition-all duration-200;
+    @apply hover:bg-surface hover:text-white;
+  }
+
+  .nav-item.active {
+    @apply bg-accent/10 text-accent border-l-2 border-accent;
+  }
+
+  /* Data tag styling (UPPERCASE MONOSPACE) */
+  .data-tag {
+    @apply font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500;
+  }
+
+  /* Status badges */
+  .badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider;
+  }
+
+  .badge-viral {
+    @apply bg-signal-purple/20 text-signal-purple border border-signal-purple/30;
+  }
+
+  .badge-breakout {
+    @apply bg-signal-green/20 text-signal-green border border-signal-green/30;
+  }
+
+  .badge-dominance {
+    @apply bg-accent/20 text-accent border border-accent/30;
+  }
+
+  .badge-stable {
+    @apply bg-slate-800/50 text-slate-400 border border-slate-700/50;
+  }
+
+  .badge-major {
+    @apply bg-tier-major/10 text-tier-major border border-tier-major/30;
+  }
+
+  .badge-indie {
+    @apply bg-tier-indie/10 text-tier-indie border border-tier-indie/30;
+  }
+
+  /* Table row hover effect */
+  .table-row-hover {
+    @apply transition-all duration-200 hover:bg-surface/50 cursor-pointer;
+    @apply border-b border-slate-900/50;
+  }
+
+  .table-row-hover:hover {
+    background: linear-gradient(90deg, rgba(220, 38, 38, 0.03) 0%, transparent 100%);
+  }
+
+  /* Omnibox (search bar) */
+  .omnibox {
+    @apply bg-terminal border-2 border-slate-800 rounded-xl px-6 py-4 text-lg font-mono;
+    @apply focus:outline-none focus:border-accent/50 transition-all duration-200;
+    @apply placeholder:text-slate-600 placeholder:uppercase placeholder:tracking-widest placeholder:text-sm;
+  }
+
+  /* Pulse indicator */
+  .pulse-dot {
+    @apply w-2 h-2 rounded-full bg-accent animate-pulse;
+  }
+
+  /* Marquee container */
+  .marquee-container {
+    @apply overflow-hidden whitespace-nowrap;
+  }
+
+  .marquee-content {
+    @apply inline-block animate-marquee;
+  }
+
+  /* Glass effect */
+  .glass {
+    @apply bg-terminal/80 backdrop-blur-xl border border-slate-800/50;
+  }
+
+  /* Chart area styling */
+  .chart-area {
+    @apply bg-gradient-to-b from-accent/5 to-transparent;
+  }
+
+  /* Rank number styling */
+  .rank-number {
+    @apply font-mono font-bold text-slate-600 tabular-nums;
+  }
+
+  /* Artist avatar */
+  .artist-avatar {
+    @apply w-10 h-10 rounded-full bg-gradient-to-br from-accent/20 to-signal-purple/20;
+    @apply flex items-center justify-center text-white font-bold text-sm;
+    @apply border border-slate-800;
+  }
+
+  /* Metric card */
+  .metric-card {
+    @apply bg-card border border-slate-800/50 rounded-xl p-5 card-gradient;
+    @apply hover:border-slate-700/50 transition-all duration-200;
+  }
+
+  /* Action button */
+  .btn-primary {
+    @apply bg-accent text-white font-bold text-xs px-4 py-2 rounded-lg;
+    @apply hover:bg-accent/90 transition-all duration-200;
+    @apply uppercase tracking-wider;
+  }
+
+  .btn-secondary {
+    @apply bg-surface text-slate-300 font-medium text-xs px-4 py-2 rounded-lg border border-slate-800;
+    @apply hover:bg-slate-800 hover:text-white transition-all duration-200;
+  }
+
+  /* Live indicator */
+  .live-badge {
+    @apply inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest text-accent;
+  }
+
+  .live-badge::before {
+    content: '';
+    @apply w-1.5 h-1.5 rounded-full bg-accent animate-pulse;
+  }
+}
+
+/* Custom animations */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(255, 255, 255, 0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
