@@ -654,6 +654,29 @@ export default function App() {
         return { totalListeners, viralCount, arbitrageCount };
     }, [filteredArtists]);
 
+    // BIGGEST MOVERS TODAY - Artists with highest growth velocity
+    const biggestMovers = useMemo(() => {
+        return [...artists]
+            .sort((a, b) => b.growthVelocity - a.growthVelocity)
+            .slice(0, 5);
+    }, [artists]);
+
+    // HIDDEN GEMS - Lower-ranked artists with strong growth (the discoveries!)
+    const hiddenGems = useMemo(() => {
+        return [...artists]
+            .filter(a => a.rank > 50) // Not in top 50 - these are the "hidden" ones
+            .sort((a, b) => b.growthVelocity - a.growthVelocity)
+            .slice(0, 5);
+    }, [artists]);
+
+    // ARBITRAGE OPPORTUNITIES - Lower-ranked artists with high power scores (underrated!)
+    const topArbitrage = useMemo(() => {
+        return [...artists]
+            .filter(a => a.rank > 30 && a.rank < 150) // Mid-tier ranks
+            .sort((a, b) => b.powerScore - a.powerScore) // But highest power scores
+            .slice(0, 5);
+    }, [artists]);
+
     return (
         <>
             {/* Onboarding Modal */}
@@ -932,6 +955,115 @@ export default function App() {
                                                 {label}
                                             </button>
                                         ))}
+                                    </div>
+                                </div>
+
+                                {/* 🔥 TODAY'S HOTTEST - Dynamic content that changes daily */}
+                                <div className="mb-4">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-lg font-bold text-white">🔥 Today's Hottest</span>
+                                            <span className="text-xs text-slate-500">• Updates 4× daily</span>
+                                        </div>
+                                        {dataTimestamp && (
+                                            <span className="text-xs text-slate-500 font-mono">
+                                                Last update: {new Date(dataTimestamp).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+                                    {/* Biggest Movers */}
+                                    <div className="bg-gradient-to-br from-accent/10 to-transparent border border-accent/30 rounded-xl p-4">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="flex items-center gap-2">
+                                                <div className="p-1.5 bg-accent/20 rounded-lg">
+                                                    <TrendingUp className="w-4 h-4 text-accent" />
+                                                </div>
+                                                <h3 className="text-sm font-bold text-white">BIGGEST MOVERS</h3>
+                                            </div>
+                                            <span className="text-[10px] text-accent font-bold">TOP 5</span>
+                                        </div>
+                                        <div className="space-y-2">
+                                            {biggestMovers.slice(0, 5).map((artist, i) => (
+                                                <button
+                                                    key={artist.id}
+                                                    onClick={() => setSelectedArtist(artist)}
+                                                    className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors text-left"
+                                                >
+                                                    <span className="text-xs font-bold text-accent w-4">{i + 1}</span>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="text-sm font-medium text-white truncate">{artist.name}</div>
+                                                        <div className="text-xs text-slate-500">{artist.genre}</div>
+                                                    </div>
+                                                    <div className="text-signal-green text-xs font-bold">
+                                                        +{artist.growthVelocity.toFixed(0)}%
+                                                    </div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Hidden Gems */}
+                                    <div className="bg-gradient-to-br from-signal-purple/10 to-transparent border border-signal-purple/30 rounded-xl p-4">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="flex items-center gap-2">
+                                                <div className="p-1.5 bg-signal-purple/20 rounded-lg">
+                                                    <Sparkles className="w-4 h-4 text-signal-purple" />
+                                                </div>
+                                                <h3 className="text-sm font-bold text-white">HIDDEN GEMS 💎</h3>
+                                            </div>
+                                            <span className="text-[10px] text-signal-purple font-bold">TOP 5</span>
+                                        </div>
+                                        <div className="space-y-2">
+                                            {hiddenGems.slice(0, 5).map((artist, i) => (
+                                                <button
+                                                    key={artist.id}
+                                                    onClick={() => setSelectedArtist(artist)}
+                                                    className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors text-left"
+                                                >
+                                                    <span className="text-xs font-bold text-signal-purple w-4">{i + 1}</span>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="text-sm font-medium text-white truncate">{artist.name}</div>
+                                                        <div className="text-xs text-slate-500">{formatNumber(artist.monthlyListeners)} listeners</div>
+                                                    </div>
+                                                    <div className="text-signal-green text-xs font-bold">
+                                                        +{artist.growthVelocity.toFixed(0)}%
+                                                    </div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Underrated Artists */}
+                                    <div className="bg-gradient-to-br from-signal-green/10 to-transparent border border-signal-green/30 rounded-xl p-4">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="flex items-center gap-2">
+                                                <div className="p-1.5 bg-signal-green/20 rounded-lg">
+                                                    <Target className="w-4 h-4 text-signal-green" />
+                                                </div>
+                                                <h3 className="text-sm font-bold text-white">UNDERRATED 📈</h3>
+                                            </div>
+                                            <span className="text-[10px] text-signal-green font-bold">TOP 5</span>
+                                        </div>
+                                        <div className="space-y-2">
+                                            {topArbitrage.slice(0, 5).map((artist, i) => (
+                                                <button
+                                                    key={artist.id}
+                                                    onClick={() => setSelectedArtist(artist)}
+                                                    className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors text-left"
+                                                >
+                                                    <span className="text-xs font-bold text-signal-green w-4">{i + 1}</span>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="text-sm font-medium text-white truncate">{artist.name}</div>
+                                                        <div className="text-xs text-slate-500">{artist.genre}</div>
+                                                    </div>
+                                                    <div className="text-accent text-xs font-bold">
+                                                        {artist.conversionScore.toFixed(0)}% conv
+                                                    </div>
+                                                </button>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
 
