@@ -1168,14 +1168,23 @@ function ArtistProfile({
             {/* Header */}
             <div className="flex items-start justify-between mb-8">
                 <div className="flex items-center gap-6">
-                    <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-accent/30 to-signal-purple/30 flex items-center justify-center text-3xl font-bold text-white border border-slate-800">
-                        {getInitials(artist.name)}
+                    {/* Rank Badge */}
+                    <div className="relative">
+                        <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-accent/30 to-signal-purple/30 flex items-center justify-center text-3xl font-bold text-white border border-slate-800">
+                            {getInitials(artist.name)}
+                        </div>
+                        <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-xs font-bold border-2 border-terminal">
+                            #{artist.rank}
+                        </div>
                     </div>
                     <div>
                         <div className="flex items-center gap-3 mb-2">
                             <h2 className="text-3xl font-bold text-white">{artist.name}</h2>
                             <span className={`badge ${artist.is_independent ? 'badge-indie' : 'badge-major'}`}>
                                 {artist.is_independent ? 'INDEPENDENT' : 'MAJOR LABEL'}
+                            </span>
+                            <span className={`badge ${artist.status === 'Viral' ? 'badge-viral' : artist.status === 'Breakout' ? 'badge-breakout' : 'badge-stable'}`}>
+                                {artist.status.toUpperCase()}
                             </span>
                         </div>
                         <div className="flex items-center gap-4 text-slate-400">
@@ -1192,13 +1201,14 @@ function ArtistProfile({
                                 </>
                             )}
                         </div>
-                        <div className="mt-3 text-sm text-slate-500 max-w-lg">
-                            <span className="text-accent font-semibold">RANK RATIONALE:</span>{' '}
-                            {artist.status === 'Viral' && `Explosive growth of +${artist.growthVelocity.toFixed(0)}% in 30 days positions this artist as a top acquisition target.`}
-                            {artist.status === 'Breakout' && `Consistent momentum with strong conversion metrics suggests impending mainstream crossover.`}
-                            {artist.status === 'Conversion' && `High social virality with low Spotify conversion creates arbitrage opportunity.`}
-                            {artist.status === 'Dominance' && `Market leader in sector with sustained listener base and brand partnerships.`}
-                            {artist.status === 'Stable' && `Established audience with consistent performance indicators.`}
+                        {/* Daily Performance Banner */}
+                        <div className={`mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${artist.growthVelocity > 50 ? 'bg-signal-green/20 text-signal-green' :
+                                artist.growthVelocity > 0 ? 'bg-accent/20 text-accent' :
+                                    'bg-red-500/20 text-red-400'
+                            }`}>
+                            {artist.growthVelocity > 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                            {artist.growthVelocity > 0 ? '+' : ''}{artist.growthVelocity.toFixed(1)}% this month
+                            <span className="text-xs opacity-70">• Updated today</span>
                         </div>
                     </div>
                 </div>
