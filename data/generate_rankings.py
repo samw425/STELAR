@@ -954,9 +954,31 @@ def generate_complete_rankings():
         # Build complete profile
         clean_name = name.lower().replace(' ', '').replace('.', '').replace("'", '')
         
+        
         # Priority: Hardcoded Assets > Logic > Defaults
         is_high_profile = monthly_listeners > 5_000_000
         
+        # VISUAL IDENTITY SYSTEM (NEXA STANDARD)
+        # 1. Official Asset (if Top Tier)
+        # 2. Aesthetic Fallback (Deterministic based on name hash)
+        
+        final_avatar = assets.get('avatar')
+        if not final_avatar:
+            # Deterministic fallback pool (Neon/Dark/Cyber aesthetics)
+            FALLBACK_POOL = [
+               'https://images.unsplash.com/photo-1493225255756-d9584f8606e9?q=80&w=400', # Live Mic
+               'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=400', # Studio Distortion
+               'https://images.unsplash.com/photo-1514525253361-bee8718a7c73?q=80&w=400', # Purple Club
+               'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=400', # Red Stage
+               'https://images.unsplash.com/photo-1571330735066-03aaa9429d89?q=80&w=400', # Low Key Studio
+               'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?q=80&w=400', # Neon Wall
+               'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=400', # Mic Close
+               'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=400', # Crowd Dark
+            ]
+            # Create consistently seeded ID
+            name_hash = sum(ord(c) for c in clean_name)
+            final_avatar = FALLBACK_POOL[name_hash % len(FALLBACK_POOL)]
+
         profile = {
             'id': artist['spotify_id'],
             'name': name,
@@ -966,7 +988,7 @@ def generate_complete_rankings():
             'spotify_id': artist['spotify_id'],
             'label_name': 'Major Label' if is_major else 'Independent',
             'is_independent': not is_major,
-            'avatar_url': assets.get('avatar'),
+            'avatar_url': final_avatar,
             
             # Social handles (Verified Assets first)
             'tiktok_handle': assets.get('tt') or (clean_name[:20] if is_high_profile else None),
