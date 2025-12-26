@@ -1452,8 +1452,8 @@ const ShareModal = ({
     const slug = artist.name.toLowerCase().replace(/\s+/g, '-');
     const url = `https://soundscout.pages.dev/artist/${slug}`;
 
-    // Viral Copy
-    const text = `🚀 ${artist.name} is blowing up! Rank #${artist.rank} on SoundScout with +${artist.growthVelocity.toFixed(1)}% growth. See the data before they sign:`;
+    // Universal Share Copy
+    const text = `Listen to ${artist.name} on SoundScout.`;
 
     // Explicit Share Intents
     const shareLinks = [
