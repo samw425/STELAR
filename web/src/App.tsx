@@ -1509,8 +1509,23 @@ function ArtistProfile({
 
                         {/* Share */}
                         <button
-                            onClick={() => {
-                                navigator.clipboard.writeText(`https://soundscout.pages.dev/artist/${artist.id}`);
+                            onClick={async () => {
+                                const shareData = {
+                                    title: `SoundScout: ${artist.name}`,
+                                    text: `Check out ${artist.name} on SoundScout`,
+                                    url: `https://soundscout.pages.dev/artist/${artist.id}`
+                                };
+                                // Try native share (Mobile/Safari)
+                                if (navigator.share) {
+                                    try {
+                                        await navigator.share(shareData);
+                                        return;
+                                    } catch (err) {
+                                        // User cancelled or share failed, silent fail or fallback
+                                    }
+                                }
+                                // Fallback to clipboard
+                                navigator.clipboard.writeText(shareData.url);
                                 alert('Link copied to clipboard!');
                             }}
                             className="group flex items-center gap-2 px-4 py-3 h-11 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white rounded-md transition-all active:scale-95"
