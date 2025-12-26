@@ -79,7 +79,7 @@ const getInitials = (name: string): string => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 };
 
-type TabType = 'power-index' | 'sonic-signals' | 'locked-roster' | 'up-and-comers' | 'about';
+type TabType = 'power-index' | 'old-school' | 'sonic-signals' | 'locked-roster' | 'up-and-comers' | 'about';
 
 // ============================================================================
 // ONBOARDING COMPONENT
@@ -599,6 +599,7 @@ export default function App() {
     const [activeDiscoveryList, setActiveDiscoveryList] = useState<'movers' | 'gems' | null>(null);
     const [selectedGenre, setSelectedGenre] = useState<string>('ALL');
     const [selectedStructure, setSelectedStructure] = useState<'ALL' | 'MAJOR' | 'INDIE'>('ALL');
+    const [oldSchoolArtists, setOldSchoolArtists] = useState<any[]>([]);
 
     // User tier (for monetization - can lock down to Pro later once we get traction)
     const userTier = 'free'; // 'free', 'pro', 'enterprise'
@@ -658,6 +659,16 @@ export default function App() {
         loadArtists();
         loadArtists();
     }, [activeTab]);
+
+    // OLD SCHOOL: Load legends data when tab is selected
+    useEffect(() => {
+        if (activeTab === 'old-school' && oldSchoolArtists.length === 0) {
+            fetch('/oldschool.json')
+                .then(res => res.json())
+                .then(data => setOldSchoolArtists(data.artists || []))
+                .catch(err => console.error('Failed to load Old School data:', err));
+        }
+    }, [activeTab, oldSchoolArtists.length]);
 
     // DEEP LINKING: Check URL on mount and open artist profile
     // DEEP LINKING: Check URL on mount and open artist profile
@@ -905,6 +916,19 @@ export default function App() {
                                             <span>Up & Comers</span>
                                         </div>
                                         <span className="text-[9px] bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded border border-green-500/30">NEW</span>
+                                    </button>
+
+                                    {/* OLD SCHOOL TAB */}
+                                    <button
+                                        onClick={() => { setActiveTab('old-school'); setSelectedArtist(null); setActiveDiscoveryList(null); setMobileMenuOpen(false); }}
+                                        className={`w-full flex items-center justify-between px-4 py-3 rounded-lg font-bold text-xs uppercase tracking-wider transition-all
+                                            ${activeTab === 'old-school' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <Crown className="w-4 h-4" />
+                                            <span>Old School</span>
+                                        </div>
+                                        <span className="text-[9px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/30">LEGENDS</span>
                                     </button>
 
                                     <button
@@ -1207,6 +1231,94 @@ export default function App() {
                                     onShowPricing={() => setShowUpgrade(true)}
                                     onShowContact={() => setShowJoin(true)}
                                 />
+                            ) : activeTab === 'old-school' ? (
+                                <div className="max-w-6xl mx-auto space-y-6">
+                                    {/* OLD SCHOOL HEADER */}
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                                        <div>
+                                            <h2 className="text-3xl font-black text-amber-400 mb-2 uppercase tracking-tighter flex items-center gap-3">
+                                                <Crown className="w-8 h-8" />
+                                                Old School Legends
+                                            </h2>
+                                            <p className="text-slate-500 text-sm">The artists who shaped music history. Explore their legacy, top songs, and sources.</p>
+                                        </div>
+                                        <div className="text-xs text-amber-400/60 font-mono">{oldSchoolArtists.length} LEGENDS</div>
+                                    </div>
+
+                                    {/* OLD SCHOOL GRID */}
+                                    {oldSchoolArtists.length === 0 ? (
+                                        <div className="text-center py-20 text-slate-500 uppercase tracking-widest text-xs font-bold">Loading legends...</div>
+                                    ) : (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                            {oldSchoolArtists.map((artist) => (
+                                                <div
+                                                    key={artist.id}
+                                                    className="bg-slate-900/50 border border-slate-800 rounded-xl p-5 hover:border-amber-500/30 hover:bg-slate-900 transition-all cursor-pointer group"
+                                                    onClick={() => {
+                                                        // Convert to PowerIndexArtist format for profile view
+                                                        const converted: PowerIndexArtist = {
+                                                            id: artist.id,
+                                                            name: artist.name,
+                                                            genre: artist.genre,
+                                                            country: artist.country,
+                                                            city: null,
+                                                            status: artist.status as PowerIndexArtist['status'],
+                                                            monthlyListeners: artist.monthlyListeners,
+                                                            tiktokFollowers: 0,
+                                                            instagramFollowers: 0,
+                                                            youtubeSubscribers: 0,
+                                                            twitterFollowers: 0,
+                                                            powerScore: 999,
+                                                            growthVelocity: 0,
+                                                            conversionScore: 0,
+                                                            arbitrageSignal: 0,
+                                                            is_independent: false,
+                                                            rank: artist.rank,
+                                                            chartRank: artist.rank,
+                                                            avatar_url: artist.avatar_url,
+                                                            spotify_id: '',
+                                                            label_name: null,
+                                                            instagram_handle: null,
+                                                            tiktok_handle: null,
+                                                            twitter_handle: null,
+                                                            youtube_channel: null,
+                                                            lastUpdated: ''
+                                                        };
+                                                        handleSelectArtist(converted);
+                                                    }}
+                                                >
+                                                    <div className="flex items-start gap-4">
+                                                        <div className="relative">
+                                                            <img
+                                                                src={artist.avatar_url}
+                                                                alt={artist.name}
+                                                                className="w-16 h-16 rounded-lg object-cover border border-slate-700 group-hover:border-amber-500/50 transition-colors"
+                                                                onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/64?text=' + getInitials(artist.name); }}
+                                                            />
+                                                            <div className="absolute -top-2 -left-2 w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center text-[10px] font-black text-black">
+                                                                {artist.rank}
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <h3 className="font-black text-white uppercase tracking-tight truncate group-hover:text-amber-400 transition-colors">{artist.name}</h3>
+                                                            <div className="flex items-center gap-2 text-[10px] text-slate-500 uppercase tracking-wider mt-1">
+                                                                <span className="text-amber-500">{artist.era}</span>
+                                                                <span>•</span>
+                                                                <span>{artist.genre}</span>
+                                                            </div>
+                                                            <p className="text-xs text-slate-400 mt-2 line-clamp-2">{artist.bio}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="mt-4 pt-3 border-t border-slate-800 flex flex-wrap gap-1">
+                                                        {artist.signature_songs?.slice(0, 3).map((song: string, i: number) => (
+                                                            <span key={i} className="text-[9px] px-2 py-0.5 bg-slate-800 text-slate-400 rounded uppercase">{song}</span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             ) : (
                                 <div className="space-y-8">
 
