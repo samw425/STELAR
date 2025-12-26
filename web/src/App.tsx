@@ -4,7 +4,7 @@ import {
     TrendingUp,
     ChevronRight,
     Zap,
-    Compass,
+
     BarChart3,
     Bookmark,
     BookmarkCheck,
@@ -83,7 +83,7 @@ function WelcomeBanner({ onDismiss }: { onDismiss: () => void }) {
             <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div className="flex items-center gap-4">
                     <div className="w-8 h-8 bg-accent/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Compass className="w-4 h-4 text-accent" />
+                        <Radio className="w-4 h-4 text-accent" />
                     </div>
                     <div className="text-center sm:text-left">
                         <span className="text-white font-bold text-sm">Welcome to SoundScout!</span>
@@ -801,7 +801,7 @@ export default function App() {
                                 <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 flex items-center justify-center">
                                         <div className="relative w-full h-full border border-white/10 rounded flex items-center justify-center bg-white/5">
-                                            <Compass className="text-accent w-5 h-5" strokeWidth={1.5} />
+                                            <Radio className="text-accent w-5 h-5" />
                                         </div>
                                     </div>
                                     <h1 className="text-2xl font-black text-white tracking-tight uppercase leading-none">
