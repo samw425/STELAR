@@ -609,7 +609,9 @@ export default function App() {
 
     // NEW RELEASES: Latest music from all artists
     const [newReleases, setNewReleases] = useState<any[]>([]);
+    const [comingSoon, setComingSoon] = useState<any[]>([]);
     const [newReleasesLoading, setNewReleasesLoading] = useState(false);
+    const [releaseType, setReleaseType] = useState<'out-now' | 'coming-soon'>('out-now');
 
     // User tier (for monetization - can lock down to Pro later once we get traction)
     const userTier = 'free'; // 'free', 'pro', 'enterprise'
@@ -684,23 +686,73 @@ export default function App() {
     useEffect(() => {
         if (activeTab === 'new-releases' && newReleases.length === 0) {
             setNewReleasesLoading(true);
-            // iTunes RSS Feed for new albums - free, no API key required
-            fetch('https://itunes.apple.com/us/rss/topalbums/limit=50/json')
-                .then(res => res.json())
-                .then(data => {
-                    const releases = data.feed?.entry?.map((item: any, index: number) => ({
-                        id: item.id?.attributes?.['im:id'] || index,
-                        name: item['im:name']?.label || 'Unknown Album',
-                        artist: item['im:artist']?.label || 'Unknown Artist',
-                        artistLink: item['im:artist']?.attributes?.href || null,
-                        artwork: item['im:image']?.[2]?.label?.replace('170x170', '400x400') || '',
-                        price: item['im:price']?.label || 'Free',
-                        releaseDate: item['im:releaseDate']?.attributes?.label || 'New',
-                        genre: item.category?.attributes?.label || 'Music',
-                        link: item.link?.attributes?.href || '#',
-                        rights: item.rights?.label || ''
-                    })) || [];
-                    setNewReleases(releases);
+
+            // Fetch MULTIPLE iTunes feeds for comprehensive coverage
+            // New Releases feed has actual new albums
+            Promise.all([
+                fetch('https://itunes.apple.com/us/rss/newreleases/limit=200/json').then(r => r.json()).catch(() => null),
+                fetch('https://itunes.apple.com/us/rss/topalbums/limit=200/json').then(r => r.json()).catch(() => null),
+                fetch('https://itunes.apple.com/us/rss/comingsoon/limit=100/json').then(r => r.json()).catch(() => null)
+            ])
+                .then(([newReleasesData, topAlbumsData, comingSoonData]) => {
+                    const today = new Date();
+                    const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+                    // Parse releases helper
+                    const parseReleases = (data: any) => {
+                        return data?.feed?.entry?.map((item: any, index: number) => {
+                            const releaseDateStr = item['im:releaseDate']?.label || '';
+                            const releaseDate = releaseDateStr ? new Date(releaseDateStr) : null;
+
+                            return {
+                                id: item.id?.attributes?.['im:id'] || `${index}-${Date.now()}`,
+                                name: item['im:name']?.label || 'Unknown Album',
+                                artist: item['im:artist']?.label || 'Unknown Artist',
+                                artistLink: item['im:artist']?.attributes?.href || null,
+                                artwork: item['im:image']?.[2]?.label?.replace('170x170', '400x400') || '',
+                                releaseDate: item['im:releaseDate']?.attributes?.label || 'New',
+                                releaseDateRaw: releaseDate,
+                                genre: item.category?.attributes?.label || 'Music',
+                                link: item.link?.attributes?.href || '#'
+                            };
+                        }) || [];
+                    };
+
+                    // Combine new releases and filter by recency (last 30 days)
+                    const allNewReleases = [
+                        ...parseReleases(newReleasesData),
+                        ...parseReleases(topAlbumsData)
+                    ];
+
+                    // Deduplicate by album name + artist
+                    const seen = new Set<string>();
+                    const outNowReleases = allNewReleases
+                        .filter(r => {
+                            const key = `${r.name.toLowerCase()}-${r.artist.toLowerCase()}`;
+                            if (seen.has(key)) return false;
+                            seen.add(key);
+                            // Only include if released in last 30 days
+                            if (r.releaseDateRaw && r.releaseDateRaw < thirtyDaysAgo) return false;
+                            // Only include if not in the future
+                            if (r.releaseDateRaw && r.releaseDateRaw > today) return false;
+                            return true;
+                        })
+                        .sort((a, b) => {
+                            if (a.releaseDateRaw && b.releaseDateRaw) {
+                                return b.releaseDateRaw.getTime() - a.releaseDateRaw.getTime();
+                            }
+                            return 0;
+                        })
+                        .slice(0, 200);
+
+                    // Coming Soon: Future releases
+                    const comingSoonReleases = parseReleases(comingSoonData)
+                        .filter((r: any) => r.releaseDateRaw && r.releaseDateRaw > today)
+                        .sort((a: any, b: any) => a.releaseDateRaw.getTime() - b.releaseDateRaw.getTime())
+                        .slice(0, 100);
+
+                    setNewReleases(outNowReleases);
+                    setComingSoon(comingSoonReleases);
                     setNewReleasesLoading(false);
                 })
                 .catch(err => {
@@ -1029,15 +1081,15 @@ export default function App() {
                                     <button
                                         onClick={() => { setActiveTab('new-releases'); setSelectedArtist(null); setActiveDiscoveryList(null); setMobileMenuOpen(false); window.history.pushState({}, '', '/releases'); }}
                                         className={`w-full flex items-center justify-between px-4 py-3 rounded-lg font-bold text-xs uppercase tracking-wider transition-all
-                                            ${activeTab === 'new-releases' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                                            ${activeTab === 'new-releases' ? 'bg-accent/10 text-accent border border-accent/20' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
                                     >
                                         <div className="flex items-center gap-3">
                                             <Disc className="w-4 h-4" />
                                             <span>New Releases</span>
                                         </div>
                                         <div className="flex items-center gap-1">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></div>
-                                            <span className="text-[9px] text-cyan-400">LIVE</span>
+                                            <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></div>
+                                            <span className="text-[9px] text-accent">LIVE</span>
                                         </div>
                                     </button>
 
@@ -1362,67 +1414,133 @@ export default function App() {
                             ) : activeTab === 'new-releases' ? (
                                 <div className="max-w-6xl mx-auto space-y-6">
                                     {/* NEW RELEASES HEADER */}
-                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                                         <div>
-                                            <h2 className="text-3xl font-black text-cyan-400 mb-2 uppercase tracking-tighter flex items-center gap-3">
-                                                <Disc className="w-8 h-8" />
+                                            <h2 className="text-3xl font-black text-white mb-2 uppercase tracking-tighter flex items-center gap-3">
+                                                <Disc className="w-8 h-8 text-accent" />
                                                 New Releases
                                                 <div className="flex items-center gap-1.5 ml-2">
-                                                    <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
-                                                    <span className="text-xs text-cyan-400">LIVE</span>
+                                                    <div className="w-2 h-2 rounded-full bg-accent animate-pulse"></div>
+                                                    <span className="text-xs text-accent">LIVE</span>
                                                 </div>
                                             </h2>
-                                            <p className="text-slate-500 text-sm">The hottest new albums and releases. Updated in real-time from top charts.</p>
+                                            <p className="text-slate-500 text-sm">
+                                                {releaseType === 'out-now'
+                                                    ? 'Fresh releases from the last 30 days. Free listening via YouTube & Spotify.'
+                                                    : 'Upcoming albums dropping soon. Get ready for the next wave.'}
+                                            </p>
                                         </div>
-                                        <div className="text-xs text-cyan-400/60 font-mono">{newReleases.length} RELEASES</div>
+                                        <div className="text-xs text-accent/60 font-mono">
+                                            {(releaseType === 'out-now' ? newReleases : comingSoon).filter(r => selectedGenre === 'ALL' || r.genre?.toUpperCase().includes(selectedGenre.replace('/', ''))).slice(0, 150).length} RELEASES
+                                        </div>
+                                    </div>
+
+                                    {/* OUT NOW / COMING SOON TOGGLE */}
+                                    <div className="flex items-center gap-4 flex-wrap">
+                                        <div className="flex items-center bg-slate-900 rounded-lg p-1 border border-slate-800">
+                                            <button
+                                                onClick={() => setReleaseType('out-now')}
+                                                className={`px-4 py-2 rounded-md text-[10px] font-black uppercase tracking-wider transition-all ${releaseType === 'out-now' ? 'text-black bg-white shadow-sm' : 'text-slate-500 hover:text-white'}`}
+                                            >
+                                                🔥 Out Now
+                                            </button>
+                                            <button
+                                                onClick={() => setReleaseType('coming-soon')}
+                                                className={`px-4 py-2 rounded-md text-[10px] font-black uppercase tracking-wider transition-all ${releaseType === 'coming-soon' ? 'text-black bg-white shadow-sm' : 'text-slate-500 hover:text-white'}`}
+                                            >
+                                                🚀 Coming Soon
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* GENRE FILTER TABS - Like Power Index */}
+                                    <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-2">
+                                        {['ALL', 'POP', 'HIP-HOP/RAP', 'R&B/SOUL', 'COUNTRY', 'ROCK', 'LATIN', 'ALTERNATIVE', 'ELECTRONIC'].map((genre) => (
+                                            <button
+                                                key={genre}
+                                                onClick={() => setSelectedGenre(genre)}
+                                                className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all whitespace-nowrap
+                                                    ${selectedGenre === genre
+                                                        ? 'bg-white text-black border-white'
+                                                        : 'bg-transparent text-slate-500 border-slate-800 hover:border-slate-600 hover:text-white'}`}
+                                            >
+                                                {genre === 'ALL' ? 'ALL GENRES' : genre}
+                                            </button>
+                                        ))}
                                     </div>
 
                                     {/* NEW RELEASES GRID */}
                                     {newReleasesLoading ? (
                                         <div className="text-center py-20">
-                                            <div className="inline-block w-8 h-8 border-2 border-cyan-400/20 border-t-cyan-400 rounded-full animate-spin mb-4" />
+                                            <div className="inline-block w-8 h-8 border-2 border-accent/20 border-t-accent rounded-full animate-spin mb-4" />
                                             <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Loading new releases...</div>
+                                        </div>
+                                    ) : (releaseType === 'out-now' ? newReleases : comingSoon).length === 0 ? (
+                                        <div className="text-center py-20 border border-dashed border-slate-800 rounded-xl">
+                                            <Disc className="w-12 h-12 mx-auto text-slate-700 mb-4" />
+                                            <div className="text-slate-500 uppercase tracking-widest text-xs font-bold">
+                                                {releaseType === 'coming-soon'
+                                                    ? 'No upcoming releases found at the moment'
+                                                    : 'No releases found'}
+                                            </div>
                                         </div>
                                     ) : (
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                            {newReleases.map((release, index) => (
-                                                <a
-                                                    key={release.id}
-                                                    href={release.link}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="bg-slate-900/50 border border-slate-800 rounded-xl p-5 hover:border-cyan-500/30 hover:bg-slate-900 transition-all cursor-pointer group"
-                                                >
-                                                    <div className="flex items-start gap-4">
-                                                        <div className="relative">
-                                                            <img
-                                                                src={release.artwork}
-                                                                alt={release.name}
-                                                                className="w-20 h-20 rounded-lg object-cover border border-slate-700 group-hover:border-cyan-500/50 transition-colors shadow-lg"
-                                                                onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/80?text=🎵'; }}
-                                                            />
-                                                            <div className="absolute -top-2 -left-2 w-6 h-6 bg-cyan-500 rounded-full flex items-center justify-center text-[10px] font-black text-black">
-                                                                {index + 1}
+                                            {(releaseType === 'out-now' ? newReleases : comingSoon)
+                                                .filter(release => selectedGenre === 'ALL' || release.genre?.toUpperCase().includes(selectedGenre.replace('/', '')))
+                                                .slice(0, 150)
+                                                .map((release, index) => (
+                                                    <div
+                                                        key={release.id}
+                                                        className="bg-slate-900/50 border border-slate-800 rounded-xl p-5 hover:border-accent/30 hover:bg-slate-900 transition-all group"
+                                                    >
+                                                        <div className="flex items-start gap-4">
+                                                            <div className="relative">
+                                                                <img
+                                                                    src={release.artwork}
+                                                                    alt={release.name}
+                                                                    className="w-20 h-20 rounded-lg object-cover border border-slate-700 group-hover:border-accent/50 transition-colors shadow-lg"
+                                                                    onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/80?text=🎵'; }}
+                                                                />
+                                                                <div className="absolute -top-2 -left-2 w-6 h-6 bg-accent rounded-full flex items-center justify-center text-[10px] font-black text-white">
+                                                                    {index + 1}
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex-1 min-w-0">
+                                                                <h3 className="font-black text-white uppercase tracking-tight truncate group-hover:text-accent transition-colors text-sm">{release.name}</h3>
+                                                                <div className="text-xs text-slate-400 font-medium mt-0.5 truncate">{release.artist}</div>
+                                                                <div className="flex items-center gap-2 text-[10px] text-slate-500 uppercase tracking-wider mt-2">
+                                                                    <span className="text-accent">{release.releaseDate}</span>
+                                                                    <span>•</span>
+                                                                    <span>{release.genre}</span>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div className="flex-1 min-w-0">
-                                                            <h3 className="font-black text-white uppercase tracking-tight truncate group-hover:text-cyan-400 transition-colors text-sm">{release.name}</h3>
-                                                            <div className="text-xs text-slate-400 font-medium mt-0.5 truncate">{release.artist}</div>
-                                                            <div className="flex items-center gap-2 text-[10px] text-slate-500 uppercase tracking-wider mt-2">
-                                                                <span className="text-cyan-500">{release.releaseDate}</span>
-                                                                <span>•</span>
-                                                                <span>{release.genre}</span>
-                                                            </div>
+                                                        {/* FREE LISTENING OPTIONS */}
+                                                        <div className="mt-4 pt-3 border-t border-slate-800 flex items-center gap-2">
+                                                            <a
+                                                                href={`https://www.youtube.com/results?search_query=${encodeURIComponent(release.artist + ' ' + release.name + ' album')}`}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                onClick={(e) => e.stopPropagation()}
+                                                                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all"
+                                                            >
+                                                                <Play className="w-3 h-3 fill-current" />
+                                                                YouTube
+                                                            </a>
+                                                            <a
+                                                                href={`https://open.spotify.com/search/${encodeURIComponent(release.artist + ' ' + release.name)}`}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                onClick={(e) => e.stopPropagation()}
+                                                                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-green-600/10 hover:bg-green-600 text-green-500 hover:text-white rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all"
+                                                            >
+                                                                <Music className="w-3 h-3" />
+                                                                Spotify
+                                                            </a>
                                                         </div>
                                                     </div>
-                                                    <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between">
-                                                        <span className="text-[9px] px-2 py-0.5 bg-slate-800 text-slate-400 rounded uppercase">{release.price}</span>
-                                                        <span className="text-[10px] text-cyan-400 group-hover:text-cyan-300 font-bold uppercase tracking-wider flex items-center gap-1">
-                                                            Listen <ArrowUpRight className="w-3 h-3" />
-                                                        </span>
-                                                    </div>
-                                                </a>
-                                            ))}
+                                                ))}
                                         </div>
                                     )}
                                 </div>
