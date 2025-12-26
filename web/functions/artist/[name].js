@@ -83,12 +83,18 @@ export async function onRequest(context) {
             return num.toString();
         };
 
-        // Use dynamic OG image for artists
-        const ogImageUrl = `https://soundscout.pages.dev/og/artist/${artistSlug}`;
+        // Use STATIC OG image (PNG) for social media compatibility
+        // Twitter/X, iMessage, Facebook do NOT support SVG images
+        const ogImageUrl = `https://soundscout.pages.dev/og-image.png`;
 
-        // Dynamic text content
-        const dynamicTitle = `${artist.name} | SoundScout`;
-        const dynamicDescription = `🎵 ${artist.name} • Rank #${artist.rank} • ${formatNumber(artist.monthlyListeners)} Monthly Listeners • Power Score: ${artist.powerScore} • ${artist.status} • ${artist.genre} | Discover more on SoundScout`;
+        // Dynamic text content - Make artist name PROMINENT
+        const statusEmoji = isLegend ? '👑' : (artist.status === 'Viral' ? '🔥' : '🎵');
+        const dynamicTitle = isLegend
+            ? `${artist.name} | Old School Legend | SoundScout`
+            : `${artist.name} | #${artist.rank} Global | SoundScout`;
+        const dynamicDescription = isLegend
+            ? `👑 LEGEND: ${artist.name} • ${artist.genre} • ${formatNumber(artist.monthlyListeners)} Monthly Listeners • One of the greatest of all time | Discover on SoundScout`
+            : `${statusEmoji} ${artist.name} • Rank #${artist.rank} • ${formatNumber(artist.monthlyListeners)} Monthly Listeners • Power Score: ${artist.powerScore} • ${artist.status} | SoundScout`;
 
         // Replace meta tags
         html = html.replace(
