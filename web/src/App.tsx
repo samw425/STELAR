@@ -1448,27 +1448,30 @@ function ArtistProfile({
                     <div className="flex gap-4 mb-10 overflow-x-auto pb-2 scrollbar-none justify-center lg:justify-start">
                         {[
                             {
-                                name: 'Live',
-                                icon: <Zap className="w-4 h-4" />,
-                                action: () => window.open(`https://www.bandsintown.com/search?q=${encodeURIComponent(artist.name)}`, '_blank')
+                                name: 'Music',
+                                icon: <Music className="w-4 h-4" />,
+                                action: () => window.open(`http://music.apple.com/us/search?term=${encodeURIComponent(artist.name)}`, '_blank')
                             },
                             {
-                                name: 'Charts',
-                                icon: <TrendingUp className="w-4 h-4" />,
-                                action: () => window.open(`https://kworb.net/spotify/artist/${artist.spotify_id}_songs.html`, '_blank')
+                                name: 'Spotify',
+                                icon: <div className="w-4 h-4 bg-green-500 rounded-full" />,
+                                action: () => window.open(`https://open.spotify.com/artist/${artist.spotify_id}`, '_blank')
                             },
                             {
-                                name: 'Social',
-                                icon: <Star className="w-4 h-4" />,
+                                name: 'Insta',
+                                icon: <div className="w-4 h-4 bg-pink-500 rounded-lg" />,
                                 action: () => {
                                     if (artist.instagram_handle) window.open(`https://instagram.com/${artist.instagram_handle}`, '_blank');
                                     else window.open(`https://www.instagram.com/explore/tags/${artist.name.replace(/\s+/g, '')}/`, '_blank');
                                 }
                             },
                             {
-                                name: 'Alpha',
-                                icon: <Sparkles className="w-4 h-4" />,
-                                action: () => document.getElementById('analyst-insight')?.scrollIntoView({ behavior: 'smooth' })
+                                name: 'YouTube',
+                                icon: <div className="w-4 h-4 bg-red-600 rounded-sm" />,
+                                action: () => {
+                                    if (artist.youtube_url) window.open(artist.youtube_url, '_blank')
+                                    else window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(artist.name)}`, '_blank')
+                                }
                             },
                         ].map((h, i) => (
                             <div key={i} className="flex flex-col items-center gap-2 shrink-0">
