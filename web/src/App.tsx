@@ -60,14 +60,15 @@ const getStatusColor = (status: PowerIndexArtist['status']) => {
 };
 
 const getStatusBadge = (status: PowerIndexArtist['status']) => {
+    // Return human-readable labels for each status
     const map: Record<PowerIndexArtist['status'], string> = {
-        Viral: 'badge-viral',
-        Breakout: 'badge-breakout',
-        Dominance: 'badge-dominance',
-        Stable: 'badge-stable',
-        Conversion: 'badge badge-indie glow-green',
+        Viral: '🔥 VIRAL',
+        Breakout: '📈 RISING',
+        Dominance: '👑 TOP',
+        Stable: '📊 STEADY',
+        Conversion: '💎 OPPORTUNITY',
     };
-    return map[status] || 'badge-stable';
+    return map[status] || status;
 };
 
 // Extend the imported PowerIndexArtist type with new properties
@@ -688,71 +689,76 @@ export default function App() {
             setNewReleasesLoading(true);
 
             // Fetch MULTIPLE iTunes feeds for comprehensive coverage
-            // New Releases feed has actual new albums
+            // Get as many releases as possible from different regions
             Promise.all([
-                fetch('https://itunes.apple.com/us/rss/newreleases/limit=200/json').then(r => r.json()).catch(() => null),
                 fetch('https://itunes.apple.com/us/rss/topalbums/limit=200/json').then(r => r.json()).catch(() => null),
-                fetch('https://itunes.apple.com/us/rss/comingsoon/limit=100/json').then(r => r.json()).catch(() => null)
+                fetch('https://itunes.apple.com/gb/rss/topalbums/limit=100/json').then(r => r.json()).catch(() => null),
+                fetch('https://itunes.apple.com/us/rss/topsongs/limit=100/json').then(r => r.json()).catch(() => null)
             ])
-                .then(([newReleasesData, topAlbumsData, comingSoonData]) => {
+                .then(([usAlbums, ukAlbums, topSongs]) => {
                     const today = new Date();
-                    const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+                    const ninetyDaysAhead = new Date(today.getTime() + 90 * 24 * 60 * 60 * 1000);
 
                     // Parse releases helper
-                    const parseReleases = (data: any) => {
+                    const parseReleases = (data: any, isTrack: boolean = false) => {
                         return data?.feed?.entry?.map((item: any, index: number) => {
                             const releaseDateStr = item['im:releaseDate']?.label || '';
                             const releaseDate = releaseDateStr ? new Date(releaseDateStr) : null;
 
                             return {
-                                id: item.id?.attributes?.['im:id'] || `${index}-${Date.now()}`,
-                                name: item['im:name']?.label || 'Unknown Album',
+                                id: item.id?.attributes?.['im:id'] || `${index}-${Date.now()}-${Math.random()}`,
+                                name: item['im:name']?.label || 'Unknown',
                                 artist: item['im:artist']?.label || 'Unknown Artist',
                                 artistLink: item['im:artist']?.attributes?.href || null,
                                 artwork: item['im:image']?.[2]?.label?.replace('170x170', '400x400') || '',
-                                releaseDate: item['im:releaseDate']?.attributes?.label || 'New',
+                                releaseDate: item['im:releaseDate']?.attributes?.label || 'New Release',
                                 releaseDateRaw: releaseDate,
                                 genre: item.category?.attributes?.label || 'Music',
-                                link: item.link?.attributes?.href || '#'
+                                link: item.link?.attributes?.href || '#',
+                                isTrack: isTrack
                             };
                         }) || [];
                     };
 
-                    // Combine new releases and filter by recency (last 30 days)
-                    const allNewReleases = [
-                        ...parseReleases(newReleasesData),
-                        ...parseReleases(topAlbumsData)
+                    // Combine all releases from all feeds
+                    const allReleases = [
+                        ...parseReleases(usAlbums),
+                        ...parseReleases(ukAlbums),
+                        ...parseReleases(topSongs, true)
                     ];
 
-                    // Deduplicate by album name + artist
+                    // Deduplicate by album/song name + artist
                     const seen = new Set<string>();
-                    const outNowReleases = allNewReleases
+                    const deduped = allReleases.filter(r => {
+                        const key = `${r.name.toLowerCase()}-${r.artist.toLowerCase()}`;
+                        if (seen.has(key)) return false;
+                        seen.add(key);
+                        return true;
+                    });
+
+                    // RECENTLY RELEASED: Include all (no strict date filter to get more results)
+                    // Sort by release date, newest first
+                    const outNowReleases = deduped
                         .filter(r => {
-                            const key = `${r.name.toLowerCase()}-${r.artist.toLowerCase()}`;
-                            if (seen.has(key)) return false;
-                            seen.add(key);
-                            // Only include if released in last 30 days
-                            if (r.releaseDateRaw && r.releaseDateRaw < thirtyDaysAgo) return false;
-                            // Only include if not in the future
+                            // Exclude future releases
                             if (r.releaseDateRaw && r.releaseDateRaw > today) return false;
                             return true;
                         })
                         .sort((a, b) => {
-                            if (a.releaseDateRaw && b.releaseDateRaw) {
-                                return b.releaseDateRaw.getTime() - a.releaseDateRaw.getTime();
-                            }
-                            return 0;
-                        })
-                        .slice(0, 200);
+                            if (!a.releaseDateRaw) return -1;
+                            if (!b.releaseDateRaw) return 1;
+                            return b.releaseDateRaw.getTime() - a.releaseDateRaw.getTime();
+                        });
 
-                    // Coming Soon: Future releases
-                    const comingSoonReleases = parseReleases(comingSoonData)
-                        .filter((r: any) => r.releaseDateRaw && r.releaseDateRaw > today)
-                        .sort((a: any, b: any) => a.releaseDateRaw.getTime() - b.releaseDateRaw.getTime())
-                        .slice(0, 100);
+                    // UPCOMING: Future releases
+                    const upcomingReleases = deduped
+                        .filter(r => r.releaseDateRaw && r.releaseDateRaw > today && r.releaseDateRaw <= ninetyDaysAhead)
+                        .sort((a, b) => a.releaseDateRaw!.getTime() - b.releaseDateRaw!.getTime());
+
+                    console.log(`New Releases: ${outNowReleases.length} recent, ${upcomingReleases.length} upcoming`);
 
                     setNewReleases(outNowReleases);
-                    setComingSoon(comingSoonReleases);
+                    setComingSoon(upcomingReleases);
                     setNewReleasesLoading(false);
                 })
                 .catch(err => {
@@ -1675,9 +1681,6 @@ export default function App() {
                                                                     <span className="text-accent">{artist.genre}</span>
                                                                     <span>•</span>
                                                                     <span>{artist.country}</span>
-                                                                </div>
-                                                                <div className={`inline-block mt-2 px-2 py-0.5 rounded text-[9px] font-bold uppercase ${getStatusColor(artist.status)}`}>
-                                                                    {getStatusBadge(artist.status)}
                                                                 </div>
                                                             </div>
                                                         </div>
