@@ -14,15 +14,79 @@ export async function onRequest(context) {
     // Decode: "Taylor-Swift" -> "Taylor Swift"
     const artistName = decodeURIComponent(artistSlug.replace(/-/g, ' '));
 
-    return generateArtistOGImage(artistName, env);
+    return generateArtistOGImage(artistName, artistSlug, env, request);
 }
 
-async function generateArtistOGImage(artistName, env) {
-    // FALLBACK: Social platforms (Twitter/X, iMessage) generally do NOT support SVG media cards.
-    // Since we cannot rasterize to PNG on the edge easily without WASM, we will redirect 
-    // to the high-quality static branding image to ensure the logo/brand ALWAYS appears.
-    // This solves the user's issue of "logo not showing up".
-    return Response.redirect('https://soundscout.pages.dev/og-image.png?v=human-1', 302);
+async function generateArtistOGImage(artistName, artistSlug, env, request) {
+    try {
+        // Use env.ASSETS for faster local fetching
+        const [rankingsRes, oldSchoolRes] = await Promise.all([
+            env.ASSETS.fetch(new Request(new URL('/rankings.json', request.url))),
+            env.ASSETS.fetch(new Request(new URL('/oldschool.json', request.url)))
+        ]);
+
+        let artist = null;
+
+        // Search in main rankings first
+        if (rankingsRes.ok) {
+            const data = await rankingsRes.json();
+            if (data.rankings) {
+                for (const category of Object.values(data.rankings)) {
+                    const found = category.find(a =>
+                        a.name.toLowerCase() === artistName.toLowerCase() ||
+                        a.name.toLowerCase().replace(/\s+/g, '-') === artistSlug.toLowerCase()
+                    );
+                    if (found) {
+                        artist = found;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // If not found, search Old School legends
+        if (!artist && oldSchoolRes.ok) {
+            const oldSchoolData = await oldSchoolRes.json();
+            const found = oldSchoolData.artists?.find(a =>
+                a.name.toLowerCase() === artistName.toLowerCase() ||
+                a.name.toLowerCase().replace(/\s+/g, '-') === artistSlug.toLowerCase()
+            );
+            if (found) {
+                // Convert Old School format to standard format for OG generation
+                artist = {
+                    name: found.name,
+                    genre: found.genre,
+                    country: found.country,
+                    status: 'Legend',
+                    rank: found.rank,
+                    monthlyListeners: found.monthlyListeners || 0,
+                    powerScore: 999,
+                    growthVelocity: 0,
+                    avatar_url: found.avatar_url
+                };
+            }
+        }
+
+        if (!artist) {
+            console.log(`Artist not found for OG generation: ${artistName} (slug: ${artistSlug})`);
+            // Return default OG image if artist not found
+            return Response.redirect('https://soundscout.pages.dev/og-image.png', 302);
+        }
+
+        // Generate SVG-based OG image (1200x630)
+        const svg = generateArtistSVG(artist);
+
+        return new Response(svg, {
+            headers: {
+                'Content-Type': 'image/svg+xml',
+                'Cache-Control': 'public, max-age=3600',
+            }
+        });
+
+    } catch (error) {
+        console.error('Error generating OG image:', error);
+        return Response.redirect('https://soundscout.pages.dev/og-image.png', 302);
+    }
 }
 
 function generateArtistSVG(artist) {

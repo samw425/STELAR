@@ -15,26 +15,52 @@ export async function onRequest(context) {
     try {
         // Fetch rankings data
         const rankingsResponse = await env.ASSETS.fetch(new Request(new URL('/rankings.json', request.url)));
+        const oldSchoolResponse = await env.ASSETS.fetch(new Request(new URL('/oldschool.json', request.url)));
 
-        if (!rankingsResponse.ok) {
-            return env.ASSETS.fetch(request);
+        let data = null;
+        if (rankingsResponse.ok) {
+            data = await rankingsResponse.json();
         }
-
-        const data = await rankingsResponse.json();
 
         // Find artist across all categories
         let artist = null;
-        const categories = ['global', 'up_and_comers', 'arbitrage', 'pop', 'hip_hop', 'r_and_b', 'country', 'latin', 'kpop', 'indie', 'electronic', 'afrobeats'];
-        for (const cat of categories) {
-            if (data.rankings[cat]) {
-                const found = data.rankings[cat].find(a =>
-                    a.name.toLowerCase() === artistName.toLowerCase() ||
-                    a.name.toLowerCase().replace(/\s+/g, '-') === artistSlug.toLowerCase()
-                );
-                if (found) {
-                    artist = found;
-                    break;
+        let isLegend = false;
+
+        // Search main rankings
+        if (data) {
+            const categories = ['global', 'up_and_comers', 'arbitrage', 'pop', 'hip_hop', 'r_and_b', 'country', 'latin', 'kpop', 'indie', 'electronic', 'afrobeats'];
+            for (const cat of categories) {
+                if (data.rankings[cat]) {
+                    const found = data.rankings[cat].find(a =>
+                        a.name.toLowerCase() === artistName.toLowerCase() ||
+                        a.name.toLowerCase().replace(/\s+/g, '-') === artistSlug.toLowerCase()
+                    );
+                    if (found) {
+                        artist = found;
+                        break;
+                    }
                 }
+            }
+        }
+
+        // Search Old School legends if not found
+        if (!artist && oldSchoolResponse.ok) {
+            const oldSchoolData = await oldSchoolResponse.json();
+            const found = oldSchoolData.artists?.find(a =>
+                a.name.toLowerCase() === artistName.toLowerCase() ||
+                a.name.toLowerCase().replace(/\s+/g, '-') === artistSlug.toLowerCase()
+            );
+            if (found) {
+                isLegend = true;
+                artist = {
+                    name: found.name,
+                    genre: found.genre,
+                    country: found.country,
+                    status: 'Legend',
+                    rank: found.rank,
+                    monthlyListeners: found.monthlyListeners || 0,
+                    powerScore: 999
+                };
             }
         }
 
