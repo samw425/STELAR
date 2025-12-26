@@ -590,7 +590,7 @@ export default function App() {
     const [showUpgrade, setShowUpgrade] = useState(false);
     const [showJoin, setShowJoin] = useState(false);
     const [showDossier, setShowDossier] = useState(false);
-    const [upgradeFeature, setUpgradeFeature] = useState<string>();
+
     const [watchlist, setWatchlist] = useState<Set<string>>(() => {
         const saved = localStorage.getItem('ss_watchlist_v1');
         return saved ? new Set(JSON.parse(saved)) : new Set();
@@ -744,10 +744,7 @@ export default function App() {
     // Note: requiresUpgrade check will be added when auth is implemented
 
     // Prompt upgrade
-    const promptUpgrade = (feature: string) => {
-        setUpgradeFeature(feature);
-        setShowUpgrade(true);
-    };
+
 
     // Filter artists - use searchResults if searching, otherwise use loaded artists
     // Filter artists - use searchResults if searching, otherwise use loaded artists
@@ -788,12 +785,7 @@ export default function App() {
     }, [filteredArtists, displayLimit]);
 
     const toggleWatchlist = (artistId: string) => {
-        // Free users limited to 1 roster slot
-        if (userTier === 'free' && !watchlist.has(artistId) && watchlist.size >= 1) {
-            promptUpgrade('Unlimited Roster Slots');
-            return;
-        }
-
+        // UNLIMITED ROSTER: Removed artificial limit per user request
         setWatchlist(prev => {
             const next = new Set(prev);
             if (next.has(artistId)) {
@@ -840,7 +832,7 @@ export default function App() {
     return (
         <>
             {/* Upgrade Modal */}
-            {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} feature={upgradeFeature} />}
+            {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} feature="Pro Features" />}
 
             {/* Join Modal */}
             {showJoin && <JoinModal onClose={() => setShowJoin(false)} />}
