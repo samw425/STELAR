@@ -800,12 +800,12 @@ export default function App() {
                                 <div className="relative">
                                     <div className="absolute inset-0 bg-accent rounded-lg blur-lg opacity-40 group-hover:opacity-100 transition-opacity"></div>
                                     <div className="w-12 h-12 bg-black border border-white/20 rounded-xl flex items-center justify-center relative z-10 overflow-hidden shadow-2xl">
-                                        <Radio className="text-accent w-7 h-7 animate-pulse" />
+                                        <Music className="text-accent w-7 h-7" />
                                         <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-transparent"></div>
                                     </div>
                                 </div>
                                 <div>
-                                    <h1 className="text-3xl font-black text-white tracking-tight uppercase leading-none">Sound<span className="text-accent">Scout</span></h1>
+                                    <h1 className="text-3xl font-black text-white tracking-[0.3em] uppercase leading-none">STELAR</h1>
                                 </div>
                             </div>
                         </div>
@@ -1683,7 +1683,7 @@ function AboutSection({ onNavigate, onShowPricing, onShowContact }: AboutSection
                     <span className="text-accent font-mono text-xs uppercase tracking-widest">Proprietary Data Engine</span>
                 </div>
                 <h1 className="text-5xl font-bold text-white mb-6">
-                    The SoundScout Algorithm
+                    The STELAR Algorithm
                 </h1>
                 <p className="text-slate-400 text-xl max-w-3xl mx-auto leading-relaxed">
                     Our proprietary ranking system analyzes <span className="text-white font-semibold">3,000+ artists</span> across
@@ -1915,7 +1915,7 @@ function AboutSection({ onNavigate, onShowPricing, onShowContact }: AboutSection
                         <div className="w-2 h-2 rounded-full bg-signal-green animate-pulse" />
                         <span className="text-slate-500 text-xs font-mono">LIVE • 4× DAILY UPDATES • PROPRIETARY ALGORITHM</span>
                     </div>
-                    <span className="text-slate-600 text-sm">© 2026 SoundScout™ • All Rights Reserved</span>
+                    <span className="text-slate-600 text-sm">© 2026 STELAR™ • All Rights Reserved</span>
                 </div>
             </footer>
         </div>

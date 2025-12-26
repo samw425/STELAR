@@ -104,7 +104,8 @@ function generateArtistSVG(artist) {
     <rect width="1200" height="630" fill="url(#overlay)"/>
     
     <!-- Premium Branding Top Left -->
-    <text x="80" y="85" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="900" fill="#FFFFFF" letter-spacing="-0.02em">SOUND<tspan fill="#E50914">SCOUT</tspan></text>
+    <text x="80" y="85" font-family="system-ui, -apple-system, sans-serif" font-size="36" font-weight="900" fill="#FFFFFF" letter-spacing="0.2em">STELAR</text>
+    <rect x="80" y="95" width="40" height="2" fill="#E50914" />
     
     <!-- Artist Card -->
     <g transform="translate(80, 160)">
