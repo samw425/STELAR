@@ -602,7 +602,9 @@ export default function App() {
 
     // User tier (for monetization - can lock down to Pro later once we get traction)
     const userTier = 'free'; // 'free', 'pro', 'enterprise'
-    const freeLimit = 5000; // Show ALL artists for launch
+    // PERFORMANCE FIX: Rendering 5000 rows freezes mobile. 
+    // Use pagination (Load More) instead. Start with 50.
+    const [displayLimit, setDisplayLimit] = useState(50);
 
     // SEAMLESS NAVIGATION: Helper to select artist and close all modals
     const handleSelectArtist = (artist: PowerIndexArtist | null) => {
@@ -775,9 +777,15 @@ export default function App() {
             rank: index + 1
         }));
 
-        const limit = userTier === 'free' ? freeLimit : 150;
-        return result.slice(0, limit);
-    }, [artists, searchResults, searchQuery, activeTab, watchlist, userTier, freeLimit, selectedGenre, selectedStructure]);
+        // Reset limit when changing tabs/search/filters
+        setDisplayLimit(50);
+        return result;
+    }, [artists, searchResults, searchQuery, activeTab, watchlist, userTier, selectedGenre, selectedStructure]);
+
+    // Apply pagination for rendering only
+    const visibleArtists = useMemo(() => {
+        return filteredArtists.slice(0, displayLimit);
+    }, [filteredArtists, displayLimit]);
 
     const toggleWatchlist = (artistId: string) => {
         // Free users limited to 1 roster slot
@@ -1222,7 +1230,7 @@ export default function App() {
                                                             <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Loading Market Data...</div>
                                                         </td>
                                                     </tr>
-                                                ) : filteredArtists.map((artist) => (
+                                                ) : visibleArtists.map((artist) => (
                                                     <tr key={artist.id} onClick={() => handleSelectArtist(artist)} className="row-cinematic group hover:bg-white/[0.02] transition-colors cursor-pointer text-xs">
                                                         <td className="px-6 py-4 font-mono text-slate-600 font-bold">{padRank(artist.rank)}</td>
                                                         <td className="px-6 py-4">
@@ -1283,14 +1291,28 @@ export default function App() {
                                                     </tr>
                                                 ))}
                                             </tbody>
+
                                         </table>
+
+                                        {/* LOAD MORE BUTTON */}
+                                        {visibleArtists.length < filteredArtists.length && (
+                                            <div className="p-4 flex justify-center border-t border-slate-800 bg-[#0B0C10]">
+                                                <button
+                                                    onClick={() => setDisplayLimit(prev => prev + 50)}
+                                                    className="px-6 py-3 bg-slate-900 border border-slate-700 rounded-full text-white text-xs font-bold uppercase tracking-widest hover:bg-slate-800 hover:border-accent transition-colors flex items-center gap-2"
+                                                >
+                                                    Load More Artists ({filteredArtists.length - visibleArtists.length} remaining)
+                                                    <ChevronRight className="w-3 h-3 rotate-90" />
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             )}
                         </div>
-                    </main >
-                </div >
-            </div >
+                    </main>
+                </div>
+            </div>
             <Analytics />
         </>
     );
