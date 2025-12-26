@@ -83,9 +83,8 @@ export async function onRequest(context) {
             return num.toString();
         };
 
-        // Use STATIC OG image (PNG) for social media compatibility
-        // Twitter/X, iMessage, Facebook do NOT support SVG images
-        const ogImageUrl = `https://soundscout.pages.dev/og-image.png`;
+        // Use DYNAMIC OG image (PNG) - workers-og generates real PNG images with artist names
+        const ogImageUrl = `https://soundscout.pages.dev/og/artist/${artistSlug}`;
 
         // Dynamic text content - Make artist name PROMINENT
         const statusEmoji = isLegend ? '👑' : (artist.status === 'Viral' ? '🔥' : '🎵');

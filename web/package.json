@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@resvg/resvg-wasm": "^2.6.2",
     "@supabase/supabase-js": "^2.89.0",
     "@vercel/analytics": "^1.6.1",
     "clsx": "^2.1.0",
@@ -17,7 +18,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "recharts": "^2.12.0",
-    "tailwind-merge": "^2.2.1"
+    "tailwind-merge": "^2.2.1",
+    "workers-og": "^0.0.27"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
