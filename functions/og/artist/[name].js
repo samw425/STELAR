@@ -101,11 +101,13 @@ function generateArtistSVG(artist) {
         'Breakout': '#FF3366',
         'Dominance': '#F59E0B',
         'Stable': '#64748B',
-        'Conversion': '#22C55E'
+        'Conversion': '#22C55E',
+        'Legend': '#D4AF37'
     };
 
     const statusColor = statusColors[artist.status] || '#64748B';
-    const avatar = artist.avatar_url || 'https://soundscout.pages.dev/og-image.png';
+    // Ensure avatar URL is properly escaped for XML
+    const avatar = (artist.avatar_url || 'https://soundscout.pages.dev/og-image.png').replace(/&/g, '&amp;');
 
     // Ensure we escape special XML characters in the name (like &)
     const safeName = artist.name.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
