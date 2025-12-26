@@ -21,26 +21,52 @@ async function generateArtistOGImage(artistName, env) {
     // Fetch rankings data to get artist info
     // Use the PUBLIC/Production URL to ensure we get the built JSON
     const rankingsUrl = 'https://soundscout.pages.dev/rankings.json';
+    const oldSchoolUrl = 'https://soundscout.pages.dev/oldschool.json';
 
     try {
-        const response = await fetch(rankingsUrl);
-        if (!response.ok) {
-            console.error('Failed to fetch rankings', response.status);
-            return Response.redirect('https://soundscout.pages.dev/og-image.png', 302);
-        }
-        const data = await response.json();
+        // Fetch both rankings and old school data
+        const [rankingsRes, oldSchoolRes] = await Promise.all([
+            fetch(rankingsUrl),
+            fetch(oldSchoolUrl)
+        ]);
 
-        // Search for artist across all categories
         let artist = null;
-        for (const category of Object.values(data.rankings)) {
-            // Robust matching: Exact name OR Name with spaces
-            const found = category.find(a =>
+
+        // Search in main rankings first
+        if (rankingsRes.ok) {
+            const data = await rankingsRes.json();
+            for (const category of Object.values(data.rankings)) {
+                const found = category.find(a =>
+                    a.name.toLowerCase() === artistName.toLowerCase() ||
+                    a.name.toLowerCase().replace(/\s+/g, '-') === artistName.toLowerCase().replace(/\s+/g, '-')
+                );
+                if (found) {
+                    artist = found;
+                    break;
+                }
+            }
+        }
+
+        // If not found, search Old School legends
+        if (!artist && oldSchoolRes.ok) {
+            const oldSchoolData = await oldSchoolRes.json();
+            const found = oldSchoolData.artists?.find(a =>
                 a.name.toLowerCase() === artistName.toLowerCase() ||
                 a.name.toLowerCase().replace(/\s+/g, '-') === artistName.toLowerCase().replace(/\s+/g, '-')
             );
             if (found) {
-                artist = found;
-                break;
+                // Convert Old School format to standard format for OG generation
+                artist = {
+                    name: found.name,
+                    genre: found.genre,
+                    country: found.country,
+                    status: 'Legend',
+                    rank: found.rank,
+                    monthlyListeners: found.monthlyListeners || 0,
+                    powerScore: 999,
+                    growthVelocity: 0,
+                    avatar_url: found.avatar_url
+                };
             }
         }
 

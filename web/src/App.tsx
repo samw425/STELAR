@@ -709,6 +709,55 @@ export default function App() {
                         a.id === slug
                     );
 
+                    // If not found in main rankings, search Old School legends
+                    if (!foundArtist) {
+                        try {
+                            const oldSchoolRes = await fetch('/oldschool.json');
+                            if (oldSchoolRes.ok) {
+                                const oldSchoolData = await oldSchoolRes.json();
+                                const osArtist = oldSchoolData.artists?.find((a: any) =>
+                                    a.name.toLowerCase() === artistName ||
+                                    a.name.toLowerCase().replace(/\s+/g, '-') === slug
+                                );
+                                if (osArtist) {
+                                    // Convert to PowerIndexArtist format
+                                    foundArtist = {
+                                        id: osArtist.id,
+                                        name: osArtist.name,
+                                        genre: osArtist.genre,
+                                        country: osArtist.country,
+                                        city: null,
+                                        status: 'Dominance' as const,
+                                        monthlyListeners: osArtist.monthlyListeners,
+                                        tiktokFollowers: 0,
+                                        instagramFollowers: 0,
+                                        youtubeSubscribers: 0,
+                                        twitterFollowers: 0,
+                                        powerScore: 999,
+                                        growthVelocity: 0,
+                                        conversionScore: 0,
+                                        arbitrageSignal: 0,
+                                        is_independent: false,
+                                        rank: osArtist.rank,
+                                        chartRank: osArtist.rank,
+                                        avatar_url: osArtist.avatar_url,
+                                        spotify_id: '',
+                                        label_name: null,
+                                        instagram_handle: null,
+                                        tiktok_handle: null,
+                                        twitter_handle: null,
+                                        youtube_channel: null,
+                                        lastUpdated: ''
+                                    };
+                                    // Switch to Old School tab when viewing an Old School artist
+                                    setActiveTab('old-school');
+                                }
+                            }
+                        } catch (e) {
+                            console.log('Failed to search Old School artists:', e);
+                        }
+                    }
+
                     if (foundArtist) {
                         setSelectedArtist(foundArtist);
                         // Ensure we scroll to top
