@@ -654,7 +654,42 @@ export default function App() {
             setLoading(false);
         }
         loadArtists();
+        loadArtists();
     }, [activeTab]);
+
+    // DEEP LINKING: Check URL on mount and open artist profile
+    useEffect(() => {
+        const checkDeepLink = async () => {
+            const path = window.location.pathname;
+            if (path.startsWith('/artist/')) {
+                // Ensure artists are loaded first
+                const rankingsData = await fetchRankingsData();
+                if (!rankingsData) return;
+
+                const slug = path.split('/artist/')[1];
+                if (slug) {
+                    const artistName = decodeURIComponent(slug.replace(/-/g, ' ')).toLowerCase();
+
+                    // Search across all categories to find the artist
+                    // We need all artists, not just the active tab
+                    let foundArtist: PowerIndexArtist | undefined;
+                    for (const category of Object.values(rankingsData.rankings)) {
+                        foundArtist = (category as PowerIndexArtist[]).find(a =>
+                            a.name.toLowerCase() === artistName ||
+                            a.name.toLowerCase().replace(/\s+/g, '-') === slug
+                        );
+                        if (foundArtist) break;
+                    }
+
+                    if (foundArtist) {
+                        setSelectedArtist(foundArtist);
+                    }
+                }
+            }
+        };
+
+        checkDeepLink();
+    }, []);
 
     const [searchResults, setSearchResults] = useState<PowerIndexArtist[]>([]);
 
