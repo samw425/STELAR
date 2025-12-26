@@ -4,7 +4,7 @@ import {
     TrendingUp,
     ChevronRight,
     Zap,
-    Radio,
+    Compass,
     BarChart3,
     Bookmark,
     BookmarkCheck,
@@ -15,9 +15,10 @@ import {
     Target,
     Users,
     Lock,
-    Sparkles,
     ArrowUpRight,
     Star,
+    Sparkles,
+    Radio,
     Menu,
     Play
 } from 'lucide-react';
@@ -794,18 +795,23 @@ export default function App() {
                         transform transition-transform duration-300 ease-in-out h-full
                         ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                     `}>
-                        {/* HEADER */}
+                        {/* BRAND HEADER - ELITE HUMAN DESIGN */}
                         <div className="p-8 pb-4">
-                            <div className="flex items-center gap-4 group cursor-pointer">
-                                <div className="relative">
-                                    <div className="absolute inset-0 bg-accent rounded-lg blur-lg opacity-40 group-hover:opacity-100 transition-opacity"></div>
-                                    <div className="w-12 h-12 bg-black border border-white/20 rounded-xl flex items-center justify-center relative z-10 overflow-hidden shadow-2xl">
-                                        <Music className="text-accent w-7 h-7" />
-                                        <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-transparent"></div>
+                            <div className="flex flex-col gap-1 group cursor-pointer">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 flex items-center justify-center">
+                                        <div className="relative w-full h-full border border-white/10 rounded flex items-center justify-center bg-white/5">
+                                            <Compass className="text-accent w-5 h-5" strokeWidth={1.5} />
+                                        </div>
                                     </div>
+                                    <h1 className="text-2xl font-black text-white tracking-tight uppercase leading-none">
+                                        SOUND<span className="text-accent font-light">SCOUT</span>
+                                    </h1>
                                 </div>
-                                <div>
-                                    <h1 className="text-3xl font-black text-white tracking-[0.3em] uppercase leading-none">STELAR</h1>
+                                <div className="pl-11">
+                                    <div className="text-[9px] font-mono text-slate-500 tracking-[0.4em] uppercase opacity-60">
+                                        Artist Discovery • Alpha
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1683,7 +1689,7 @@ function AboutSection({ onNavigate, onShowPricing, onShowContact }: AboutSection
                     <span className="text-accent font-mono text-xs uppercase tracking-widest">Proprietary Data Engine</span>
                 </div>
                 <h1 className="text-5xl font-bold text-white mb-6">
-                    The STELAR Algorithm
+                    The SoundScout Algorithm
                 </h1>
                 <p className="text-slate-400 text-xl max-w-3xl mx-auto leading-relaxed">
                     Our proprietary ranking system analyzes <span className="text-white font-semibold">3,000+ artists</span> across
@@ -1915,7 +1921,7 @@ function AboutSection({ onNavigate, onShowPricing, onShowContact }: AboutSection
                         <div className="w-2 h-2 rounded-full bg-signal-green animate-pulse" />
                         <span className="text-slate-500 text-xs font-mono">LIVE • 4× DAILY UPDATES • PROPRIETARY ALGORITHM</span>
                     </div>
-                    <span className="text-slate-600 text-sm">© 2026 STELAR™ • All Rights Reserved</span>
+                    <span className="text-slate-600 text-sm">© 2026 SoundScout™ • All Rights Reserved</span>
                 </div>
             </footer>
         </div>
