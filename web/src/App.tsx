@@ -83,7 +83,7 @@ function WelcomeBanner({ onDismiss }: { onDismiss: () => void }) {
             <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div className="flex items-center gap-4">
                     <div className="w-8 h-8 bg-accent/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Sparkles className="w-4 h-4 text-accent" />
+                        <Compass className="w-4 h-4 text-accent" />
                     </div>
                     <div className="text-center sm:text-left">
                         <span className="text-white font-bold text-sm">Welcome to SoundScout!</span>
@@ -1008,7 +1008,7 @@ export default function App() {
                                     <div className="flex items-center gap-4 text-[9px] font-bold uppercase tracking-wider">
                                         <span className="text-red-500 flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></div> Live Data</span>
                                         <span className="text-green-500">✓ Full Access</span>
-                                        <span className="text-slate-500">150 Artists</span>
+                                        <span className="text-slate-500">5,000+ Artists</span>
                                         <span className="text-slate-500">Updated 4x Daily</span>
                                     </div>
                                 </div>
