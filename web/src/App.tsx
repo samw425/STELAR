@@ -1414,7 +1414,8 @@ const ShareModal = ({
 }) => {
     if (!isOpen) return null;
 
-    const url = `https://soundscout.pages.dev/artist/${artist.id}`;
+    const slug = artist.name.toLowerCase().replace(/\s+/g, '-');
+    const url = `https://soundscout.pages.dev/artist/${slug}`;
     const text = `Check out ${artist.name} on SoundScout - The Artist Discovery Platform`;
 
     // Explicit Share Intents
