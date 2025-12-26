@@ -2,13 +2,15 @@ name: SoundScout Real-Time Data Refresh
 
 on:
   schedule:
-    # Run 4 times a day: 12AM, 6AM, 12PM, 6PM UTC
-    - cron: '0 0,6,12,18 * * *'
+    # Run once a day at 12AM UTC
+    - cron: '0 0 * * *'
   workflow_dispatch: # Allow manual trigger
 
 jobs:
   refresh-rankings:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     
     steps:
       - name: Checkout Code
@@ -25,19 +27,20 @@ jobs:
           
       - name: Generate Rankings (Proprietary Algorithm)
         run: |
-          python sound-scout/data/generate_rankings.py
+          python data/generate_rankings.py
           
       - name: Move Data to Web Public Folder
         run: |
           # Ensure public directory exists
-          mkdir -p sound-scout/web/public
+          mkdir -p web/public
           # Move the generated json
-          mv rankings.json sound-scout/web/public/
+          mv rankings.json web/public/
           
       - name: Commit and Push Changes
         run: |
           git config --global user.name "SoundScout Bot"
           git config --global user.email "bot@soundscout.app"
-          git add sound-scout/web/public/rankings.json
+          git add web/public/rankings.json
           git commit -m "📈 Real-Time Data Refresh [$(date)]" || echo "No changes to commit"
           git push
+
