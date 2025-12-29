@@ -1,13 +1,14 @@
-name: SoundScout Real-Time Data Refresh
+name: STELAR Daily Data Refresh & Deploy
 
 on:
   schedule:
-    # Run once a day at 12AM UTC
+    # Run twice a day: 12AM and 12PM UTC
     - cron: '0 0 * * *'
+    - cron: '0 12 * * *'
   workflow_dispatch: # Allow manual trigger
 
 jobs:
-  refresh-rankings:
+  refresh-and-deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -38,9 +39,29 @@ jobs:
           
       - name: Commit and Push Changes
         run: |
-          git config --global user.name "SoundScout Bot"
-          git config --global user.email "bot@soundscout.app"
+          git config --global user.name "STELAR Bot"
+          git config --global user.email "bot@stelarmusic.com"
           git add web/public/rankings.json
-          git commit -m "📈 Real-Time Data Refresh [$(date)]" || echo "No changes to commit"
+          git commit -m "📈 STELAR Data Refresh [$(date)]" || echo "No changes to commit"
           git push
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Web Dependencies
+        working-directory: ./web
+        run: npm ci
+
+      - name: Build Web App
+        working-directory: ./web
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          workingDirectory: web
+          command: pages deploy dist --project-name stelarmusic
