@@ -96,7 +96,7 @@ const getInitials = (name: string): string => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 };
 
-type TabType = 'power-index' | 'old-school' | 'sonic-signals' | 'locked-roster' | 'up-and-comers' | 'new-releases' | 'about';
+type TabType = 'the-pulse' | 'old-school' | 'sonic-signals' | 'locked-roster' | 'up-and-comers' | 'new-releases' | 'about';
 
 // ============================================================================
 // ONBOARDING COMPONENT
@@ -111,7 +111,7 @@ function WelcomeBanner({ onDismiss }: { onDismiss: () => void }) {
                         <Radio className="w-4 h-4 text-accent" />
                     </div>
                     <div className="text-center sm:text-left">
-                        <span className="text-white font-bold text-sm">Welcome to SoundScout!</span>
+                        <span className="text-white font-bold text-sm">Welcome to STELAR!</span>
                         <span className="text-slate-400 text-sm ml-2 hidden md:inline">
                             Click any artist to view their full profile • Use search to find specific artists • Filter by genre or structure
                         </span>
@@ -441,7 +441,7 @@ function DossierModal({ artist, onClose }: { artist: PowerIndexArtist, onClose: 
                 {/* CINEMATIC BACKGROUND */}
                 <div className="absolute inset-0 z-0">
                     <img
-                        src={artist.avatar_url || 'https://soundscout.pages.dev/og-image.png'}
+                        src={artist.avatar_url || 'https://stelarmusic.pages.dev/og-image.png'}
                         className="w-full h-full object-cover opacity-30 scale-110 blur-[80px]"
                         alt=""
                     />
@@ -578,7 +578,7 @@ function DossierModal({ artist, onClose }: { artist: PowerIndexArtist, onClose: 
                 {/* MODAL FOOTER */}
                 <div className="relative z-[100] p-6 border-t border-white/5 bg-black/50 backdrop-blur-3xl flex justify-between items-center">
                     <div className="text-[9px] font-mono text-white/20 uppercase tracking-[0.2em] hidden md:block">
-                        SoundScout Data Terminal v2.0 // Artist Object {artist.id.slice(0, 8)}
+                        STELAR Data Terminal v2.0 // Artist Object {artist.id.slice(0, 8)}
                     </div>
                     <div className="flex gap-3 w-full md:w-auto">
                         <button onClick={onClose} className="flex-1 md:flex-none px-8 py-3 rounded-full font-black text-[10px] text-white/40 hover:text-white uppercase tracking-widest transition-colors">
@@ -595,7 +595,7 @@ function DossierModal({ artist, onClose }: { artist: PowerIndexArtist, onClose: 
 }
 
 export default function App() {
-    const [activeTab, setActiveTab] = useState<TabType>('power-index');
+    const [activeTab, setActiveTab] = useState<TabType>('the-pulse');
     const [searchQuery, setSearchQuery] = useState('');
     const [artists, setArtists] = useState<PowerIndexArtist[]>([]);
     const [loading, setLoading] = useState(true);
@@ -1045,14 +1045,14 @@ export default function App() {
                                 <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 px-2">Terminal Access</h3>
                                 <nav className="space-y-1">
                                     <button
-                                        onClick={() => { setActiveTab('power-index'); setSelectedArtist(null); setActiveDiscoveryList(null); setMobileMenuOpen(false); }}
+                                        onClick={() => { setActiveTab('the-pulse'); setSelectedArtist(null); setActiveDiscoveryList(null); setMobileMenuOpen(false); }}
                                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-xs uppercase tracking-wider transition-all
-                                            ${activeTab === 'power-index'
+                                            ${activeTab === 'the-pulse'
                                                 ? 'bg-accent/10 text-accent border border-accent/20 shadow-[0_0_15px_rgba(255,51,102,0.1)]'
                                                 : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
                                     >
                                         <BarChart3 className="w-4 h-4" />
-                                        <span>Power Index</span>
+                                        <span>The Pulse</span>
                                     </button>
                                     <button
                                         onClick={() => { setActiveTab('up-and-comers'); setSelectedArtist(null); setActiveDiscoveryList(null); setMobileMenuOpen(false); }}
@@ -1248,7 +1248,7 @@ export default function App() {
                     </aside>
 
                     <main className="flex-1 flex flex-col relative overflow-hidden bg-[#0B0C10]">
-                        {/* TOP HEADER - POWER INDEX STYLE */}
+                        {/* TOP HEADER - THE PULSE STYLE */}
                         <header className="h-20 border-b border-slate-900 bg-[#0B0C10] flex items-center justify-between px-8 z-10 shrink-0">
                             <div className="flex items-center gap-6">
                                 <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-slate-400">
@@ -1256,7 +1256,7 @@ export default function App() {
                                 </button>
 
                                 <div>
-                                    <h1 className="text-xl font-black text-white tracking-widest uppercase mb-1">Power Index</h1>
+                                    <h1 className="text-xl font-black text-white tracking-widest uppercase mb-1">The Pulse</h1>
                                     <div className="flex items-center gap-4 text-[9px] font-bold uppercase tracking-wider">
                                         <span className="text-red-500 flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></div> Live Data</span>
                                         <span className="text-green-500">✓ Full Access</span>
@@ -1614,7 +1614,7 @@ export default function App() {
                                 </div>
                             ) : (
                                 <div className="space-y-8">
-                                    {/* POWER INDEX CONTENT - GRID OR LIST VIEW */}
+                                    {/* THE PULSE CONTENT - GRID OR LIST VIEW */}
                                     {viewMode === 'grid' ? (
                                         /* GRID VIEW - Modern card-based layout like Old School */
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -1802,21 +1802,38 @@ const TopTracks = ({ artistName }: { artistName: string }) => {
 
     useEffect(() => {
         const fetchTracks = async () => {
+            if (!artistName) return;
             setLoading(true);
             try {
-                // Zero-Cost API: iTunes Search
-                const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(artistName)}&entity=song&limit=5`);
-                const data = await res.json();
+                // SAFER CLEAN: Only strip content in parentheses at the END of the name
+                const cleanName = artistName
+                    .replace(/\s*\(.*\)$/, '')
+                    .trim();
+
+                // 2. PRIMARY FETCH
+                let res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(cleanName)}&entity=song&limit=50`);
+                let data = await res.json();
+
+                // 3. FALLBACK: Try original name if search failed or returned too few results
+                if ((!data.results || data.results.length < 1) && cleanName !== artistName) {
+                    res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(artistName)}&entity=song&limit=50`);
+                    data = await res.json();
+                }
+
                 setTracks(data.results || []);
             } catch (e) {
                 console.error("Failed to fetch tracks", e);
+                setTracks([]);
             } finally {
                 setLoading(false);
             }
         };
 
-        if (artistName) fetchTracks();
+        fetchTracks();
     }, [artistName]);
+
+    const [showAll] = useState(true); // SHOW 50 BY DEFAULT AS REQUESTED
+    const visibleTracks = showAll ? tracks : tracks.slice(0, 5);
 
     const togglePlay = (url: string) => {
         if (playing === url) {
@@ -1846,7 +1863,7 @@ const TopTracks = ({ artistName }: { artistName: string }) => {
                 <Music className="w-4 h-4" /> Top Sonic Outputs
             </h3>
             <div className="space-y-3">
-                {tracks.map((track, i) => (
+                {visibleTracks.map((track, i) => (
                     <div
                         key={track.trackId}
                         className="w-full flex items-center justify-between p-3 bg-slate-900/50 border border-slate-800 rounded-xl hover:bg-slate-800 hover:border-slate-700 transition-all group text-left relative"
@@ -1928,10 +1945,10 @@ const ShareModal = ({
     if (!isOpen) return null;
 
     const slug = artist.name.toLowerCase().replace(/\s+/g, '-');
-    const url = `https://soundscout.pages.dev/artist/${slug}`;
+    const url = `https://stelarmusic.pages.dev/artist/${slug}`;
 
     // Universal Share Copy
-    const text = `Check out ${artist.name} on SoundScout.`;
+    const text = `Check out ${artist.name} on STELAR.`;
 
     // Explicit Share Intents
     const shareLinks = [
@@ -2372,7 +2389,7 @@ function AboutSection({ onNavigate, onShowPricing, onShowContact }: AboutSection
                     <span className="text-accent font-mono text-xs uppercase tracking-widest">Proprietary Data Engine</span>
                 </div>
                 <h1 className="text-5xl font-bold text-white mb-6">
-                    The SoundScout Algorithm
+                    The STELAR Algorithm
                 </h1>
                 <p className="text-slate-400 text-xl max-w-3xl mx-auto leading-relaxed">
                     Our proprietary ranking system analyzes <span className="text-white font-semibold">3,000+ artists</span> across
@@ -2472,7 +2489,7 @@ function AboutSection({ onNavigate, onShowPricing, onShowContact }: AboutSection
                     </div>
                     <div>
                         <h2 className="text-2xl font-bold text-white">Arbitrage Detection™</h2>
-                        <p className="text-slate-500 text-sm">The secret sauce that makes SoundScout different</p>
+                        <p className="text-slate-500 text-sm">The secret sauce that makes STELAR different</p>
                     </div>
                 </div>
                 <p className="text-slate-300 text-lg mb-8 max-w-3xl">
@@ -2565,7 +2582,7 @@ function AboutSection({ onNavigate, onShowPricing, onShowContact }: AboutSection
                             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent/50 flex items-center justify-center">
                                 <Radio className="w-4 h-4 text-white" />
                             </div>
-                            <span className="text-white font-bold">SoundScout</span>
+                            <span className="text-white font-bold">STELAR</span>
                             <span className="text-slate-500 text-xs">™</span>
                         </div>
                         <p className="text-slate-500 text-sm">
@@ -2575,10 +2592,10 @@ function AboutSection({ onNavigate, onShowPricing, onShowContact }: AboutSection
                     <div>
                         <h4 className="text-white font-bold mb-4">Product</h4>
                         <ul className="space-y-2 text-slate-400 text-sm">
-                            <li><button onClick={() => onNavigate('power-index')} className="hover:text-white transition-colors">Power Index</button></li>
+                            <li><button onClick={() => onNavigate('the-pulse')} className="hover:text-white transition-colors">The Pulse</button></li>
                             <li><button onClick={() => onNavigate('up-and-comers')} className="hover:text-white transition-colors">Up & Comers</button></li>
                             <li><button onClick={() => onNavigate('sonic-signals')} className="hover:text-white transition-colors">Arbitrage Signals</button></li>
-                            <li><button onClick={() => onNavigate('power-index')} className="hover:text-white transition-colors">Genre Rankings</button></li>
+                            <li><button onClick={() => onNavigate('the-pulse')} className="hover:text-white transition-colors">Genre Rankings</button></li>
                         </ul>
                     </div>
                     <div>
@@ -2604,7 +2621,7 @@ function AboutSection({ onNavigate, onShowPricing, onShowContact }: AboutSection
                         <div className="w-2 h-2 rounded-full bg-signal-green animate-pulse" />
                         <span className="text-slate-500 text-xs font-mono">LIVE • 4× DAILY UPDATES • PROPRIETARY ALGORITHM</span>
                     </div>
-                    <span className="text-slate-600 text-sm">© 2026 SoundScout™ • All Rights Reserved</span>
+                    <span className="text-slate-600 text-sm">© 2026 STELAR™ • All Rights Reserved</span>
                 </div>
             </footer>
         </div>

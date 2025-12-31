@@ -1,5 +1,5 @@
 /**
- * SoundScout Data Layer
+ * STELAR Data Layer
  * ======================
  * Fetches REAL artist data from our proprietary rankings.
  * 
@@ -114,9 +114,9 @@ export async function fetchRankingsData(): Promise<RankingsData | null> {
             cacheTimestamp = Date.now();
             activeFetchPromise = null; // Clear when done
 
-            console.log(`[SoundScout] Loaded ${data.total_artists} artists from ${data.data_source}`);
-            console.log(`[SoundScout] Algorithm version: ${data.algorithm_version}`);
-            console.log(`[SoundScout] Generated at: ${data.generated_at}`);
+            console.log(`[STELAR] Loaded ${data.total_artists} artists from ${data.data_source}`);
+            console.log(`[STELAR] Algorithm version: ${data.algorithm_version}`);
+            console.log(`[STELAR] Generated at: ${data.generated_at}`);
 
             return data;
         } catch (error) {
@@ -138,7 +138,7 @@ export function getDataTimestamp(): string | null {
 }
 
 /**
- * Fetch artists for the Power Index.
+ * Fetch artists for The Pulse.
  * Supports filtering by genre and category.
  */
 export async function fetchPowerIndex(
