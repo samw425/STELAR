@@ -70,30 +70,67 @@ export async function onRequest(context) {
                 : `${artist.monthlyListeners}`;
 
         const badge = isLegend ? '👑 LEGEND' : artist.status?.toUpperCase() || 'ARTIST';
+        const avatarUrl = artist.avatar_url || 'https://soundscout.pages.dev/og-image.png';
 
-        // Simple HTML that workers-og can handle
+        // High-end "Netflix-style" HTML template
         return new ImageResponse(
-            `<div style="display:flex;flex-direction:column;width:100%;height:100%;background:#111;padding:50px;font-family:sans-serif">
-                <div style="display:flex;color:white;font-size:32px;font-weight:bold">
-                    <span>SOUND</span><span style="color:#E50914">SCOUT</span>
-                </div>
-                <div style="display:flex;flex:1;align-items:center;margin-top:30px">
-                    <img src="${artist.avatar_url || 'https://soundscout.pages.dev/og-image.png'}" width="240" height="240" style="border-radius:120px;border:5px solid #E50914" />
-                    <div style="display:flex;flex-direction:column;margin-left:50px">
-                        <div style="display:flex;background:#E50914;padding:8px 20px;border-radius:20px;margin-bottom:15px">
-                            <span style="color:white;font-size:18px;font-weight:bold">${badge}</span>
+            `<div style="display:flex;flex-direction:column;width:100%;height:100%;background:#000;font-family:sans-serif;position:relative;overflow:hidden">
+                <!-- Blurred Background of the Artist -->
+                <img src="${avatarUrl}" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;filter:blur(60px) brightness(0.4);object-fit:cover" />
+                
+                <!-- Main Container -->
+                <div style="display:flex;flex-direction:column;width:100%;height:100%;padding:60px;position:relative;z-index:10;background:rgba(0,0,0,0.3)">
+                    <!-- Brand Header -->
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:40px">
+                        <div style="display:flex;width:40px;height:40px;background:#E50914;border-radius:8px;align-items:center;justify-content:center;color:white;font-weight:900;font-size:24px">S</div>
+                        <div style="display:flex;color:white;font-size:32px;font-weight:900;letter-spacing:-1px">
+                            <span>STELAR</span><span style="color:#E50914">MUSIC</span>
                         </div>
-                        <div style="display:flex;color:white;font-size:${artist.name.length > 14 ? 52 : 72}px;font-weight:900">${artist.name.toUpperCase()}</div>
-                        <div style="display:flex;color:#888;font-size:24px;margin-top:10px">${artist.genre} • Rank #${artist.rank}</div>
-                        <div style="display:flex;margin-top:30px">
-                            <div style="display:flex;flex-direction:column;margin-right:60px">
-                                <span style="color:#666;font-size:14px">LISTENERS</span>
-                                <span style="color:white;font-size:36px;font-weight:bold">${listeners}</span>
+                    </div>
+
+                    <div style="display:flex;flex:1;align-items:center">
+                        <!-- Artist Profile Image with Glow -->
+                        <div style="display:flex;position:relative;margin-right:60px">
+                            <div style="position:absolute;inset:-10px;background:#E50914;border-radius:140px;opacity:0.3;filter:blur(20px)"></div>
+                            <img src="${avatarUrl}" width="280" height="280" style="border-radius:140px;border:6px solid white;position:relative;z-index:2;object-fit:cover" />
+                        </div>
+
+                        <!-- Artist Info with Glassmorphism Overlay -->
+                        <div style="display:flex;flex-direction:column;background:rgba(255,255,255,0.05);padding:40px;border-radius:32px;border:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(10px);flex-grow:1">
+                            <div style="display:flex;align-items:center;margin-bottom:15px">
+                                <div style="display:flex;background:#E50914;padding:6px 16px;border-radius:30px">
+                                    <span style="color:white;font-size:16px;font-weight:900;letter-spacing:1px">${badge}</span>
+                                </div>
+                                <span style="color:rgba(255,255,255,0.5);font-size:18px;font-weight:700;margin-left:15px;text-transform:uppercase;letter-spacing:2px">RANK #${artist.rank}</span>
                             </div>
-                            <div style="display:flex;flex-direction:column">
-                                <span style="color:#666;font-size:14px">POWER</span>
-                                <span style="color:#E50914;font-size:36px;font-weight:bold">${artist.powerScore}</span>
+                            
+                            <div style="display:flex;color:white;font-size:${artist.name.length > 14 ? 64 : 84}px;font-weight:900;line-height:1;margin-bottom:10px;letter-spacing:-2px">${artist.name.toUpperCase()}</div>
+                            <div style="display:flex;color:#E50914;font-size:24px;font-weight:700;text-transform:uppercase;letter-spacing:4px;margin-bottom:30px">${artist.genre}</div>
+                            
+                            <div style="display:flex;gap:50px">
+                                <div style="display:flex;flex-direction:column">
+                                    <span style="color:rgba(255,255,255,0.4);font-size:14px;font-weight:900;text-transform:uppercase;letter-spacing:2px;margin-bottom:5px">Monthly Listeners</span>
+                                    <span style="color:white;font-size:42px;font-weight:900">${listeners}</span>
+                                </div>
+                                <div style="display:flex;flex-direction:column">
+                                    <span style="color:rgba(255,255,255,0.4);font-size:14px;font-weight:900;text-transform:uppercase;letter-spacing:2px;margin-bottom:5px">Power Score</span>
+                                    <span style="color:#E50914;font-size:42px;font-weight:900">${artist.powerScore}</span>
+                                </div>
+                                <div style="display:flex;flex-direction:column">
+                                    <span style="color:rgba(255,255,255,0.4);font-size:14px;font-weight:900;text-transform:uppercase;letter-spacing:2px;margin-bottom:5px">Status</span>
+                                    <span style="color:white;font-size:40px;font-weight:900">${artist.status === 'Legend' ? '👑' : artist.status}</span>
+                                </div>
                             </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Bottom Ticker-feel -->
+                    <div style="display:flex;margin-top:auto;border-top:1px solid rgba(255,255,255,0.1);padding-top:20px;justify-content:space-between;align-items:center">
+                        <span style="color:rgba(255,255,255,0.3);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:2px">Global Music Intelligence Terminal</span>
+                        <div style="display:flex;gap:15px;color:rgba(255,255,255,0.3);font-size:12px;font-weight:900">
+                            <span>RANKINGS</span>
+                            <span>ANALYTICS</span>
+                            <span>DISCOVERY</span>
                         </div>
                     </div>
                 </div>

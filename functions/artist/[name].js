@@ -89,11 +89,11 @@ export async function onRequest(context) {
         // Dynamic text content - Make artist name PROMINENT
         const statusEmoji = isLegend ? '👑' : (artist.status === 'Viral' ? '🔥' : '🎵');
         const dynamicTitle = isLegend
-            ? `${artist.name} | Old School Legend | SoundScout`
-            : `${artist.name} | #${artist.rank} Global | SoundScout`;
+            ? `${artist.name} | Old School Legend | STELAR`
+            : `${artist.name} | #${artist.rank} Global | STELAR`;
         const dynamicDescription = isLegend
-            ? `👑 LEGEND: ${artist.name} • ${artist.genre} • ${formatNumber(artist.monthlyListeners)} Monthly Listeners • One of the greatest of all time | Discover on SoundScout`
-            : `${statusEmoji} ${artist.name} • Rank #${artist.rank} • ${formatNumber(artist.monthlyListeners)} Monthly Listeners • Power Score: ${artist.powerScore} • ${artist.status} | SoundScout`;
+            ? `👑 LEGEND: ${artist.name} • ${artist.genre} • ${formatNumber(artist.monthlyListeners)} Monthly Listeners • One of the greatest of all time | Discover on STELAR`
+            : `${statusEmoji} ${artist.name} • Rank #${artist.rank} • ${formatNumber(artist.monthlyListeners)} Monthly Listeners • Power Score: ${artist.powerScore} • ${artist.status} | STELAR`;
 
         // Replace meta tags
         html = html.replace(
@@ -107,6 +107,11 @@ export async function onRequest(context) {
         html = html.replace(
             /<meta property="og:image" content="[^"]*"/g,
             `<meta property="og:image" content="${ogImageUrl}"`
+        );
+        // Ensure summary_large_image is set for Twitter
+        html = html.replace(
+            /<meta name="twitter:card" content="[^"]*"/g,
+            `<meta name="twitter:card" content="summary_large_image"`
         );
         html = html.replace(
             /<meta name="twitter:title" content="[^"]*"/g,
