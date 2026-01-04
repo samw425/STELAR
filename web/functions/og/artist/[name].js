@@ -74,13 +74,13 @@ export async function onRequest(context) {
         // Simple HTML that workers-og can handle
         return new ImageResponse(
             `<div style="display:flex;flex-direction:column;width:100%;height:100%;background:#0B0C10;padding:50px;font-family:sans-serif">
-                <div style="display:flex;color:#00FF41;font-size:32px;font-weight:900;letter-spacing:0.1em">
+                <div style="display:flex;color:#FF4500;font-size:32px;font-weight:900;letter-spacing:0.1em">
                     STELAR
                 </div>
                 <div style="display:flex;flex:1;align-items:center;margin-top:30px">
-                    <img src="${artist.avatar_url || 'https://stelarmusic.pages.dev/og-image.png'}" width="240" height="240" style="border-radius:120px;border:5px solid #00FF41" />
+                    <img src="${artist.avatar_url || 'https://stelarmusic.pages.dev/og-image.png'}" width="240" height="240" style="border-radius:120px;border:5px solid #FF4500" />
                     <div style="display:flex;flex-direction:column;margin-left:50px">
-                        <div style="display:flex;background:#00FF41;padding:8px 20px;border-radius:20px;margin-bottom:15px">
+                        <div style="display:flex;background:#FF4500;padding:8px 20px;border-radius:20px;margin-bottom:15px">
                             <span style="color:white;font-size:18px;font-weight:bold">${badge}</span>
                         </div>
                         <div style="display:flex;color:white;font-size:${artist.name.length > 14 ? 52 : 72}px;font-weight:900">${artist.name.toUpperCase()}</div>
@@ -92,7 +92,7 @@ export async function onRequest(context) {
                             </div>
                             <div style="display:flex;flex-direction:column">
                                 <span style="color:#666;font-size:14px">POWER</span>
-                                <span style="color:#00FF41;font-size:36px;font-weight:bold">${artist.powerScore}</span>
+                                <span style="color:#FF4500;font-size:36px;font-weight:bold">${artist.powerScore}</span>
                             </div>
                         </div>
                     </div>

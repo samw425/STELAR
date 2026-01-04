@@ -30,11 +30,11 @@
 
   /* Glow effects */
   .glow-red {
-    text-shadow: 0 0 10px rgba(220, 38, 38, 0.6);
+    text-shadow: 0 0 10px rgba(255, 69, 0, 0.6);
   }
 
   .glow-green {
-    text-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+    text-shadow: 0 0 10px rgba(255, 69, 0, 0.6);
   }
 
   /* Card gradient overlay */
@@ -79,11 +79,11 @@
   }
 
   .badge-major {
-    @apply bg-tier-major/10 text-tier-major border border-tier-major/30;
+    @apply bg-accent/10 text-accent border border-accent/30;
   }
 
   .badge-indie {
-    @apply bg-tier-indie/10 text-tier-indie border border-tier-indie/30;
+    @apply bg-accent/10 text-accent border border-accent/30;
   }
 
   /* Table row hover effect */
@@ -93,7 +93,7 @@
   }
 
   .table-row-hover:hover {
-    background: linear-gradient(90deg, rgba(220, 38, 38, 0.03) 0%, transparent 100%);
+    background: linear-gradient(90deg, rgba(255, 69, 0, 0.03) 0%, transparent 100%);
   }
 
   /* Omnibox (search bar) */
@@ -218,7 +218,7 @@
   top: 0;
   bottom: 0;
   width: 3px;
-  background: linear-gradient(180deg, #ff3366, #9333ea);
+  background: linear-gradient(180deg, #FF4500, #FF4500);
   opacity: 0;
   transition: opacity 0.3s ease;
   border-radius: 0 2px 2px 0;
@@ -226,15 +226,15 @@
 
 .row-cinematic:hover {
   background: linear-gradient(90deg,
-      rgba(255, 51, 102, 0.08) 0%,
-      rgba(147, 51, 234, 0.04) 30%,
+      rgba(255, 69, 0, 0.08) 0%,
+      rgba(255, 69, 0, 0.04) 30%,
       transparent 100%) !important;
   transform: translateX(2px);
 }
 
 .row-cinematic:hover::before {
   opacity: 1;
-  box-shadow: 0 0 20px rgba(255, 51, 102, 0.6);
+  box-shadow: 0 0 20px rgba(255, 69, 0, 0.6);
 }
 
 /* ============================================
@@ -255,17 +255,17 @@
 
 .status-ring-viral::before {
   border-color: #a855f7;
-  box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+  box-shadow: 0 0 10px rgba(255, 69, 0, 0.4);
 }
 
 .status-ring-breakout::before {
-  border-color: #22c55e;
-  box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);
+  border-color: #FF4500;
+  box-shadow: 0 0 10px rgba(255, 69, 0, 0.4);
 }
 
 .status-ring-dominance::before {
-  border-color: #f59e0b;
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+  border-color: #FF4500;
+  box-shadow: 0 0 10px rgba(255, 69, 0, 0.4);
 }
 
 .status-ring-stable::before {
@@ -274,8 +274,8 @@
 }
 
 .status-ring-conversion::before {
-  border-color: #22c55e;
-  box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+  border-color: #FF4500;
+  box-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
   animation: pulse-ring 2s infinite;
 }
 

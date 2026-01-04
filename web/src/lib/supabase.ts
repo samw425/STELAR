@@ -213,7 +213,19 @@ export async function searchAllArtists(query: string): Promise<PowerIndexArtist[
     if (!data || !query.trim()) return [];
 
     const normalizedQuery = query.toLowerCase().trim();
-    const allArtists = data.rankings.global; // Global has most comprehensive list
+
+    // Search across ALL categories for maximum coverage
+    const allArtistsMap = new Map<string, PowerIndexArtist>();
+
+    Object.values(data.rankings).forEach(categoryArtists => {
+        categoryArtists.forEach(artist => {
+            if (!allArtistsMap.has(artist.id)) {
+                allArtistsMap.set(artist.id, artist);
+            }
+        });
+    });
+
+    const allArtists = Array.from(allArtistsMap.values());
 
     // Search by name, genre, country
     const matches = allArtists.filter(artist => {
@@ -227,7 +239,11 @@ export async function searchAllArtists(query: string): Promise<PowerIndexArtist[
     matches.sort((a, b) => {
         const aExact = a.name.toLowerCase().startsWith(normalizedQuery) ? 1 : 0;
         const bExact = b.name.toLowerCase().startsWith(normalizedQuery) ? 1 : 0;
-        return bExact - aExact;
+
+        if (aExact !== bExact) return bExact - aExact;
+
+        // Then by popularity (powerScore)
+        return b.powerScore - a.powerScore;
     });
 
     return matches;

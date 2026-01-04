@@ -1,0 +1,760 @@
+{
+    "generated_at": "2026-01-03T23:27:00.000Z",
+    "total_tours": 50,
+    "affiliate_partner": "StubHub",
+    "tours": [
+        {
+            "artist": "Morgan Wallen",
+            "tour_name": "Still The Problem Tour",
+            "genre": "Country",
+            "start_date": "2026-04-10",
+            "end_date": "2026-08-01",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb16d91fcd5fc6b92c8e1f7b6a",
+            "ticket_link": "https://www.stubhub.com/morgan-wallen-tickets/",
+            "venues": [
+                "U.S. Bank Stadium",
+                "Allegiant Stadium",
+                "Soldier Field",
+                "Michigan Stadium"
+            ],
+            "price_range": "$89 - $599"
+        },
+        {
+            "artist": "Post Malone",
+            "tour_name": "Summer Stadium Tour",
+            "genre": "Hip Hop",
+            "start_date": "2026-04-10",
+            "end_date": "2026-08-29",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb6be070445b03e0b63147c2c1",
+            "ticket_link": "https://www.stubhub.com/post-malone-tickets/",
+            "venues": [
+                "Tortuga Festival",
+                "Stagecoach",
+                "Summerfest",
+                "YQM Country Fest"
+            ],
+            "price_range": "$79 - $450"
+        },
+        {
+            "artist": "Jelly Roll",
+            "tour_name": "Beautifully Broken Tour",
+            "genre": "Country",
+            "start_date": "2026-05-15",
+            "end_date": "2026-07-04",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb8b9b5b1ca61ba5b5c7f98c8f",
+            "ticket_link": "https://www.stubhub.com/jelly-roll-tickets/",
+            "venues": [
+                "Boots In The Park",
+                "Outskirts Festival",
+                "Summerfest"
+            ],
+            "price_range": "$69 - $350"
+        },
+        {
+            "artist": "Coldplay",
+            "tour_name": "Music of the Spheres World Tour",
+            "genre": "Rock",
+            "start_date": "2026-05-01",
+            "end_date": "2027-12-31",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb989ed05e1f0570cc4726c2d3",
+            "ticket_link": "https://www.stubhub.com/coldplay-tickets/",
+            "venues": [
+                "Wembley Stadium",
+                "MetLife Stadium",
+                "SoFi Stadium"
+            ],
+            "price_range": "$99 - $899"
+        },
+        {
+            "artist": "The Weeknd",
+            "tour_name": "After Hours Til Dawn Tour",
+            "genre": "R&B",
+            "start_date": "2026-06-11",
+            "end_date": "2026-08-15",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb214f3cf1cbe7a8e8e31c4a6c",
+            "ticket_link": "https://www.stubhub.com/the-weeknd-tickets/",
+            "venues": [
+                "SoFi Stadium",
+                "MetLife Stadium",
+                "Rogers Centre"
+            ],
+            "price_range": "$89 - $650"
+        },
+        {
+            "artist": "Lady Gaga",
+            "tour_name": "The Mayhem Ball",
+            "genre": "Pop",
+            "start_date": "2026-03-01",
+            "end_date": "2026-09-30",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5ebc8d3d98a1bccbe1e5d8a5d0c",
+            "ticket_link": "https://www.stubhub.com/lady-gaga-tickets/",
+            "venues": [
+                "Madison Square Garden",
+                "The Forum",
+                "O2 Arena"
+            ],
+            "price_range": "$129 - $999"
+        },
+        {
+            "artist": "Ed Sheeran",
+            "tour_name": "The Loop Tour",
+            "genre": "Pop",
+            "start_date": "2026-06-01",
+            "end_date": "2026-11-30",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb3bcef85e105dfc42399ef0ba",
+            "ticket_link": "https://www.stubhub.com/ed-sheeran-tickets/",
+            "venues": [
+                "Wembley Stadium",
+                "Rose Bowl",
+                "AT&T Stadium"
+            ],
+            "price_range": "$89 - $599"
+        },
+        {
+            "artist": "Ariana Grande",
+            "tour_name": "Eternal Sunshine Tour",
+            "genre": "Pop",
+            "start_date": "2026-04-01",
+            "end_date": "2026-10-31",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5ebcdce7620dc940db079bf4952",
+            "ticket_link": "https://www.stubhub.com/ariana-grande-tickets/",
+            "venues": [
+                "Madison Square Garden",
+                "Staples Center",
+                "United Center"
+            ],
+            "price_range": "$99 - $750"
+        },
+        {
+            "artist": "Bad Bunny",
+            "tour_name": "Debí Tirar Más Fotos World Tour",
+            "genre": "Latin",
+            "start_date": "2026-02-01",
+            "end_date": "2026-08-31",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb9ad50e478a469c12a517aa3a",
+            "ticket_link": "https://www.stubhub.com/bad-bunny-tickets/",
+            "venues": [
+                "Estadio Azteca",
+                "Hard Rock Stadium",
+                "Yankee Stadium"
+            ],
+            "price_range": "$89 - $699"
+        },
+        {
+            "artist": "Metallica",
+            "tour_name": "M72 World Tour - Encore Leg",
+            "genre": "Rock",
+            "start_date": "2026-05-15",
+            "end_date": "2026-09-30",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb69ca98dd3083f1082d740e44",
+            "ticket_link": "https://www.stubhub.com/metallica-tickets/",
+            "venues": [
+                "Olympic Stadium Berlin",
+                "Stade de France",
+                "Wembley Stadium"
+            ],
+            "price_range": "$99 - $599"
+        },
+        {
+            "artist": "Luke Combs",
+            "tour_name": "My Kinda Saturday Night Tour",
+            "genre": "Country",
+            "start_date": "2026-03-01",
+            "end_date": "2026-10-31",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5ebe5a2d940f2a4d85b81e8c4f1",
+            "ticket_link": "https://www.stubhub.com/luke-combs-tickets/",
+            "venues": [
+                "AT&T Stadium",
+                "Sofi Stadium",
+                "Nissan Stadium"
+            ],
+            "price_range": "$79 - $450"
+        },
+        {
+            "artist": "Cardi B",
+            "tour_name": "Little Miss Drama Tour",
+            "genre": "Hip Hop",
+            "start_date": "2026-03-04",
+            "end_date": "2026-08-31",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5ebe0e1f4a83fd1e9c8bc8a5c8a",
+            "ticket_link": "https://www.stubhub.com/cardi-b-tickets/",
+            "venues": [
+                "Barclays Center",
+                "The Forum",
+                "Toyota Center"
+            ],
+            "price_range": "$89 - $550"
+        },
+        {
+            "artist": "Zach Bryan",
+            "tour_name": "With Heaven On Tour",
+            "genre": "Country",
+            "start_date": "2026-03-15",
+            "end_date": "2026-09-30",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb5f3f3d5e54b1e5c4e8e1f2a3",
+            "ticket_link": "https://www.stubhub.com/zach-bryan-tickets/",
+            "venues": [
+                "Red Rocks",
+                "Gorge Amphitheatre",
+                "Fenway Park"
+            ],
+            "price_range": "$69 - $399"
+        },
+        {
+            "artist": "Sabrina Carpenter",
+            "tour_name": "Short n' Sweet Tour",
+            "genre": "Pop",
+            "start_date": "2026-02-01",
+            "end_date": "2026-07-31",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb7e8a5c7c3d5f8a9e6b4c2d1e",
+            "ticket_link": "https://www.stubhub.com/sabrina-carpenter-tickets/",
+            "venues": [
+                "Madison Square Garden",
+                "The Forum",
+                "Bridgestone Arena"
+            ],
+            "price_range": "$59 - $350"
+        },
+        {
+            "artist": "Eric Church",
+            "tour_name": "Free the Machine Tour",
+            "genre": "Country",
+            "start_date": "2026-01-22",
+            "end_date": "2026-06-30",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb4a5b6c7d8e9f0a1b2c3d4e5f",
+            "ticket_link": "https://www.stubhub.com/eric-church-tickets/",
+            "venues": [
+                "Bridgestone Arena",
+                "T-Mobile Arena",
+                "Xcel Energy Center"
+            ],
+            "price_range": "$79 - $450"
+        },
+        {
+            "artist": "Blake Shelton",
+            "tour_name": "Live In Las Vegas Residency",
+            "genre": "Country",
+            "start_date": "2026-01-15",
+            "end_date": "2026-12-31",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb3a4b5c6d7e8f9a0b1c2d3e4f",
+            "ticket_link": "https://www.stubhub.com/blake-shelton-tickets/",
+            "venues": [
+                "The Colosseum at Caesars Palace"
+            ],
+            "price_range": "$99 - $599"
+        },
+        {
+            "artist": "Rascal Flatts",
+            "tour_name": "Life Is A Highway 25th Anniversary Tour",
+            "genre": "Country",
+            "start_date": "2026-03-01",
+            "end_date": "2026-08-09",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb2a3b4c5d6e7f8a9b0c1d2e3f",
+            "ticket_link": "https://www.stubhub.com/rascal-flatts-tickets/",
+            "venues": [
+                "Bridgestone Arena",
+                "Grand Ole Opry",
+                "Ryman Auditorium"
+            ],
+            "price_range": "$69 - $299"
+        },
+        {
+            "artist": "HARDY",
+            "tour_name": "Country! Tour",
+            "genre": "Country",
+            "start_date": "2026-02-05",
+            "end_date": "2026-05-31",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb1a2b3c4d5e6f7a8b9c0d1e2f",
+            "ticket_link": "https://www.stubhub.com/hardy-tickets/",
+            "venues": [
+                "Bridgestone Arena",
+                "Red Rocks",
+                "The Ryman"
+            ],
+            "price_range": "$49 - $250"
+        },
+        {
+            "artist": "Cody Johnson",
+            "tour_name": "2026 Arena Tour",
+            "genre": "Country",
+            "start_date": "2026-02-06",
+            "end_date": "2026-10-31",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb0a1b2c3d4e5f6a7b8c9d0e1f",
+            "ticket_link": "https://www.stubhub.com/cody-johnson-tickets/",
+            "venues": [
+                "AT&T Center",
+                "Toyota Center",
+                "Dickies Arena"
+            ],
+            "price_range": "$59 - $350"
+        },
+        {
+            "artist": "Foo Fighters",
+            "tour_name": "Take Cover Tour",
+            "genre": "Rock",
+            "start_date": "2026-04-01",
+            "end_date": "2026-09-30",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5ebf91b06d3d6f8c9a0e1f2a3b4",
+            "ticket_link": "https://www.stubhub.com/foo-fighters-tickets/",
+            "venues": [
+                "Madison Square Garden",
+                "The Forum",
+                "Wembley Stadium"
+            ],
+            "price_range": "$89 - $499"
+        },
+        {
+            "artist": "AC/DC",
+            "tour_name": "Power Up Tour",
+            "genre": "Rock",
+            "start_date": "2026-05-01",
+            "end_date": "2026-10-31",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eba0b1c2d3e4f5a6b7c8d9e0f1",
+            "ticket_link": "https://www.stubhub.com/acdc-tickets/",
+            "venues": [
+                "Wembley Stadium",
+                "Stade de France",
+                "Olympic Stadium"
+            ],
+            "price_range": "$99 - $699"
+        },
+        {
+            "artist": "Kendrick Lamar",
+            "tour_name": "Grand National Tour with SZA",
+            "genre": "Hip Hop",
+            "start_date": "2026-04-19",
+            "end_date": "2026-06-30",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb437b9e2a82505b3d93ff1022",
+            "ticket_link": "https://www.stubhub.com/kendrick-lamar-tickets/",
+            "venues": [
+                "SoFi Stadium",
+                "State Farm Arena",
+                "Toyota Center"
+            ],
+            "price_range": "$99 - $599"
+        },
+        {
+            "artist": "Playboi Carti",
+            "tour_name": "I AM MUSIC World Tour",
+            "genre": "Hip Hop",
+            "start_date": "2026-03-01",
+            "end_date": "2026-09-01",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb8a3d5e6f7a8b9c0d1e2f3a4b",
+            "ticket_link": "https://www.stubhub.com/playboi-carti-tickets/",
+            "venues": [
+                "Madison Square Garden",
+                "The Forum",
+                "Barclays Center"
+            ],
+            "price_range": "$79 - $450"
+        },
+        {
+            "artist": "Iron Maiden",
+            "tour_name": "Future Past World Tour",
+            "genre": "Rock",
+            "start_date": "2026-05-01",
+            "end_date": "2026-11-30",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb5a6b7c8d9e0f1a2b3c4d5e6f",
+            "ticket_link": "https://www.stubhub.com/iron-maiden-tickets/",
+            "venues": [
+                "O2 Arena",
+                "Madison Square Garden",
+                "Wembley Arena"
+            ],
+            "price_range": "$89 - $399"
+        },
+        {
+            "artist": "Journey",
+            "tour_name": "50th Anniversary Tour",
+            "genre": "Rock",
+            "start_date": "2026-02-01",
+            "end_date": "2026-09-30",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb6a7b8c9d0e1f2a3b4c5d6e7f",
+            "ticket_link": "https://www.stubhub.com/journey-tickets/",
+            "venues": [
+                "T-Mobile Arena",
+                "MGM Grand",
+                "Hollywood Bowl"
+            ],
+            "price_range": "$79 - $350"
+        },
+        {
+            "artist": "Def Leppard",
+            "tour_name": "Las Vegas Residency",
+            "genre": "Rock",
+            "start_date": "2026-03-01",
+            "end_date": "2026-12-31",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb7b8c9d0e1f2a3b4c5d6e7f8a",
+            "ticket_link": "https://www.stubhub.com/def-leppard-tickets/",
+            "venues": [
+                "The Colosseum at Caesars Palace"
+            ],
+            "price_range": "$99 - $499"
+        },
+        {
+            "artist": "Bon Jovi",
+            "tour_name": "Forever Tour",
+            "genre": "Rock",
+            "start_date": "2026-05-01",
+            "end_date": "2026-10-31",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb8c9d0e1f2a3b4c5d6e7f8a9b",
+            "ticket_link": "https://www.stubhub.com/bon-jovi-tickets/",
+            "venues": [
+                "Madison Square Garden",
+                "Wembley Stadium",
+                "O2 Arena"
+            ],
+            "price_range": "$89 - $599"
+        },
+        {
+            "artist": "Bryan Adams",
+            "tour_name": "So Happy It Hurts World Tour",
+            "genre": "Rock",
+            "start_date": "2026-04-01",
+            "end_date": "2026-11-30",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb9d0e1f2a3b4c5d6e7f8a9b0c",
+            "ticket_link": "https://www.stubhub.com/bryan-adams-tickets/",
+            "venues": [
+                "Royal Albert Hall",
+                "Madison Square Garden",
+                "Sydney Opera House"
+            ],
+            "price_range": "$69 - $299"
+        },
+        {
+            "artist": "Travis Scott",
+            "tour_name": "Utopia World Tour",
+            "genre": "Hip Hop",
+            "start_date": "TBA",
+            "end_date": "TBA",
+            "status": "rumored",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb9de0a097e8bff42c6cc5e6a6",
+            "ticket_link": "https://www.stubhub.com/travis-scott-tickets/",
+            "venues": [
+                "TBA"
+            ],
+            "price_range": "TBA"
+        },
+        {
+            "artist": "Drake",
+            "tour_name": "Visionary Nights Tour",
+            "genre": "Hip Hop",
+            "start_date": "2026-03-03",
+            "end_date": "2026-04-08",
+            "status": "rumored",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb4293385d324db8558179afd9",
+            "ticket_link": "https://www.stubhub.com/drake-tickets/",
+            "venues": [
+                "Madison Square Garden",
+                "Scotiabank Arena",
+                "Staples Center"
+            ],
+            "price_range": "TBA"
+        },
+        {
+            "artist": "Taylor Swift",
+            "tour_name": "New Album World Tour",
+            "genre": "Pop",
+            "start_date": "TBA",
+            "end_date": "TBA",
+            "status": "rumored",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb859e4c14fa59296c8649e0e4",
+            "ticket_link": "https://www.stubhub.com/taylor-swift-tickets/",
+            "venues": [
+                "TBA - Expected 2027"
+            ],
+            "price_range": "TBA"
+        },
+        {
+            "artist": "Beyoncé",
+            "tour_name": "Cowboy Carter World Tour",
+            "genre": "R&B",
+            "start_date": "TBA",
+            "end_date": "TBA",
+            "status": "rumored",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb12e3f20d05a8d6cfde988715",
+            "ticket_link": "https://www.stubhub.com/beyonce-tickets/",
+            "venues": [
+                "TBA"
+            ],
+            "price_range": "TBA"
+        },
+        {
+            "artist": "Wu-Tang Clan",
+            "tour_name": "36 Chambers Anniversary Tour",
+            "genre": "Hip Hop",
+            "start_date": "2026-03-17",
+            "end_date": "2026-03-19",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb0e1f2a3b4c5d6e7f8a9b0c1d",
+            "ticket_link": "https://www.stubhub.com/wu-tang-clan-tickets/",
+            "venues": [
+                "Madison Square Garden",
+                "Barclays Center"
+            ],
+            "price_range": "$89 - $399"
+        },
+        {
+            "artist": "Cypress Hill",
+            "tour_name": "Insane in the Brain Tour",
+            "genre": "Hip Hop",
+            "start_date": "2026-04-01",
+            "end_date": "2026-07-18",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb1f2a3b4c5d6e7f8a9b0c1d2e",
+            "ticket_link": "https://www.stubhub.com/cypress-hill-tickets/",
+            "venues": [
+                "Red Rocks",
+                "The Greek Theatre",
+                "Hollywood Bowl"
+            ],
+            "price_range": "$59 - $199"
+        },
+        {
+            "artist": "MGK",
+            "tour_name": "Mainstream Sellout Tour",
+            "genre": "Rock",
+            "start_date": "2026-03-01",
+            "end_date": "2026-08-31",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb4a9929e0f9bb7c8fd2e98e1e",
+            "ticket_link": "https://www.stubhub.com/machine-gun-kelly-tickets/",
+            "venues": [
+                "Madison Square Garden",
+                "The Forum",
+                "Red Rocks"
+            ],
+            "price_range": "$59 - $299"
+        },
+        {
+            "artist": "Snoop Dogg",
+            "tour_name": "Cali to the World Tour",
+            "genre": "Hip Hop",
+            "start_date": "2026-05-01",
+            "end_date": "2026-09-30",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb9a1c3d5e7f9b0c2d4e6f8a0b",
+            "ticket_link": "https://www.stubhub.com/snoop-dogg-tickets/",
+            "venues": [
+                "The Forum",
+                "Hollywood Bowl",
+                "Madison Square Garden"
+            ],
+            "price_range": "$69 - $350"
+        },
+        {
+            "artist": "Lana Del Rey",
+            "tour_name": "Lasso Tour",
+            "genre": "Pop",
+            "start_date": "TBA",
+            "end_date": "TBA",
+            "status": "rumored",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb5bba667d18f3d10d1e5e1c0e",
+            "ticket_link": "https://www.stubhub.com/lana-del-rey-tickets/",
+            "venues": [
+                "TBA - 2027"
+            ],
+            "price_range": "TBA"
+        },
+        {
+            "artist": "U2",
+            "tour_name": "Achtung Baby Live Tour",
+            "genre": "Rock",
+            "start_date": "TBA",
+            "end_date": "TBA",
+            "status": "rumored",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb0c68f6c95232e716f0abee8d",
+            "ticket_link": "https://www.stubhub.com/u2-tickets/",
+            "venues": [
+                "TBA - 2026 or 2027"
+            ],
+            "price_range": "TBA"
+        },
+        {
+            "artist": "Bailey Zimmerman",
+            "tour_name": "Different Night Same Rodeo Tour",
+            "genre": "Country",
+            "start_date": "2026-02-19",
+            "end_date": "2026-08-31",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb2b3c4d5e6f7a8b9c0d1e2f3a",
+            "ticket_link": "https://www.stubhub.com/bailey-zimmerman-tickets/",
+            "venues": [
+                "Bridgestone Arena",
+                "Grand Ole Opry",
+                "Red Rocks"
+            ],
+            "price_range": "$49 - $250"
+        },
+        {
+            "artist": "Trace Adkins",
+            "tour_name": "30th Anniversary Tour",
+            "genre": "Country",
+            "start_date": "2026-01-16",
+            "end_date": "2026-06-30",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb3c4d5e6f7a8b9c0d1e2f3a4b",
+            "ticket_link": "https://www.stubhub.com/trace-adkins-tickets/",
+            "venues": [
+                "Grand Ole Opry",
+                "Ryman Auditorium",
+                "Billy Bob's Texas"
+            ],
+            "price_range": "$49 - $199"
+        },
+        {
+            "artist": "Twisted Sister",
+            "tour_name": "50th Anniversary Reunion Tour",
+            "genre": "Rock",
+            "start_date": "2026-06-01",
+            "end_date": "2026-09-04",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb4d5e6f7a8b9c0d1e2f3a4b5c",
+            "ticket_link": "https://www.stubhub.com/twisted-sister-tickets/",
+            "venues": [
+                "Alaska State Fair",
+                "Various Festivals"
+            ],
+            "price_range": "$59 - $299"
+        },
+        {
+            "artist": "Eric Clapton",
+            "tour_name": "Slowhand at 80 Tour",
+            "genre": "Rock",
+            "start_date": "2026-04-28",
+            "end_date": "2026-08-31",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb5e6f7a8b9c0d1e2f3a4b5c6d",
+            "ticket_link": "https://www.stubhub.com/eric-clapton-tickets/",
+            "venues": [
+                "Royal Albert Hall",
+                "Madison Square Garden",
+                "O2 Arena"
+            ],
+            "price_range": "$99 - $599"
+        },
+        {
+            "artist": "Lewis Capaldi",
+            "tour_name": "BST Hyde Park Headliner",
+            "genre": "Pop",
+            "start_date": "2026-07-01",
+            "end_date": "2026-08-31",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb6f7a8b9c0d1e2f3a4b5c6d7e",
+            "ticket_link": "https://www.stubhub.com/lewis-capaldi-tickets/",
+            "venues": [
+                "BST Hyde Park",
+                "O2 Arena",
+                "3Arena Dublin"
+            ],
+            "price_range": "$79 - $350"
+        },
+        {
+            "artist": "Ashnikko",
+            "tour_name": "Weedkiller World Tour",
+            "genre": "Pop",
+            "start_date": "2026-02-11",
+            "end_date": "2026-02-20",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb7a8b9c0d1e2f3a4b5c6d7e8f",
+            "ticket_link": "https://www.stubhub.com/ashnikko-tickets/",
+            "venues": [
+                "Brixton Academy",
+                "Terminal 5",
+                "The Fillmore"
+            ],
+            "price_range": "$49 - $150"
+        },
+        {
+            "artist": "J.I.D",
+            "tour_name": "Forever Story Tour",
+            "genre": "Hip Hop",
+            "start_date": "2026-04-02",
+            "end_date": "2026-04-06",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb8b9c0d1e2f3a4b5c6d7e8f9a",
+            "ticket_link": "https://www.stubhub.com/jid-tickets/",
+            "venues": [
+                "Brooklyn Steel",
+                "The Fillmore",
+                "The Roxy"
+            ],
+            "price_range": "$49 - $150"
+        },
+        {
+            "artist": "Freddie Gibbs",
+            "tour_name": "Soul Sold Separately Tour",
+            "genre": "Hip Hop",
+            "start_date": "2026-04-07",
+            "end_date": "2026-04-08",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb9c0d1e2f3a4b5c6d7e8f9a0b",
+            "ticket_link": "https://www.stubhub.com/freddie-gibbs-tickets/",
+            "venues": [
+                "The Novo",
+                "Brooklyn Steel"
+            ],
+            "price_range": "$45 - $120"
+        },
+        {
+            "artist": "Rick Ross",
+            "tour_name": "Boss Tour",
+            "genre": "Hip Hop",
+            "start_date": "2026-03-01",
+            "end_date": "2026-03-20",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb0d1e2f3a4b5c6d7e8f9a0b1c",
+            "ticket_link": "https://www.stubhub.com/rick-ross-tickets/",
+            "venues": [
+                "American Airlines Arena",
+                "The Forum",
+                "Barclays Center"
+            ],
+            "price_range": "$59 - $250"
+        },
+        {
+            "artist": "T-Pain",
+            "tour_name": "Road to Wiscansin Tour",
+            "genre": "Hip Hop",
+            "start_date": "2026-03-15",
+            "end_date": "2026-04-08",
+            "status": "confirmed",
+            "image": "https://i.scdn.co/image/ab6761610000e5eb1e2f3a4b5c6d7e8f9a0b1c2d",
+            "ticket_link": "https://www.stubhub.com/t-pain-tickets/",
+            "venues": [
+                "House of Blues",
+                "The Fillmore",
+                "Brooklyn Bowl"
+            ],
+            "price_range": "$49 - $175"
+        }
+    ]
+}

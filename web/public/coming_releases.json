@@ -1,0 +1,113 @@
+{
+    "coming_soon": [
+        {
+            "id": "cs-1",
+            "name": "TS12 (Untitled)",
+            "artist": "Taylor Swift",
+            "genre": "Pop",
+            "status": "rumored",
+            "releaseDate": "2026",
+            "artwork": "https://i.scdn.co/image/ab6761610000e5eb5a00969a4698c3132a15fbb0"
+        },
+        {
+            "id": "cs-2",
+            "name": "Utopia Deluxe",
+            "artist": "Travis Scott",
+            "genre": "Hip Hop",
+            "status": "confirmed",
+            "releaseDate": "Q1 2026",
+            "artwork": "https://i.scdn.co/image/ab6761610000e5eb19c2790744c792d05570bb71"
+        },
+        {
+            "id": "cs-3",
+            "name": "Vultures 3",
+            "artist": "Kanye West",
+            "genre": "Hip Hop",
+            "status": "confirmed",
+            "releaseDate": "2026",
+            "artwork": "https://i.scdn.co/image/ab6761610000e5eb6e835a500e791bf9c27a422a"
+        },
+        {
+            "id": "cs-4",
+            "name": "New Album",
+            "artist": "Rihanna",
+            "genre": "R&B",
+            "status": "rumored",
+            "releaseDate": "TBA",
+            "artwork": "https://i.scdn.co/image/ab6761610000e5eb99e4fca7c0b7cb166d915789"
+        },
+        {
+            "id": "cs-5",
+            "name": "GNX Deluxe",
+            "artist": "Kendrick Lamar",
+            "genre": "Hip Hop",
+            "status": "confirmed",
+            "releaseDate": "Q1 2026",
+            "artwork": "https://i.scdn.co/image/ab6761610000e5eb437b9e2a82505b3d93ff1022"
+        },
+        {
+            "id": "cs-6",
+            "name": "New Album",
+            "artist": "Beyoncé",
+            "genre": "R&B",
+            "status": "rumored",
+            "releaseDate": "2026",
+            "artwork": "https://i.scdn.co/image/ab6761610000e5eb12e3f20d05a8d6cfde988715"
+        },
+        {
+            "id": "cs-7",
+            "name": "New Album",
+            "artist": "Drake",
+            "genre": "Hip Hop",
+            "status": "rumored",
+            "releaseDate": "2026",
+            "artwork": "https://i.scdn.co/image/ab6761610000e5eb4293385d324db8558179afd9"
+        },
+        {
+            "id": "cs-8",
+            "name": "F1 Trillion Deluxe",
+            "artist": "Post Malone",
+            "genre": "Pop",
+            "status": "confirmed",
+            "releaseDate": "Feb 2026",
+            "artwork": "https://i.scdn.co/image/ab6761610000e5ebe17c0aa1714a03d62b5ce4e0"
+        },
+        {
+            "id": "cs-9",
+            "name": "Music of the Spheres II",
+            "artist": "Coldplay",
+            "genre": "Pop",
+            "status": "confirmed",
+            "releaseDate": "2026",
+            "artwork": "https://i.scdn.co/image/ab6761610000e5eb989ed05e1f0570cc4726c2d3"
+        },
+        {
+            "id": "cs-10",
+            "name": "New Album",
+            "artist": "The Weeknd",
+            "genre": "R&B",
+            "status": "confirmed",
+            "releaseDate": "Q1 2026",
+            "artwork": "https://i.scdn.co/image/ab6761610000e5eb214f3cf1cbe7139c1e26ffbb"
+        },
+        {
+            "id": "cs-11",
+            "name": "Beautifully Broken",
+            "artist": "Jelly Roll",
+            "genre": "Country",
+            "status": "confirmed",
+            "releaseDate": "2026",
+            "artwork": "https://i.scdn.co/image/ab6761610000e5eb8ee9a6c8a772a4c82c6f8f83"
+        },
+        {
+            "id": "cs-12",
+            "name": "New Album",
+            "artist": "SZA",
+            "genre": "R&B",
+            "status": "rumored",
+            "releaseDate": "2026",
+            "artwork": "https://i.scdn.co/image/ab6761610000e5eb0895066d172e1f51f520bc65"
+        }
+    ],
+    "lastUpdated": "2026-01-04"
+}

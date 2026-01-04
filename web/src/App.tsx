@@ -30,14 +30,16 @@ import {
     LayoutGrid,
     List,
     Disc,
+    Share2,
     Youtube,
     Terminal,
     Cpu,
-    Activity,
-    Share2
+    Ticket,
+    Clock
 } from 'lucide-react';
 import { PowerIndexArtist, searchAllArtists, fetchRankingsData } from './lib/supabase';
 import { Analytics } from '@vercel/analytics/react';
+import { LandingPage } from './components/LandingPage';
 
 // ============================================================================
 // UTILITY FUNCTIONS
@@ -53,11 +55,11 @@ const padRank = (rank: number): string => rank.toString().padStart(3, '0');
 
 const getStatusColor = (status: PowerIndexArtist['status']) => {
     const map: Record<PowerIndexArtist['status'], string> = {
-        Viral: 'bg-signal-purple/20 text-signal-purple border-signal-purple/30',
+        Viral: 'bg-[#FF4500]/20 text-[#FF4500] border-[#FF4500]/30',
         Breakout: 'bg-accent/20 text-accent border-accent/30',
         Dominance: 'bg-amber-500/20 text-amber-500 border-amber-500/30',
         Stable: 'bg-slate-500/20 text-slate-400 border-slate-700',
-        Conversion: 'bg-signal-green/20 text-signal-green border-signal-green/30',
+        Conversion: 'bg-accent/20 text-accent border-accent/30',
     };
     return map[status] || 'bg-slate-500/20 text-slate-400 border-slate-700';
 };
@@ -99,7 +101,7 @@ const getInitials = (name: string): string => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 };
 
-type TabType = 'the-pulse' | 'old-school' | 'sonic-signals' | 'locked-roster' | 'the-launchpad' | 'new-releases' | 'about';
+type TabType = 'the-pulse' | 'old-school' | 'sonic-signals' | 'locked-roster' | 'the-launchpad' | 'new-releases' | 'live-tours' | 'about';
 
 // ============================================================================
 // ONBOARDING COMPONENT
@@ -208,8 +210,8 @@ function UpgradeModal({ onClose, feature }: { onClose: () => void; feature?: str
                 </div>
 
                 {/* Launch Promo Banner */}
-                <div className="bg-gradient-to-r from-signal-green/20 to-emerald-500/10 border border-signal-green/30 rounded-xl p-4 mb-6 text-center">
-                    <div className="inline-flex items-center gap-2 text-signal-green text-sm font-bold">
+                <div className="bg-gradient-to-r from-[#FF4500]/20 to-[#FF8c00]/10 border border-[#FF4500]/30 rounded-xl p-4 mb-6 text-center">
+                    <div className="inline-flex items-center gap-2 text-[#FF4500] text-sm font-bold">
                         <Star className="w-4 h-4" />
                         LAUNCH SPECIAL: Pro features are FREE for a limited time!
                         <Star className="w-4 h-4" />
@@ -227,12 +229,12 @@ function UpgradeModal({ onClose, feature }: { onClose: () => void; feature?: str
                                 }`}
                         >
                             {plan.promo && (
-                                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-signal-green text-white text-[10px] font-bold rounded-full whitespace-nowrap">
+                                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-[#FF4500] text-black text-[10px] font-bold rounded-full whitespace-nowrap">
                                     {plan.promo}
                                 </div>
                             )}
                             {plan.current && (
-                                <div className="text-[10px] text-signal-green font-bold uppercase tracking-wider mb-2">
+                                <div className="text-[10px] text-[#FF4500] font-bold uppercase tracking-wider mb-2">
                                     ✓ Currently Active
                                 </div>
                             )}
@@ -338,8 +340,8 @@ function JoinModal({ onClose }: { onClose: () => void }) {
         return (
             <div className="fixed inset-0 bg-black/90 backdrop-blur-xl z-50 flex items-center justify-center p-4">
                 <div className="glass max-w-md w-full p-8 rounded-3xl shadow-2xl text-center relative border-accent/20">
-                    <div className="w-16 h-16 bg-signal-green/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <Star className="w-8 h-8 text-signal-green" />
+                    <div className="w-16 h-16 bg-[#FF4500]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <Star className="w-8 h-8 text-[#FF4500]" />
                     </div>
                     <h2 className="text-2xl font-bold text-white mb-3">You're on the List!</h2>
                     <p className="text-slate-400 mb-6">
@@ -365,7 +367,7 @@ function JoinModal({ onClose }: { onClose: () => void }) {
                     <div>
                         <h2 className="text-2xl font-bold text-white mb-2">Join the Waitlist</h2>
                         <p className="text-slate-400 text-sm">
-                            Get early access to premium features and exclusive market intelligence.
+                            Get early access to premium features and exclusive market insights.
                         </p>
                     </div>
                     <button onClick={onClose} className="p-2 text-slate-500 hover:text-white rounded-lg hover:bg-surface">
@@ -418,7 +420,7 @@ function JoinModal({ onClose }: { onClose: () => void }) {
                         disabled={loading}
                         className="w-full py-3 rounded-xl font-black bg-white text-black hover:bg-white/90 transition-all mt-6 disabled:opacity-50 disabled:cursor-not-allowed uppercase text-[10px] tracking-[0.2em] shadow-lg spring-hover"
                     >
-                        {loading ? 'Joining Intelligence...' : 'Join Waitlist'}
+                        {loading ? 'Joining Waitlist...' : 'Join Waitlist'}
                     </button>
                 </form>
 
@@ -468,7 +470,7 @@ function DossierModal({ artist, onClose, onClaim, isClaimed }: { artist: PowerIn
                         <div className="relative group">
                             <div className="absolute inset-0 bg-accent/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             <div className="w-48 h-48 md:w-56 md:h-56 rounded-full border-4 border-white/10 p-2 relative z-10">
-                                <div className="w-full h-full rounded-full overflow-hidden border-2 border-accent shadow-[0_0_20px_rgba(0,255,65,0.3)]">
+                                <div className="w-full h-full rounded-full overflow-hidden border-2 border-accent shadow-[0_0_20px_rgba(255,69,0,0.3)]">
                                     <img
                                         src={artist.avatar_url || ''}
                                         className="w-full h-full object-cover"
@@ -496,6 +498,67 @@ function DossierModal({ artist, onClose, onClaim, isClaimed }: { artist: PowerIn
                                     UUID: {artist.spotify_id.slice(0, 8)}...
                                 </div>
                             </div>
+
+                            {/* SOCIAL LINKS */}
+                            <div className="flex items-center justify-center md:justify-start gap-4 mt-6">
+                                <a
+                                    href={`https://open.spotify.com/artist/${artist.spotify_id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="p-3 bg-[#1DB954]/10 hover:bg-[#1DB954] text-[#1DB954] hover:text-white rounded-full transition-all hover:scale-110"
+                                    title="Open on Spotify"
+                                >
+                                    <Music className="w-5 h-5" />
+                                </a>
+
+                                {artist.instagram_handle && (
+                                    <a
+                                        href={`https://instagram.com/${artist.instagram_handle}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="p-3 bg-pink-500/10 hover:bg-pink-600 text-pink-500 hover:text-white rounded-full transition-all hover:scale-110"
+                                        title="Instagram"
+                                    >
+                                        <Instagram className="w-5 h-5" />
+                                    </a>
+                                )}
+
+                                {artist.tiktok_handle && (
+                                    <a
+                                        href={`https://tiktok.com/@${artist.tiktok_handle}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="p-3 bg-white/10 hover:bg-black text-white rounded-full transition-all hover:scale-110"
+                                        title="TikTok"
+                                    >
+                                        <div className="w-5 h-5 font-black flex items-center justify-center text-[10px]">TT</div>
+                                    </a>
+                                )}
+
+                                {artist.twitter_handle && (
+                                    <a
+                                        href={`https://twitter.com/${artist.twitter_handle}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="p-3 bg-blue-400/10 hover:bg-blue-400 text-blue-400 hover:text-white rounded-full transition-all hover:scale-110"
+                                        title="Twitter"
+                                    >
+                                        <Twitter className="w-5 h-5" />
+                                    </a>
+                                )}
+
+                                {artist.youtube_url && (
+                                    <a
+                                        href={artist.youtube_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="p-3 bg-red-600/10 hover:bg-red-600 text-red-600 hover:text-white rounded-full transition-all hover:scale-110"
+                                        title="YouTube Channel"
+                                    >
+                                        <Youtube className="w-5 h-5" />
+                                    </a>
+                                )}
+                            </div>
                         </div>
                     </div>
 
@@ -511,7 +574,7 @@ function DossierModal({ artist, onClose, onClaim, isClaimed }: { artist: PowerIn
                         </div>
                         <div className="space-y-1">
                             <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest">30d Growth</div>
-                            <div className="text-3xl md:text-4xl font-black text-signal-green font-mono">+{artist.growthVelocity.toFixed(1)}%</div>
+                            <div className="text-3xl md:text-4xl font-black text-[#FF4500] font-mono">+{artist.growthVelocity.toFixed(1)}%</div>
                         </div>
                         <div className="space-y-1">
                             <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Conversion</div>
@@ -529,7 +592,7 @@ function DossierModal({ artist, onClose, onClaim, isClaimed }: { artist: PowerIn
                                 <div className="group">
                                     <div className="flex justify-between items-center mb-2">
                                         <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">EST. ANNUAL REVENUE</span>
-                                        <span className="text-signal-green text-[10px] font-bold tracking-widest">+12.4% SIGNAL</span>
+                                        <span className="text-[#FF4500] text-[10px] font-bold tracking-widest">+12.4% SIGNAL</span>
                                     </div>
                                     <div className="text-3xl font-bold text-white font-mono group-hover:text-accent transition-colors">
                                         ${formatNumber(artist.monthlyListeners * 0.003 * 12 * 0.7)}
@@ -540,7 +603,7 @@ function DossierModal({ artist, onClose, onClaim, isClaimed }: { artist: PowerIn
                                 <div className="group">
                                     <div className="flex justify-between items-center mb-2">
                                         <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">PROJECTED VALUATION (3YR)</span>
-                                        <span className="text-accent text-[10px] font-bold tracking-widest shadow-[0_0_10px_rgba(0,255,65,0.2)]">HIGH CONFIDENCE</span>
+                                        <span className="text-accent text-[10px] font-bold tracking-widest shadow-[0_0_10px_rgba(255,69,0,0.2)]">HIGH CONFIDENCE</span>
                                     </div>
                                     <div className="text-3xl font-bold text-white font-mono group-hover:text-accent transition-colors">
                                         ${formatNumber(artist.monthlyListeners * 2.5)}
@@ -582,7 +645,7 @@ function DossierModal({ artist, onClose, onClaim, isClaimed }: { artist: PowerIn
                 {/* MODAL FOOTER */}
                 <div className="relative z-[100] p-6 border-t border-white/5 bg-black/50 backdrop-blur-3xl flex justify-between items-center">
                     <div className="text-[9px] font-mono text-white/20 uppercase tracking-[0.2em] hidden md:block">
-                        STELAR Data Terminal v2.0 // Artist Object {artist.id.slice(0, 8)}
+                        STELAR Engine v2.0 // Artist Object {artist.id.slice(0, 8)}
                     </div>
                     <div className="flex gap-3 w-full md:w-auto">
                         <button onClick={onClose} className="flex-1 md:flex-none px-8 py-3 rounded-full font-black text-[10px] text-white/40 hover:text-white uppercase tracking-widest transition-colors">
@@ -592,8 +655,8 @@ function DossierModal({ artist, onClose, onClaim, isClaimed }: { artist: PowerIn
                             onClick={() => onClaim(artist.id)}
                             className={`flex-1 md:flex-none px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 shadow-lg
                                 ${isClaimed
-                                    ? 'bg-[#00FF41]/20 text-[#00FF41] border border-[#00FF41]/30'
-                                    : 'bg-[#00FF41] text-black hover:bg-[#00FF41]/90 shadow-[0_0_20px_rgba(0,255,65,0.3)]'}`}
+                                    ? 'bg-[#FF4500]/20 text-[#FF4500] border border-[#FF4500]/30'
+                                    : 'bg-[#FF4500] text-black hover:bg-[#FF4500]/90 shadow-[0_0_20px_rgba(255,69,0,0.3)]'}`}
                         >
                             {isClaimed ? '✓ Claimed Day Zero' : 'Claim Discovery'}
                         </button>
@@ -608,7 +671,7 @@ function DossierModal({ artist, onClose, onClaim, isClaimed }: { artist: PowerIn
 }
 
 export default function App() {
-    const [activeTab, setActiveTab] = useState<TabType>('the-pulse');
+    const [activeTab, setActiveTab] = useState<TabType>('the-launchpad'); // Default to Launchpad per user request
     const [searchQuery, setSearchQuery] = useState('');
     const [artists, setArtists] = useState<PowerIndexArtist[]>([]);
     const [loading, setLoading] = useState(true);
@@ -642,11 +705,18 @@ export default function App() {
     const [newReleases, setNewReleases] = useState<any[]>([]);
     const [newReleasesLoading, setNewReleasesLoading] = useState(false);
 
+    // LIVE TOURS: Concert tours with affiliate links
+    const [tours, setTours] = useState<any[]>([]);
+    const [toursLoading, setToursLoading] = useState(false);
+
+    // COMING SOON: Upcoming album releases
+    const [comingReleases, setComingReleases] = useState<any[]>([]);
+
     // User tier (for monetization - can lock down to Pro later once we get traction)
     const userTier = 'free'; // 'free', 'pro', 'enterprise'
     // PERFORMANCE FIX: Rendering 5000 rows freezes mobile. 
     // Use pagination (Load More) instead. Start with 50.
-    const [displayLimit, setDisplayLimit] = useState(50);
+    const [displayLimit, setDisplayLimit] = useState(150);
 
     // SEAMLESS NAVIGATION: Helper to select artist and close all modals
     const handleSelectArtist = (artist: PowerIndexArtist | null) => {
@@ -657,7 +727,9 @@ export default function App() {
         setMobileMenuOpen(false);
 
         // Then set the new artist
+        // Then set the new artist
         setSelectedArtist(artist);
+        setSearchQuery(''); // Clear search so profile shows up
 
         // Update URL for deep linking
         if (artist) {
@@ -792,6 +864,33 @@ export default function App() {
                 });
         }
     }, [activeTab, newReleases.length]);
+
+    // LIVE TOURS: Load concert tours data with affiliate links
+    useEffect(() => {
+        if (activeTab === 'live-tours' && tours.length === 0) {
+            setToursLoading(true);
+            fetch('/tours.json')
+                .then(res => res.json())
+                .then(data => {
+                    setTours(data.tours || []);
+                    setToursLoading(false);
+                })
+                .catch(err => {
+                    console.error('Failed to load Tours data:', err);
+                    setToursLoading(false);
+                });
+        }
+    }, [activeTab, tours.length]);
+
+    // COMING SOON: Load upcoming album releases
+    useEffect(() => {
+        if (activeTab === 'new-releases' && comingReleases.length === 0) {
+            fetch('/coming_releases.json')
+                .then(res => res.json())
+                .then(data => setComingReleases(data.coming_soon || []))
+                .catch(err => console.error('Failed to load Coming Soon:', err));
+        }
+    }, [activeTab, comingReleases.length]);
 
     // DEEP LINKING: Check URL on mount and open artist profile
     // DEEP LINKING: Check URL on mount and open artist profile
@@ -950,9 +1049,17 @@ export default function App() {
             result = result.filter(a => watchlist.has(a.id));
         }
 
-        // Filter by tab (Launchpad - Unsigned discovery)
+        // Filter by tab (Launchpad - Professional Scout Engine)
+        // NOTE: up_and_comers is PRE-CURATED in generate_rankings.py with 150 artists
+        // No additional filtering needed - just sort by potential
         if (activeTab === 'the-launchpad') {
-            result = result.filter(a => a.is_independent && a.monthlyListeners < 1000000);
+            // PROFESSIONAL SORTING: Prioritize 'Signing Candidates' 
+            // Candidates are Independent + High Growth Velocity
+            result = [...result].sort((a, b) => {
+                const aPotential = a.is_independent ? a.growthVelocity * 2 : a.growthVelocity;
+                const bPotential = b.is_independent ? b.growthVelocity * 2 : b.growthVelocity;
+                return bPotential - aPotential;
+            });
         }
 
         // Filter by Genre
@@ -1000,14 +1107,6 @@ export default function App() {
 
 
 
-    const openYouTube = (artist: PowerIndexArtist) => {
-        if (artist.youtube_url && artist.youtube_url.includes('channel')) {
-            window.open(artist.youtube_url, '_blank');
-        } else {
-            const query = encodeURIComponent(`${artist.name} official youtube channel`);
-            window.open(`https://www.youtube.com/results?search_query=${query}`, '_blank');
-        }
-    };
 
     // Stats
 
@@ -1028,6 +1127,25 @@ export default function App() {
             .slice(0, 25);
     }, [artists]);
 
+    // LANDING PAGE STATE
+    const [hasEntered, setHasEntered] = useState(false);
+
+    useEffect(() => {
+        const visited = localStorage.getItem('stelar_visited');
+        if (visited) {
+            setHasEntered(true);
+        }
+    }, []);
+
+    const handleEnterApp = () => {
+        setHasEntered(true);
+        localStorage.setItem('stelar_visited', 'true');
+    };
+
+    if (!hasEntered) {
+        return <LandingPage onEnter={handleEnterApp} />;
+    }
+
     return (
         <>
             {/* Upgrade Modal */}
@@ -1046,31 +1164,37 @@ export default function App() {
                 />
             )}
 
-            <div className="min-h-screen bg-terminal text-slate-300 font-sans selection:bg-accent/30 selection:text-white overflow-x-hidden relative">
-
-                {/* GLOBAL VIBRANCY GLOW */}
+            <div className="min-h-screen bg-black text-white selection:bg-[#FF4500] selection:text-white font-sans overflow-x-hidden">
+                <Analytics />    {/* GLOBAL VIBRANCY GLOW */}
                 <div
                     className="vibrancy-glow fixed inset-0 w-full h-full"
                     style={{
-                        background: activeTab === 'the-launchpad' ? '#00FF41' :
+                        background: activeTab === 'the-launchpad' ? '#FF4500' :
                             activeTab === 'sonic-signals' ? '#9333ea' :
-                                '#00FF41',
+                                '#FF4500',
                         opacity: selectedArtist ? 0.05 : 0.1
                     }}
                 />
 
-                <div className="flex h-screen overflow-hidden relative z-10"> {/* Subtract ticker height approx */}
-                    {/* Welcome Banner - Non-blocking onboarding */}
-                    {showOnboarding && <WelcomeBanner onDismiss={completeOnboarding} />}
+                {/* Welcome Banner - Non-blocking onboarding */}
+                {showOnboarding && <WelcomeBanner onDismiss={completeOnboarding} />}
 
-                    {/* Background Glows */}
-                    <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-[120px] pointer-events-none"></div>
-                    <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-signal-purple/5 rounded-full blur-[120px] pointer-events-none"></div>
+                {/* Ambient Background - BOOSTED VIBRANCY */}
+                <div className="absolute top-[-50%] left-[-20%] w-[100%] h-[100%] bg-purple-900/40 rounded-full blur-[120px] pointer-events-none animate-pulse-slow mix-blend-screen" />
+                <div className="absolute bottom-[-20%] right-[-20%] w-[80%] h-[80%] bg-blue-900/30 rounded-full blur-[150px] pointer-events-none animate-pulse-slow delay-700 mix-blend-screen" />
+                <div className="absolute top-[20%] left-[20%] w-[60%] h-[60%] bg-[#FF4500]/20 rounded-full blur-[200px] pointer-events-none mix-blend-screen" />
+                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 pointer-events-none mix-blend-overlay"></div>
+                <div className="flex h-screen overflow-hidden relative z-10"> {/* Subtract ticker height approx */}
+                    {/* MOBILE MENU BACKDROP OVERLAY */}
+                    <div
+                        className={`fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                        onClick={() => setMobileMenuOpen(false)}
+                    />
 
                     {/* MAIN LAYOUT WRAPPER */}
                     {/* LEFT RAIL / SIDEBAR */}
                     <aside className={`
-                        fixed lg:relative inset-y-0 left-0 z-40
+                        fixed lg:relative inset-y-0 left-0 z-[80]
                         w-80 flex flex-col border-r border-slate-900 bg-[#0B0C10]
                         transform transition-transform duration-300 ease-in-out h-full
                         ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
@@ -1079,18 +1203,14 @@ export default function App() {
                         <div className="p-8 pb-4">
                             <div className="flex flex-col gap-1 group cursor-pointer">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 flex items-center justify-center">
-                                        <div className="relative w-full h-full border border-accent/20 rounded flex items-center justify-center bg-accent/5">
-                                            <Radio className="text-accent w-5 h-5 shadow-[0_0_10px_rgba(0,255,65,0.5)]" />
-                                        </div>
-                                    </div>
+                                    <Radio className="w-10 h-10 text-[#FF4500] drop-shadow-[0_0_20px_rgba(255,69,0,0.9)]" strokeWidth={1.5} />
                                     <h1 className="text-2xl font-black text-white tracking-tighter uppercase leading-none">
                                         STELAR
                                     </h1>
                                 </div>
                                 <div className="pl-11">
                                     <div className="text-[9px] font-mono text-slate-500 tracking-[0.4em] uppercase opacity-60">
-                                        Artist Discovery Platform
+                                        Track the top. Discover the Next
                                     </div>
                                 </div>
                             </div>
@@ -1099,10 +1219,9 @@ export default function App() {
                         <div className="flex-1 overflow-y-auto px-4 space-y-6 scrollbar-hide">
                             {/* NAVIGATION SECTION */}
                             <div>
-                                <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 px-2">Terminal Access</h3>
                                 <nav className="space-y-1">
                                     <button
-                                        onClick={() => { setActiveTab('the-pulse'); setSelectedArtist(null); setActiveDiscoveryList(null); setMobileMenuOpen(false); }}
+                                        onClick={() => { setActiveTab('the-pulse'); setSelectedArtist(null); setActiveDiscoveryList(null); setMobileMenuOpen(false); setSearchQuery(''); }}
                                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-xs uppercase tracking-wider transition-all spring-hover
                                             ${activeTab === 'the-pulse'
                                                 ? 'bg-white/10 text-white shadow-xl'
@@ -1116,7 +1235,7 @@ export default function App() {
                                         onClick={() => { setActiveTab('the-launchpad'); setSelectedArtist(null); setActiveDiscoveryList(null); setMobileMenuOpen(false); }}
                                         className={`w-full flex items-center justify-between px-4 py-3 rounded-lg font-bold text-xs uppercase tracking-wider transition-all spring-hover
                                             ${activeTab === 'the-launchpad'
-                                                ? 'bg-[#00FF41]/10 text-[#00FF41] border border-[#00FF41]/20 shadow-[0_0_15px_rgba(0,255,65,0.1)]'
+                                                ? 'bg-[#FF4500]/10 text-[#FF4500] border border-[#FF4500]/20 shadow-[0_0_15px_rgba(255,69,0,0.1)]'
                                                 : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
                                     >
                                         <div className="flex items-center gap-3">
@@ -1124,7 +1243,7 @@ export default function App() {
                                             <span>The Launchpad</span>
                                         </div>
                                         <div className="flex items-center gap-1">
-                                            <span className="text-[9px] bg-[#00FF41]/20 text-[#00FF41] px-1.5 py-0.5 rounded border border-[#00FF41]/30">NEW</span>
+                                            <span className="text-[9px] bg-[#FF4500]/20 text-[#FF4500] px-1.5 py-0.5 rounded border border-[#FF4500]/30">NEW</span>
                                         </div>
                                     </button>
 
@@ -1158,17 +1277,19 @@ export default function App() {
                                         </div>
                                     </button>
 
+                                    {/* LIVE TOURS TAB */}
                                     <button
-                                        onClick={() => { setActiveTab('sonic-signals'); setSelectedArtist(null); setActiveDiscoveryList(null); setMobileMenuOpen(false); }}
+                                        onClick={() => { setActiveTab('live-tours'); setSelectedArtist(null); setActiveDiscoveryList(null); setMobileMenuOpen(false); }}
                                         className={`w-full flex items-center justify-between px-4 py-3 rounded-lg font-bold text-xs uppercase tracking-wider transition-all spring-hover
-                                            ${activeTab === 'sonic-signals' ? 'bg-white/10 text-white' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                                            ${activeTab === 'live-tours' ? 'bg-[#FF4500]/10 text-[#FF4500] border border-[#FF4500]/20' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
                                     >
                                         <div className="flex items-center gap-3">
-                                            <Radio className="w-4 h-4" />
-                                            <span>Sonic Signals</span>
+                                            <Ticket className="w-4 h-4" />
+                                            <span>Live Tours</span>
                                         </div>
-                                        <div className="w-2 h-2 rounded-full bg-accent animate-pulse"></div>
+                                        <span className="text-[9px] bg-[#FF4500]/20 text-[#FF4500] px-1.5 py-0.5 rounded border border-[#FF4500]/30">50+</span>
                                     </button>
+
 
                                     <button
                                         onClick={() => { setActiveTab('locked-roster'); setSelectedArtist(null); setActiveDiscoveryList(null); setMobileMenuOpen(false); }}
@@ -1188,7 +1309,7 @@ export default function App() {
                                     >
                                         <div className="flex items-center gap-3">
                                             <Target className="w-4 h-4" />
-                                            <span>The Algorithm</span>
+                                            <span>How It Works</span>
                                         </div>
                                     </button>
                                 </nav>
@@ -1246,7 +1367,7 @@ export default function App() {
                                                     className="flex items-center justify-between text-[10px] group-hover:bg-white/5 p-1 rounded transition-colors cursor-pointer"
                                                 >
                                                     <span className="text-slate-300 font-medium hover:text-accent">{artist.name}</span>
-                                                    <span className="text-green-500 font-mono font-bold">+{artist.growthVelocity.toFixed(0)}%</span>
+                                                    <span className="text-[#FF4500] font-mono font-bold">+{artist.growthVelocity.toFixed(0)}%</span>
                                                 </div>
                                             ))}
                                         </div>
@@ -1255,8 +1376,8 @@ export default function App() {
                                     {/* Widget 3: Underrated (Simulated for UI match) */}
                                     <div className="group cursor-pointer">
                                         <div className="flex items-center gap-3 mb-3">
-                                            <div className="w-8 h-8 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center">
-                                                <Target className="w-4 h-4 text-green-500" />
+                                            <div className="w-8 h-8 rounded-lg bg-[#FF4500]/10 border border-[#FF4500]/20 flex items-center justify-center">
+                                                <Target className="w-4 h-4 text-[#FF4500]" />
                                             </div>
                                             <div>
                                                 <div className="text-xs font-bold text-white uppercase tracking-wider">Underrated</div>
@@ -1285,7 +1406,7 @@ export default function App() {
                         <div className="p-4 mt-auto border-t border-slate-900 bg-[#0B0C10]">
                             <button
                                 onClick={() => setShowUpgrade(true)}
-                                className="w-full bg-gradient-to-r from-accent to-purple-600 rounded-xl p-4 text-left group hover:scale-[1.02] transition-transform shadow-lg relative overflow-hidden"
+                                className="w-full bg-gradient-to-r from-[#FF4500] to-[#FF8c00] rounded-xl p-4 text-left group hover:scale-[1.02] transition-transform shadow-lg relative overflow-hidden"
                             >
                                 <div className="relative z-10">
                                     <div className="flex items-center gap-2 mb-2">
@@ -1328,13 +1449,13 @@ export default function App() {
                                                 activeTab === 'sonic-signals' ? 'Sonic Signals' :
                                                     activeTab === 'the-launchpad' ? 'The Launchpad Radar' :
                                                         activeTab === 'new-releases' ? 'New Releases' :
-                                                            activeTab === 'about' ? 'The Algorithm' :
-                                                                'Data Terminal'}
+                                                            activeTab === 'about' ? 'How It Works' :
+                                                                'STELAR Engine'}
                                     </h1>
                                     <div className="flex items-center gap-4 text-[9px] font-bold uppercase tracking-wider">
                                         <span className="text-accent flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></div> Live Data</span>
                                         {claims.size > 0 && (
-                                            <span className="text-[#00FF41] border-l border-slate-800 pl-4 flex items-center gap-1.5">
+                                            <span className="text-[#FF4500] border-l border-slate-800 pl-4 flex items-center gap-1.5">
                                                 <Zap className="w-3 h-3" /> {claims.size} CLAIMS
                                             </span>
                                         )}
@@ -1348,7 +1469,10 @@ export default function App() {
                                 <input
                                     type="text"
                                     value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onChange={(e) => {
+                                        setSearchQuery(e.target.value);
+                                        if (e.target.value) setSelectedArtist(null);
+                                    }}
                                     placeholder="SEARCH 3000+ ARTISTS..."
                                     className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs text-white uppercase tracking-widest focus:bg-white/10 focus:border-accent/40 focus:ring-1 focus:ring-accent/20 transition-all outline-none placeholder:text-slate-700 shadow-inner"
                                 />
@@ -1362,7 +1486,10 @@ export default function App() {
                                 <input
                                     type="text"
                                     value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onChange={(e) => {
+                                        setSearchQuery(e.target.value);
+                                        if (e.target.value) setSelectedArtist(null);
+                                    }}
                                     placeholder="Search artists..."
                                     className="w-full bg-slate-900/50 border border-slate-800 rounded-lg pl-10 pr-4 py-3 text-sm text-white focus:border-accent/40 focus:ring-1 focus:ring-accent/20 transition-all outline-none placeholder:text-slate-500"
                                 />
@@ -1453,10 +1580,10 @@ export default function App() {
                                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                                                 <div>
                                                     <h1 className="text-4xl font-black text-white mb-2 uppercase tracking-tighter flex items-center gap-3">
-                                                        THE POWER INDEX
+                                                        THE PULSE
                                                         <div className="flex items-center gap-1.5 ml-2">
-                                                            <div className="w-2 h-2 rounded-full bg-[#00FF41] animate-pulse shadow-[0_0_10px_rgba(0,255,65,0.5)]"></div>
-                                                            <span className="text-[10px] text-[#00FF41] font-mono uppercase tracking-widest">Global Intelligence Feed</span>
+                                                            <div className="w-2 h-2 rounded-full bg-[#FF4500] animate-pulse shadow-[0_0_10px_rgba(255,95,21,0.5)]"></div>
+                                                            <span className="text-[10px] text-[#FF4500] font-mono uppercase tracking-widest">Global Feed</span>
                                                         </div>
                                                     </h1>
                                                     <p className="text-slate-500 text-sm font-medium">
@@ -1467,10 +1594,10 @@ export default function App() {
                                                     <div className="text-right">
                                                         <div className="text-[10px] text-slate-500 uppercase font-black mb-1">Network Status</div>
                                                         <div className="flex items-center gap-2">
-                                                            <div className="h-1 w-8 bg-[#00FF41]/20 rounded-full overflow-hidden">
-                                                                <div className="h-full bg-[#00FF41] w-3/4 animate-pulse"></div>
+                                                            <div className="h-1 w-8 bg-[#FF4500]/20 rounded-full overflow-hidden">
+                                                                <div className="h-full bg-[#FF4500] w-3/4 animate-pulse"></div>
                                                             </div>
-                                                            <span className="text-[10px] font-mono text-[#00FF41]">OPTIMIZED</span>
+                                                            <span className="text-[10px] font-mono text-[#FF4500]">OPTIMIZED</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1488,24 +1615,109 @@ export default function App() {
                                                 <div className="space-y-2">
                                                     {(activeDiscoveryList === 'movers' ? biggestMovers : hiddenGems).map((artist, i) => (
                                                         <button key={artist.id} onClick={() => setSelectedArtist(artist)} className="w-full flex items-center gap-4 p-4 bg-slate-900/50 border border-slate-800 rounded-xl hover:bg-slate-800 hover:border-slate-700 transition-all">
-                                                            <span className="text-lg font-bold text-accent w-8">{padRank(i + 1)}</span>
+                                                            <span className="text-lg font-bold text-[#FF4500] w-8">{padRank(i + 1)}</span>
                                                             <div className="flex-1 text-left font-bold text-white uppercase tracking-tight">{artist.name}</div>
-                                                            <div className="text-signal-green font-mono font-bold">+{artist.growthVelocity.toFixed(1)}%</div>
+                                                            <div className={`font-mono font-bold ${artist.growthVelocity > 0 ? 'text-[#22c55e]' : 'text-[#ef4444]'}`}>
+                                                                {artist.growthVelocity > 0 ? '+' : ''}{artist.growthVelocity.toFixed(1)}%
+                                                            </div>
                                                             <ChevronRight className="w-4 h-4 text-slate-700" />
                                                         </button>
                                                     ))}
+                                                </div>
+                                            </div>
+                                        ) : searchQuery ? (
+                                            /* UNIVERSAL SEARCH RESULTS */
+                                            <div className="max-w-6xl mx-auto space-y-6">
+                                                <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-tighter">
+                                                    Search Results: "{searchQuery}"
+                                                </h2>
+
+                                                {visibleArtists.length > 0 ? (
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+                                                        {visibleArtists.map((artist) => (
+                                                            <div
+                                                                key={artist.id}
+                                                                className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 hover:border-accent/30 hover:bg-slate-900 transition-all cursor-pointer group"
+                                                                onClick={() => handleSelectArtist(artist)}
+                                                            >
+                                                                <div className="flex items-center gap-4">
+                                                                    <div className="w-12 h-12 rounded-lg bg-slate-800 overflow-hidden relative">
+                                                                        {artist.avatar_url ? (
+                                                                            <img src={artist.avatar_url} alt={artist.name} className="w-full h-full object-cover" />
+                                                                        ) : (
+                                                                            <div className="w-full h-full flex items-center justify-center text-slate-500 font-bold">{getInitials(artist.name)}</div>
+                                                                        )}
+                                                                    </div>
+                                                                    <div className="flex-1 min-w-0">
+                                                                        <div className="font-bold text-white text-sm truncate">{artist.name}</div>
+                                                                        <div className="text-[10px] text-slate-500 font-bold uppercase">{artist.genre}</div>
+                                                                    </div>
+                                                                    <div className={`text-xs font-bold font-mono ${artist.growthVelocity > 0 ? 'text-[#22c55e]' : 'text-[#ef4444]'}`}>
+                                                                        {artist.growthVelocity > 0 ? '+' : ''}{artist.growthVelocity.toFixed(0)}%
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    <div className="text-center py-10 border border-dashed border-slate-800 rounded-xl mb-8">
+                                                        <div className="text-slate-500 uppercase tracking-widest text-xs font-bold">
+                                                            No artists found in Stelar Database
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* EXTERNAL SEARCH FALLBACK */}
+                                                <div className="border-t border-slate-800 pt-8">
+                                                    <h3 className="text-xl font-black text-white mb-4 uppercase tracking-tight flex items-center gap-2">
+                                                        <Globe className="w-5 h-5 text-accent" />
+                                                        Search Everywhere
+                                                    </h3>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        <a
+                                                            href={`https://open.spotify.com/search/${encodeURIComponent(searchQuery)}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="flex items-center gap-4 p-6 bg-[#1DB954]/10 border border-[#1DB954]/20 rounded-xl hover:bg-[#1DB954]/20 transition-all group"
+                                                        >
+                                                            <div className="p-3 bg-[#1DB954] rounded-full text-black">
+                                                                <Music className="w-6 h-6" />
+                                                            </div>
+                                                            <div>
+                                                                <div className="text-lg font-black text-white uppercase tracking-tight group-hover:text-[#1DB954] transition-colors">Spotify</div>
+                                                                <div className="text-sm text-slate-400">Search "{searchQuery}" on Spotify</div>
+                                                            </div>
+                                                            <ChevronRight className="w-5 h-5 text-slate-600 ml-auto group-hover:translate-x-1 transition-transform" />
+                                                        </a>
+
+                                                        <a
+                                                            href={`https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="flex items-center gap-4 p-6 bg-[#FF0000]/10 border border-[#FF0000]/20 rounded-xl hover:bg-[#FF0000]/20 transition-all group"
+                                                        >
+                                                            <div className="p-3 bg-[#FF0000] rounded-full text-white">
+                                                                <Youtube className="w-6 h-6" />
+                                                            </div>
+                                                            <div>
+                                                                <div className="text-lg font-black text-white uppercase tracking-tight group-hover:text-[#FF0000] transition-colors">YouTube</div>
+                                                                <div className="text-sm text-slate-400">Search "{searchQuery}" on YouTube</div>
+                                                            </div>
+                                                            <ChevronRight className="w-5 h-5 text-slate-600 ml-auto group-hover:translate-x-1 transition-transform" />
+                                                        </a>
+                                                    </div>
                                                 </div>
                                             </div>
                                         ) : activeTab === 'the-launchpad' ? (
                                             <div className="max-w-6xl mx-auto space-y-6">
                                                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                                                     <div>
-                                                        <h2 className="text-3xl font-black text-[#00FF41] mb-2 uppercase tracking-tighter flex items-center gap-3">
+                                                        <h2 className="text-3xl font-black text-[#FF4500] mb-2 uppercase tracking-tighter flex items-center gap-3">
                                                             <Terminal className="w-8 h-8" />
                                                             The Launchpad
                                                             <div className="flex items-center gap-1.5 ml-2">
-                                                                <div className="w-2 h-2 rounded-full bg-[#00FF41] animate-pulse shadow-[0_0_10px_rgba(0,255,65,0.5)]"></div>
-                                                                <span className="text-[10px] text-[#00FF41] font-mono uppercase tracking-widest">Scout Engine Active (150+ Signals)</span>
+                                                                <div className="w-2 h-2 rounded-full bg-[#FF4500] animate-pulse shadow-[0_0_10px_rgba(255,69,0,0.5)]"></div>
+                                                                <span className="text-[10px] text-[#FF4500] font-mono uppercase tracking-widest">Proprietary Scout Engine Active</span>
                                                             </div>
                                                         </h2>
                                                         <p className="text-slate-500 text-sm font-medium">
@@ -1515,7 +1727,7 @@ export default function App() {
                                                     <div className="flex items-center gap-4">
                                                         <div className="text-right">
                                                             <div className="text-[10px] text-slate-500 uppercase font-black mb-1">Total Claims</div>
-                                                            <div className="text-xl font-black text-[#00FF41] font-mono">{claims.size}</div>
+                                                            <div className="text-xl font-black text-[#FF4500] font-mono">{claims.size}</div>
                                                         </div>
                                                         <div className="h-10 w-px bg-slate-800"></div>
                                                         <div className="text-right">
@@ -1531,29 +1743,40 @@ export default function App() {
                                                         <div
                                                             key={artist.id}
                                                             onClick={() => handleSelectArtist(artist)}
-                                                            className="glass border-[#00FF41]/10 rounded-2xl p-5 hover:border-[#00FF41]/40 hover:bg-[#00FF41]/5 transition-all cursor-pointer group relative overflow-hidden spring-hover"
+                                                            className="glass border-[#FF4500]/10 rounded-2xl p-5 hover:border-[#FF4500]/40 hover:bg-[#FF4500]/5 transition-all cursor-pointer group relative overflow-hidden spring-hover"
                                                         >
                                                             {/* Pulsing radar effect for high growth */}
                                                             {artist.growthVelocity > 15 && (
-                                                                <div className="absolute inset-0 border-2 border-[#00FF41]/20 animate-pulse rounded-xl pointer-events-none"></div>
+                                                                <div className="absolute inset-0 border-2 border-[#FF4500]/20 animate-pulse rounded-xl pointer-events-none"></div>
                                                             )}
 
                                                             <div className="flex items-start gap-4 relative z-10">
                                                                 <div className="relative">
-                                                                    <div className="w-16 h-16 rounded-lg overflow-hidden border border-[#00FF41]/20 group-hover:border-[#00FF41]/50 transition-colors">
+                                                                    <div className="w-16 h-16 rounded-lg overflow-hidden border border-[#FF4500]/20 group-hover:border-[#FF4500]/50 transition-colors">
                                                                         <img
                                                                             src={artist.avatar_url || ''}
                                                                             className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-500"
-                                                                            onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = `<div class="w-full h-full flex items-center justify-center text-xl font-black text-[#00FF41] bg-black font-mono">${getInitials(artist.name)}</div>` }}
+                                                                            onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = `<div class="w-full h-full flex items-center justify-center text-xl font-black text-[#FF4500] bg-black font-mono">${getInitials(artist.name)}</div>` }}
                                                                         />
                                                                     </div>
-                                                                    <div className="absolute -top-2 -left-2 px-1.5 py-0.5 bg-[#00FF41] text-black text-[8px] font-black rounded uppercase tracking-tighter shadow-lg">
+                                                                    <div className="absolute -top-2 -left-2 px-1.5 py-0.5 bg-[#FF4500] text-black text-[8px] font-black rounded uppercase tracking-tighter shadow-lg">
                                                                         SCOUTED
                                                                     </div>
                                                                 </div>
                                                                 <div className="flex-1 min-w-0">
-                                                                    <h3 className="font-black text-white uppercase tracking-tight truncate group-hover:text-[#00FF41] transition-colors">{artist.name}</h3>
-                                                                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">{artist.genre}</div>
+                                                                    <div className="flex items-center gap-2 mb-1">
+                                                                        <h3 className="font-black text-white uppercase tracking-tight truncate group-hover:text-[#FF4500] transition-colors">{artist.name}</h3>
+                                                                        {artist.is_independent && (
+                                                                            <span className="px-1.5 py-0.5 bg-[#FF4500]/20 text-[#FF4500] text-[7px] font-black rounded uppercase">UNSIGNED</span>
+                                                                        )}
+                                                                    </div>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <div className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">{artist.genre}</div>
+                                                                        <div className="w-1 h-1 rounded-full bg-slate-800"></div>
+                                                                        <div className="text-[9px] text-[#FF4500] font-black uppercase">
+                                                                            {artist.monthlyListeners < 100000 ? 'EMERGING' : artist.monthlyListeners < 1000000 ? 'BREAKOUT' : 'ESTABLISHED'}
+                                                                        </div>
+                                                                    </div>
                                                                     <div className="flex items-center gap-3 mt-3">
                                                                         <div className="text-center">
                                                                             <div className="text-[8px] text-slate-600 uppercase font-bold">Listeners</div>
@@ -1561,7 +1784,9 @@ export default function App() {
                                                                         </div>
                                                                         <div className="text-center">
                                                                             <div className="text-[8px] text-slate-600 uppercase font-bold">Velocity</div>
-                                                                            <div className="text-xs font-black text-[#00FF41] font-mono">+{artist.growthVelocity.toFixed(1)}%</div>
+                                                                            <div className={`text-xs font-black font-mono ${artist.growthVelocity > 0 ? 'text-[#22c55e]' : 'text-[#ef4444]'}`}>
+                                                                                {artist.growthVelocity > 0 ? '+' : ''}{artist.growthVelocity.toFixed(1)}%
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1569,16 +1794,16 @@ export default function App() {
 
                                                             {/* Action Bar */}
                                                             <div className="mt-4 pt-4 border-t border-slate-900 flex items-center justify-between">
-                                                                <div className="text-[8px] font-mono text-[#00FF41]/60 uppercase flex items-center gap-2">
+                                                                <div className="text-[8px] font-mono text-[#FF4500]/60 uppercase flex items-center gap-2">
                                                                     <Cpu className="w-3 h-3" /> Auto-Classifier: {artist.status.toUpperCase()}
                                                                 </div>
                                                                 <div className="flex items-center gap-2">
                                                                     {claims.has(artist.id) ? (
-                                                                        <div className="flex items-center gap-1 text-[#00FF41] text-[9px] font-black uppercase tracking-widest">
+                                                                        <div className="flex items-center gap-1 text-[#FF4500] text-[9px] font-black uppercase tracking-widest">
                                                                             <BookmarkCheck className="w-3 h-3" /> Claimed
                                                                         </div>
                                                                     ) : (
-                                                                        <div className="text-white text-[9px] font-black uppercase tracking-widest bg-white/5 px-2 py-1 rounded border border-white/10 group-hover:border-[#00FF41]/40 transition-colors">
+                                                                        <div className="text-white text-[9px] font-black uppercase tracking-widest bg-white/5 px-2 py-1 rounded border border-white/10 group-hover:border-[#FF4500]/40 transition-colors">
                                                                             Open Dossier
                                                                         </div>
                                                                     )}
@@ -1593,7 +1818,7 @@ export default function App() {
                                                     <div className="flex justify-center py-10">
                                                         <button
                                                             onClick={() => setDisplayLimit(prev => prev + 50)}
-                                                            className="px-8 py-3 bg-slate-900 border border-slate-800 text-[#00FF41] rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-[#00FF41]/10 hover:border-[#00FF41]/30 transition-all active:scale-95"
+                                                            className="px-8 py-3 bg-slate-900 border border-slate-800 text-[#FF4500] rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-[#FF4500]/10 hover:border-[#FF4500]/30 transition-all active:scale-95"
                                                         >
                                                             Scan More Upcomers
                                                         </button>
@@ -1619,6 +1844,70 @@ export default function App() {
                                                 ) : (
                                                     <div className="text-center py-20 text-slate-500 uppercase tracking-widest text-xs font-bold border border-dashed border-slate-800 rounded-xl">
                                                         No artists locked. <br /> Use the bookmark icon to lock artists to your roster.
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ) : activeTab === 'live-tours' ? (
+                                            <div className="max-w-6xl mx-auto space-y-6">
+                                                {/* LIVE TOURS HEADER */}
+                                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                                                    <div>
+                                                        <h2 className="text-3xl font-black text-white mb-2 uppercase tracking-tighter flex items-center gap-3">
+                                                            <Ticket className="w-8 h-8 text-accent" />
+                                                            Live Tours 2026
+                                                        </h2>
+                                                        <p className="text-slate-500 text-sm">
+                                                            Get tickets to see your favorite artists live.
+                                                        </p>
+                                                    </div>
+                                                    <div className="text-xs text-accent/60 font-mono">{tours.length} TOURS</div>
+                                                </div>
+
+                                                {/* TOUR CARDS GRID */}
+                                                {toursLoading ? (
+                                                    <div className="text-center py-20 text-slate-500 uppercase tracking-widest text-xs font-bold">Loading tours...</div>
+                                                ) : (
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                                        {tours.map((tour, idx) => (
+                                                            <div key={idx} className="bg-slate-900/50 border border-slate-800 rounded-xl p-5 hover:border-accent/30 transition-all group">
+                                                                <div className="flex items-start gap-4 mb-4">
+                                                                    <img src={tour.image} alt={tour.artist} className="w-16 h-16 rounded-lg object-cover" onError={(e) => { e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(tour.artist)}&background=1a1a2e&color=FF4500&size=64`; }} />
+                                                                    <div className="flex-1 min-w-0">
+                                                                        <div className="flex items-center gap-2 mb-1">
+                                                                            <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${tour.status === 'confirmed' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'}`}>
+                                                                                {tour.status}
+                                                                            </span>
+                                                                            <span className="text-[9px] text-slate-500">{tour.genre}</span>
+                                                                        </div>
+                                                                        <h3 className="text-white font-bold text-sm truncate">{tour.artist}</h3>
+                                                                        <p className="text-slate-400 text-xs truncate">{tour.tour_name}</p>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="space-y-2 text-xs text-slate-500 mb-4">
+                                                                    <div className="flex justify-between">
+                                                                        <span>Dates:</span>
+                                                                        <span className="text-white">{tour.start_date === 'TBA' ? 'TBA' : `${tour.start_date?.slice(5)} - ${tour.end_date?.slice(5)}`}</span>
+                                                                    </div>
+                                                                    <div className="flex justify-between">
+                                                                        <span>Price Range:</span>
+                                                                        <span className="text-accent">{tour.price_range}</span>
+                                                                    </div>
+                                                                    <div className="flex justify-between">
+                                                                        <span>Venues:</span>
+                                                                        <span className="text-slate-400 truncate max-w-[150px]">{tour.venues?.[0] || 'Various'}</span>
+                                                                    </div>
+                                                                </div>
+                                                                <a
+                                                                    href={tour.ticket_link}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent/90 text-black font-bold text-xs uppercase rounded-lg transition-all"
+                                                                >
+                                                                    <Ticket className="w-4 h-4" />
+                                                                    Get Tickets
+                                                                </a>
+                                                            </div>
+                                                        ))}
                                                     </div>
                                                 )}
                                             </div>
@@ -1666,7 +1955,45 @@ export default function App() {
                                                     ))}
                                                 </div>
 
-                                                {/* NEW RELEASES GRID */}
+                                                {/* COMING SOON SECTION */}
+                                                {comingReleases.length > 0 && (
+                                                    <div className="mb-6 p-4 bg-slate-900/50 rounded-xl border border-amber-500/20">
+                                                        <h3 className="text-sm font-black text-white mb-4 uppercase tracking-tight flex items-center gap-2">
+                                                            <Clock className="w-4 h-4 text-amber-500" />
+                                                            Coming Soon
+                                                            <span className="text-[10px] text-slate-500 font-normal ml-2">{comingReleases.length} UPCOMING</span>
+                                                        </h3>
+                                                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                                                            {comingReleases.map((release) => (
+                                                                <div key={release.id} className="bg-slate-900/80 border border-slate-800 rounded-lg p-3 hover:border-amber-500/30 transition-all group">
+                                                                    <div className="flex items-center gap-3">
+                                                                        <img
+                                                                            src={release.artwork}
+                                                                            alt={release.artist}
+                                                                            className="w-12 h-12 rounded-lg object-cover border border-slate-700"
+                                                                            onError={(e) => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(release.artist)}&background=1a1a2e&color=FF4500&size=48`; }}
+                                                                        />
+                                                                        <div className="flex-1 min-w-0">
+                                                                            <div className="flex items-center gap-1.5 mb-1">
+                                                                                <span className={`text-[8px] px-1.5 py-0.5 rounded font-black uppercase ${release.status === 'confirmed'
+                                                                                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                                                                                    : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                                                                                    }`}>
+                                                                                    {release.status}
+                                                                                </span>
+                                                                            </div>
+                                                                            <div className="text-xs font-bold text-white truncate">{release.artist}</div>
+                                                                            <div className="text-[10px] text-slate-400 truncate">{release.name}</div>
+                                                                            <div className="text-[9px] text-amber-500 mt-1">{release.releaseDate}</div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* OUT NOW - RELEASES GRID */}
                                                 {newReleasesLoading ? (
                                                     <div className="text-center py-20">
                                                         <div className="inline-block w-8 h-8 border-2 border-accent/20 border-t-accent rounded-full animate-spin mb-4" />
@@ -1718,7 +2045,7 @@ export default function App() {
                                                                             target="_blank"
                                                                             rel="noopener noreferrer"
                                                                             onClick={(e) => e.stopPropagation()}
-                                                                            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[#00FF41]/10 hover:bg-[#00FF41] text-[#00FF41] hover:text-black rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all"
+                                                                            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[#FF4500]/10 hover:bg-[#FF4500] text-[#FF4500] hover:text-black rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all"
                                                                         >
                                                                             <Play className="w-3 h-3 fill-current" />
                                                                             YouTube
@@ -1848,7 +2175,7 @@ export default function App() {
                                                                     <div className="flex items-start gap-4">
                                                                         <div className="relative">
                                                                             <div
-                                                                                onClick={(e) => { e.stopPropagation(); openYouTube(artist); }}
+                                                                                onClick={(e) => { e.stopPropagation(); handleSelectArtist(artist); }}
                                                                                 className={`status-ring status-ring-${artist.status.toLowerCase()} w-16 h-16 rounded-xl bg-slate-800 overflow-hidden relative cursor-pointer hover:scale-105 transition-transform`}
                                                                             >
                                                                                 {artist.avatar_url ? (
@@ -1884,7 +2211,9 @@ export default function App() {
                                                                         </div>
                                                                         <div>
                                                                             <div className="text-[9px] text-slate-500 uppercase">Growth</div>
-                                                                            <div className="text-sm font-bold text-green-500">+{artist.growthVelocity.toFixed(0)}%</div>
+                                                                            <div className={`text-sm font-bold ${artist.growthVelocity > 0 ? 'text-[#22c55e]' : 'text-[#ef4444]'}`}>
+                                                                                {artist.growthVelocity > 0 ? '+' : ''}{artist.growthVelocity.toFixed(0)}%
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1923,7 +2252,7 @@ export default function App() {
                                                                         <td className="px-6 py-4">
                                                                             <div className="flex items-center gap-4">
                                                                                 <div
-                                                                                    onClick={(e) => { e.stopPropagation(); openYouTube(artist); }}
+                                                                                    onClick={(e) => { e.stopPropagation(); handleSelectArtist(artist); }}
                                                                                     title="Watch on YouTube"
                                                                                     className={`status-ring status-ring-${artist.status.toLowerCase()} w-10 h-10 rounded-full bg-slate-800 overflow-hidden relative cursor-pointer hover:ring-2 hover:ring-accent hover:shadow-[0_0_15px_rgba(255,51,102,0.4)] transition-all`}
                                                                                 >
@@ -1949,19 +2278,19 @@ export default function App() {
                                                                         <td className="px-6 py-4 font-mono font-bold text-slate-300">{formatNumber(artist.tiktokFollowers)}</td>
                                                                         <td className="px-6 py-4">
                                                                             <div className={`inline-block px-2 py-1 rounded border font-mono font-bold text-[10px] ${artist.conversionScore < 40
-                                                                                ? 'bg-green-500/10 text-green-500 border-green-500/20'
+                                                                                ? 'bg-[#FF4500]/10 text-[#FF4500] border-[#FF4500]/20'
                                                                                 : 'bg-slate-800 text-slate-400 border-slate-700'
                                                                                 }`}>
                                                                                 {artist.conversionScore.toFixed(1)}%
                                                                             </div>
                                                                         </td>
                                                                         <td className="px-6 py-4">
-                                                                            <div className="text-green-500 font-mono font-bold">
-                                                                                ↗ +{artist.growthVelocity.toFixed(1)}%
+                                                                            <div className={`font-mono font-bold ${artist.growthVelocity > 0 ? 'text-[#22c55e]' : 'text-[#ef4444]'}`}>
+                                                                                {artist.growthVelocity > 0 ? '↗ +' : '↘ '}{artist.growthVelocity.toFixed(1)}%
                                                                             </div>
                                                                         </td>
                                                                         <td className="px-6 py-4">
-                                                                            <span className="px-2 py-1 rounded border border-[#00FF41]/20 bg-[#00FF41]/5 text-[#00FF41] text-[10px] font-black uppercase tracking-wider">
+                                                                            <span className="px-2 py-1 rounded border border-[#FF4500]/20 bg-[#FF4500]/5 text-[#FF4500] text-[10px] font-black uppercase tracking-wider">
                                                                                 {artist.is_independent ? 'INDIE' : 'MAJOR'}
                                                                             </span>
                                                                         </td>
@@ -2120,7 +2449,7 @@ const TopTracks = ({ artistName }: { artistName: string }) => {
                             )}
                             <button
                                 onClick={(e) => openYouTubeSearch(e, `${track.artistName} ${track.trackName}`)}
-                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#00FF41]/10 hover:bg-[#00FF41] hover:text-black text-[#00FF41] transition-all uppercase text-[9px] font-black tracking-wider"
+                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FF4500]/10 hover:bg-[#FF4500] hover:text-black text-[#FF4500] transition-all uppercase text-[9px] font-black tracking-wider"
                                 title="Search Full Song on YouTube"
                             >
                                 <Play className="w-3 h-3 fill-current" /> YouTube
@@ -2370,10 +2699,10 @@ function ArtistProfile({
                                     onClick={() => onClaim(artist.id)}
                                     className={`group flex items-center gap-2 px-5 py-3 h-11 rounded-md transition-all active:scale-95 shadow-lg border
                                         ${isClaimed
-                                            ? 'bg-[#00FF41]/20 text-[#00FF41] border-[#00FF41]/30 shadow-[0_0_15px_rgba(0,255,65,0.1)]'
-                                            : 'bg-[#00FF41] text-black border-[#00FF41]/50 hover:bg-[#00FF41]/90 shadow-[0_0_20px_rgba(0,255,65,0.3)]'}`}
+                                            ? 'bg-[#FF4500]/20 text-[#FF4500] border-[#FF4500]/30 shadow-[0_0_15px_rgba(0,255,65,0.1)]'
+                                            : 'bg-[#FF4500] text-black border-[#FF4500]/50 hover:bg-[#FF4500]/90 shadow-[0_0_20px_rgba(0,255,65,0.3)]'}`}
                                 >
-                                    <Zap className={`w-4 h-4 ${isClaimed ? 'text-[#00FF41]' : 'text-black'}`} />
+                                    <Zap className={`w-4 h-4 ${isClaimed ? 'text-[#FF4500]' : 'text-black'}`} />
                                     <span className="font-black text-[10px] uppercase tracking-widest">
                                         {isClaimed ? 'Claimed' : 'Claim Discovery'}
                                     </span>
@@ -2428,7 +2757,7 @@ function ArtistProfile({
                                 <div className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mb-1">Monthly Listeners</div>
                                 <div className="flex items-center gap-2">
                                     <div className="text-3xl lg:text-4xl font-black text-white font-mono tracking-tighter">{formatNumber(artist.monthlyListeners)}</div>
-                                    <div className="text-signal-green text-xs font-bold leading-none mt-1">▲ {artist.growthVelocity.toFixed(1)}%</div>
+                                    <div className="text-[#FF4500] text-xs font-bold leading-none mt-1">▲ {artist.growthVelocity.toFixed(1)}%</div>
                                 </div>
                             </div>
                             <div className="bg-surface/30 backdrop-blur-md border border-slate-800/50 rounded-2xl p-6">
@@ -2448,7 +2777,7 @@ function ArtistProfile({
                                 onClick={() => {
                                     window.open(`https://music.youtube.com/search?q=${encodeURIComponent(artist.name + ' top songs')}`, '_blank');
                                 }}
-                                className="bg-[#00FF41]/10 border border-[#00FF41]/30 text-[#00FF41] font-black text-[12px] px-8 py-5 rounded-2xl hover:bg-[#00FF41] hover:text-black transition-all uppercase tracking-[0.2em] shadow-[0_10px_30px_rgba(0,255,65,0.1)] flex items-center gap-2 group"
+                                className="bg-[#FF4500]/10 border border-[#FF4500]/30 text-[#FF4500] font-black text-[12px] px-8 py-5 rounded-2xl hover:bg-[#FF4500] hover:text-black transition-all uppercase tracking-[0.2em] shadow-[0_10px_30px_rgba(255,69,0,0.1)] flex items-center gap-2 group"
                             >
                                 <Play className="w-4 h-4 fill-white" /> Listen
                             </button>
@@ -2507,7 +2836,7 @@ function ArtistProfile({
                             <div className="space-y-4">
                                 {report.map((insight, i) => (
                                     <div key={i} className="flex gap-5 p-5 bg-black/30 rounded-2xl border border-white/5 group hover:border-accent/40 transition-all duration-300">
-                                        <div className="w-2 h-2 rounded-full bg-accent mt-2 shrink-0 group-hover:scale-150 transition-transform shadow-[0_0_10px_rgba(0,255,65,0.8)]"></div>
+                                        <div className="w-2 h-2 rounded-full bg-accent mt-2 shrink-0 group-hover:scale-150 transition-transform shadow-[0_0_10px_rgba(255,69,0,0.8)]"></div>
                                         <span className="text-slate-300 text-base font-medium leading-relaxed italic">"{insight}"</span>
                                     </div>
                                 ))}
@@ -2521,7 +2850,7 @@ function ArtistProfile({
                                     <span className="text-4xl font-black text-white font-mono tracking-tighter">{investmentScore.toFixed(0)}%</span>
                                 </div>
                                 <div className="h-4 w-full bg-slate-900 rounded-full overflow-hidden mb-6 border border-white/5">
-                                    <div className="h-full bg-accent transition-all duration-2000 shadow-[0_0_20px_rgba(0,255,65,0.6)]" style={{ width: `${investmentScore}%` }}></div>
+                                    <div className="h-full bg-accent transition-all duration-2000 shadow-[0_0_20px_rgba(255,69,0,0.6)]" style={{ width: `${investmentScore}%` }}></div>
                                 </div>
                                 <p className="text-[11px] text-slate-400 leading-relaxed uppercase tracking-widest text-center">
                                     Risk-adjusted score based on multi-source velocity & conversion alpha metrics.
@@ -2632,17 +2961,17 @@ function AboutSection({ onNavigate, onShowPricing, onShowContact }: AboutSection
                 </h1>
                 <p className="text-slate-400 text-xl max-w-3xl mx-auto leading-relaxed">
                     Our proprietary ranking system analyzes <span className="text-white font-semibold">3,000+ artists</span> across
-                    <span className="text-white font-semibold"> 4 data sources</span>, updated
-                    <span className="text-signal-green font-bold">4 times daily</span> to identify the world's most promising talent.
+                    <span className="text-white font-semibold"> 5 data sources</span>, updated
+                    <span className="text-[#FF4500] font-bold">4 times daily</span> to identify the world's most promising talent.
                 </p>
             </div>
 
             {/* Real-Time Updates Banner */}
-            <section className="bg-gradient-to-r from-signal-green/10 via-emerald-500/5 to-signal-green/10 border border-signal-green/30 rounded-2xl p-8">
+            <section className="bg-gradient-to-r from-[#FF4500]/10 via-[#FF8c00]/5 to-[#FF4500]/10 border border-[#FF4500]/30 rounded-2xl p-8">
                 <div className="flex items-center justify-between flex-wrap gap-6">
                     <div>
                         <div className="flex items-center gap-3 mb-3">
-                            <div className="w-3 h-3 bg-signal-green rounded-full animate-pulse" />
+                            <div className="w-3 h-3 bg-[#FF4500] rounded-full animate-pulse" />
                             <h2 className="text-2xl font-bold text-white">Real-Time Updates</h2>
                         </div>
                         <p className="text-slate-400 max-w-xl">
@@ -2651,7 +2980,7 @@ function AboutSection({ onNavigate, onShowPricing, onShowContact }: AboutSection
                         </p>
                     </div>
                     <div className="text-right">
-                        <div className="text-3xl font-bold text-signal-green">4×</div>
+                        <div className="text-3xl font-bold text-[#FF4500]">4×</div>
                         <div className="text-slate-500 text-sm">DAILY UPDATES</div>
                     </div>
                 </div>
@@ -2668,55 +2997,86 @@ function AboutSection({ onNavigate, onShowPricing, onShowContact }: AboutSection
                         <p className="text-slate-500 text-sm">Aggregated from the world's largest music platforms</p>
                     </div>
                 </div>
-                <div className="grid md:grid-cols-4 gap-4">
+                <div className="grid md:grid-cols-5 gap-4">
                     <div className="bg-gradient-to-r from-green-900/30 to-green-800/20 border border-green-700/30 rounded-xl p-5">
                         <div className="text-green-400 font-bold text-lg mb-2">🎵 Spotify</div>
-                        <p className="text-slate-400 text-sm">3,000+ artists from global charts. Total streams, daily plays, chart positions.</p>
-                        <div className="mt-3 text-xs text-green-500 font-mono">PRIMARY RANKING</div>
+                        <p className="text-slate-400 text-sm">3,000+ artists from global charts. Streams, plays, positions.</p>
+                        <div className="mt-3 text-xs text-green-500 font-mono">PRIMARY</div>
                     </div>
                     <div className="bg-gradient-to-r from-pink-900/30 to-pink-800/20 border border-pink-700/30 rounded-xl p-5">
                         <div className="text-pink-400 font-bold text-lg mb-2">📱 TikTok</div>
-                        <p className="text-slate-400 text-sm">Viral detection engine. Identify trends before they hit mainstream.</p>
-                        <div className="mt-3 text-xs text-pink-500 font-mono">VIRALITY INDEX</div>
+                        <p className="text-slate-400 text-sm">Viral detection engine. Trends before mainstream.</p>
+                        <div className="mt-3 text-xs text-pink-500 font-mono">VIRALITY</div>
                     </div>
                     <div className="bg-gradient-to-r from-purple-900/30 to-purple-800/20 border border-purple-700/30 rounded-xl p-5">
                         <div className="text-purple-400 font-bold text-lg mb-2">📸 Instagram</div>
-                        <p className="text-slate-400 text-sm">Audience size and brand potential. Crossover appeal indicator.</p>
-                        <div className="mt-3 text-xs text-purple-500 font-mono">SOCIAL REACH</div>
+                        <p className="text-slate-400 text-sm">Brand potential & crossover appeal.</p>
+                        <div className="mt-3 text-xs text-purple-500 font-mono">SOCIAL</div>
                     </div>
                     <div className="bg-gradient-to-r from-red-900/30 to-red-800/20 border border-red-700/30 rounded-xl p-5">
                         <div className="text-accent-dim font-bold text-lg mb-2">🎬 YouTube</div>
-                        <p className="text-slate-400 text-sm">Video performance and discovery metrics. Cross-platform validation.</p>
-                        <div className="mt-3 text-xs text-accent font-mono">DISCOVERY INDEX</div>
+                        <p className="text-slate-400 text-sm">Video performance & discovery metrics.</p>
+                        <div className="mt-3 text-xs text-accent font-mono">DISCOVERY</div>
+                    </div>
+                    <div className="bg-gradient-to-r from-[#FF4500]/30 to-[#FF8c00]/20 border border-[#FF4500]/30 rounded-xl p-5">
+                        <div className="text-[#FF4500] font-bold text-lg mb-2">☁️ SoundCloud</div>
+                        <p className="text-slate-400 text-sm">Underground & indie discovery. A&R gold.</p>
+                        <div className="mt-3 text-xs text-[#FF4500] font-mono">LAUNCHPAD</div>
                     </div>
                 </div>
             </section>
 
-            {/* Power Score */}
-            <section className="bg-card border border-slate-800 rounded-2xl p-8">
+            {/* USER GUIDE SECTION */}
+            <section className="bg-card border border-slate-800 rounded-2xl p-8 mb-8">
                 <div className="flex items-center gap-3 mb-6">
-                    <div className="p-3 bg-gradient-to-br from-signal-purple to-blue-500 rounded-xl">
-                        <BarChart3 className="w-6 h-6 text-white" />
+                    <div className="p-3 bg-gradient-to-br from-[#FF4500] to-orange-600 rounded-xl">
+                        <Target className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                        <h2 className="text-2xl font-bold text-white">Power Score™ <span className="text-slate-500 font-normal text-lg">(0-1000)</span></h2>
-                        <p className="text-slate-500 text-sm">Our proprietary composite ranking algorithm</p>
+                        <h2 className="text-2xl font-bold text-white">Platform Guide</h2>
+                        <p className="text-slate-500 text-sm">How to use STELAR</p>
                     </div>
                 </div>
-                <div className="grid md:grid-cols-5 gap-4">
-                    {[
-                        { weight: '35%', name: 'Streaming Power', desc: 'Total Spotify reach', color: 'accent' },
-                        { weight: '25%', name: 'Daily Momentum', desc: 'Current velocity', color: 'signal-green' },
-                        { weight: '20%', name: 'Social Reach', desc: 'TikTok + Instagram', color: 'pink-500' },
-                        { weight: '10%', name: 'Discovery Index', desc: 'YouTube presence', color: 'red-500' },
-                        { weight: '10%', name: 'Chart Bonus', desc: 'Billboard positions', color: 'yellow-500' },
-                    ].map(factor => (
-                        <div key={factor.name} className="bg-terminal border border-slate-800 rounded-xl p-4 text-center">
-                            <div className={`text-3xl font-bold text-${factor.color} mb-2`}>{factor.weight}</div>
-                            <div className="text-white font-semibold text-sm">{factor.name}</div>
-                            <div className="text-slate-500 text-xs mt-1">{factor.desc}</div>
-                        </div>
-                    ))}
+
+                <div className="grid md:grid-cols-3 gap-8">
+                    {/* 1. Global Pulse */}
+                    <div className="space-y-4">
+                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 text-white font-black">1</div>
+                        <h3 className="text-lg font-bold text-white">The Pulse (Global Top 50)</h3>
+                        <p className="text-sm text-slate-400 leading-relaxed">
+                            A live, daily-updated ranking of the world's most momentous artists. We aggregate data from Spotify, Apple Music, TikTok, and Socials to determine who is <em>actually</em> moving culture right now.
+                        </p>
+                        <ul className="text-xs text-slate-500 space-y-2">
+                            <li className="flex items-center gap-2">✓ Updates every 24 hours</li>
+                            <li className="flex items-center gap-2">✓ Weighted by current velocity</li>
+                        </ul>
+                    </div>
+
+                    {/* 2. Artist Dossiers */}
+                    <div className="space-y-4">
+                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 text-white font-black">2</div>
+                        <h3 className="text-lg font-bold text-white">Artist Profiles</h3>
+                        <p className="text-sm text-slate-400 leading-relaxed">
+                            Click any artist to open their comprehensive Dossier. Access direct links to their <strong>Spotify</strong>, <strong>Instagram</strong>, and high-level financial analysis.
+                        </p>
+                        <ul className="text-xs text-slate-500 space-y-2">
+                            <li className="flex items-center gap-2">✓ Direct streaming links</li>
+                            <li className="flex items-center gap-2">✓ Revenue projections</li>
+                        </ul>
+                    </div>
+
+                    {/* 3. Discovery */}
+                    <div className="space-y-4">
+                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 text-white font-black">3</div>
+                        <h3 className="text-lg font-bold text-white">Discovery & Search</h3>
+                        <p className="text-sm text-slate-400 leading-relaxed">
+                            Use the <strong className="text-white">Search Bar</strong> to find any of the 3,000+ tracked artists. Use <strong className="text-white">The Launchpad</strong> to find unsigned talent before they break.
+                        </p>
+                        <ul className="text-xs text-slate-500 space-y-2">
+                            <li className="flex items-center gap-2">✓ Filter by 15+ Genres</li>
+                            <li className="flex items-center gap-2">✓ Find "Arbitrage" opportunities</li>
+                        </ul>
+                    </div>
                 </div>
             </section>
 
@@ -2740,22 +3100,22 @@ function AboutSection({ onNavigate, onShowPricing, onShowContact }: AboutSection
                 <div className="grid md:grid-cols-2 gap-6">
                     <div className="bg-card border border-slate-800 rounded-xl p-6">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="w-12 h-12 rounded-full bg-signal-green/20 flex items-center justify-center">
-                                <TrendingUp className="w-6 h-6 text-signal-green" />
+                            <div className="w-12 h-12 rounded-full bg-[#FF4500]/20 flex items-center justify-center">
+                                <TrendingUp className="w-6 h-6 text-[#FF4500]" />
                             </div>
                             <div>
-                                <div className="text-signal-green font-bold text-xl">Conversion Score</div>
+                                <div className="text-[#FF4500] font-bold text-xl">Conversion Score</div>
                                 <div className="text-slate-500 text-sm">Social → Streaming ratio</div>
                             </div>
                         </div>
                         <div className="space-y-3">
                             <div className="flex justify-between items-center bg-terminal rounded-lg p-3">
                                 <span className="text-slate-400">Score 0-40</span>
-                                <span className="text-accent font-bold">🔥 ARBITRAGE OPPORTUNITY</span>
+                                <span className="text-[#FF4500] font-bold">🔥 ARBITRAGE OPPORTUNITY</span>
                             </div>
                             <div className="flex justify-between items-center bg-terminal rounded-lg p-3">
                                 <span className="text-slate-400">Score 80-100</span>
-                                <span className="text-signal-green font-bold">✓ Market Leader</span>
+                                <span className="text-[#FF4500] font-bold">✓ Market Leader</span>
                             </div>
                         </div>
                     </div>
@@ -2825,7 +3185,7 @@ function AboutSection({ onNavigate, onShowPricing, onShowContact }: AboutSection
                             <span className="text-slate-500 text-xs">™</span>
                         </div>
                         <p className="text-slate-500 text-sm">
-                            The world's most advanced A&R intelligence platform. Find tomorrow's superstars today.
+                            The world's most advanced A&R platform. Find tomorrow's superstars today.
                         </p>
                     </div>
                     <div>

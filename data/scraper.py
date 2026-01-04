@@ -195,8 +195,14 @@ class BillboardDataSource:
         'artist_100': 'https://www.billboard.com/charts/artist-100/',
         'hot_100': 'https://www.billboard.com/charts/hot-100/',
         'billboard_200': 'https://www.billboard.com/charts/billboard-200/',
-        'global_200': 'https://www.billboard.com/charts/billboard-global-200/'
+        'global_200': 'https://www.billboard.com/charts/billboard-global-200/',
+        'emerging_artists': 'https://www.billboard.com/charts/emerging-artists/'
     }
+    
+    def get_emerging_artists(self) -> List[Dict]:
+        """Get Billboard Emerging Artists chart (The Launchpad Source)"""
+        return self._scrape_chart('emerging_artists', 50)
+
     
     def get_artist_100(self) -> List[Dict]:
         """Get Billboard Artist 100 chart"""
@@ -242,21 +248,38 @@ class BillboardDataSource:
                 return []
             
             entries = []
-            # Billboard uses specific HTML structure
-            # Pattern may need adjustment based on current Billboard HTML
-            pattern = r'<span class="c-label[^"]*a-font-primary-bold[^"]*">\s*(\d+)\s*</span>.*?<h3[^>]*>\s*([^<]+)\s*</h3>'
-            matches = re.findall(pattern, response.text, re.DOTALL)
+            # Billboard HTML Structure (Updated Jan 2026) - BLOCK BASED
+            # Split by row containers to avoid greedy regex issues and handle structure variations
+            soup_blocks = re.split(r'<div class="o-chart-results-list-row-container">', response.text)
             
-            for match in matches[:limit]:
-                rank, name = match
-                entries.append({
-                    'rank': int(rank),
-                    'name': name.strip(),
-                    'chart': chart_name,
-                    'source': 'billboard'
-                })
+            for block in soup_blocks[1:]: # Skip first empty chunk before first row
+                # 1. Extract Rank
+                # Rank is in a c-label. We look for the first isolated number.
+                # Fix: Allow optional attributes/spaces after class
+                rank_match = re.search(r'<span class="c-label[^"]*"[^>]*>\s*(\d+)\s*</span>', block)
+                if not rank_match:
+                    continue
+                rank = int(rank_match.group(1))
+                
+                # 2. Extract Name
+                # Name is in an h3 with specific ID "title-of-a-story"
+                name_match = re.search(r'<h3[^>]*id="title-of-a-story"[^>]*>(.*?)</h3>', block, re.DOTALL)
+                if name_match:
+                    raw_name = name_match.group(1)
+                    # Remove link tags if present (e.g. <a href="...">Name</a>)
+                    clean_name = re.sub(r'<[^>]+>', '', raw_name).strip()
+                    # Collapse multiple spaces/newlines
+                    clean_name = re.sub(r'\s+', ' ', clean_name).strip()
+                    
+                    if clean_name and (len(entries) < limit):
+                        entries.append({
+                            'rank': rank,
+                            'name': clean_name,
+                            'chart': chart_name,
+                            'source': 'billboard'
+                        })
             
-            return entries
+            return entries[:limit]
             
         except Exception as e:
             print(f"[Billboard] Error scraping {chart_name}: {e}")

@@ -14,9 +14,9 @@ export default {
         surface: '#141418',
 
         // Accent Colors
-        accent: '#00FF41', // Neon Terminal Green
-        'accent-dim': 'rgba(0, 255, 65, 0.1)',
-        'accent-glow': 'rgba(0, 255, 65, 0.3)',
+        accent: '#FF4500', // Electric Orange
+        'accent-dim': 'rgba(255, 69, 0, 0.1)',
+        'accent-glow': 'rgba(255, 69, 0, 0.3)',
 
         // Signal Colors
         signal: {
@@ -28,8 +28,8 @@ export default {
 
         // Tier Colors
         tier: {
-          major: '#00FF41',
-          indie: '#22c55e',
+          major: '#FF4500',
+          indie: '#FF4500', // Darker Orange for Indie
         }
       },
       fontFamily: {
@@ -62,8 +62,8 @@ export default {
         },
       },
       boxShadow: {
-        'glow-red': '0 0 20px rgba(0, 255, 65, 0.3)',
-        'glow-green': '0 0 20px rgba(0, 255, 65, 0.3)',
+        'glow-primary': '0 0 20px rgba(255, 69, 0, 0.3)',
+        'glow-secondary': '0 0 20px rgba(255, 69, 0, 0.3)',
       }
     },
   },

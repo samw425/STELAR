@@ -1,0 +1,112 @@
+
+======================================================================
+SOUNDSCOUT PROPRIETARY RANKING ENGINE v2.0
+Timestamp: 2026-01-04T01:07:38.794311
+Building Multi-Million Dollar A&R Intelligence Database
+======================================================================
+
+[1/5] Fetching REAL data from Kworb...
+      Fetching Current Monthly Listeners (REAL-TIME)...
+      Found 2500 artists from Monthly Listeners
+      Fetching total stream data for enrichment...
+      Enriched with 2997 artists' stream data
+      Built dataset with 2500 artists (ranked by CURRENT popularity)
+      Top 5: Ariana Grande, Justin Bieber, The Weeknd, Bruno Mars, Taylor Swift
+      Retrieved 2500 artists from Spotify Charts
+[2/5] Processing artists with PROPRIETARY ALGORITHM...
+         ✓ Got iTunes image for: Ariana Grande
+         ✓ Got iTunes image for: Justin Bieber
+         ✓ Got iTunes image for: The Weeknd
+         ✓ Got iTunes image for: Bruno Mars
+         ✓ Got iTunes image for: Taylor Swift
+         ✓ Got iTunes image for: Rihanna
+         ✓ Got iTunes image for: Coldplay
+         ✓ Got iTunes image for: Ed Sheeran
+         ✓ Got iTunes image for: Mariah Carey
+         ✓ Got iTunes image for: Sia
+      Processed 2500 artist profiles
+      After seasonal filter: 2479 artists (removed holiday artists)
+[3/5] Generating category rankings (MIN 150 each)...
+      Global: 2479 artists (Full Database)
+      Pop: 150 artists (Authentic + Failsafe)
+      Hip Hop: 150 artists (Authentic + Failsafe)
+      R&B: 150 artists (Authentic + Failsafe)
+      Country: 150 artists (Authentic + Failsafe)
+      Afrobeats: 150 artists (Authentic + Failsafe)
+      Latin: 150 artists (Authentic + Failsafe)
+      K-Pop: 150 artists (Authentic + Failsafe)
+      Indie: 150 artists (Authentic + Failsafe)
+      Alternative: 150 artists (Authentic + Failsafe)
+      Electronic: 150 artists (Authentic + Failsafe)
+      Major Label: 150 artists
+      Independent: 150 artists
+
+[3/5] Generating Up & Comers (Criteria: English, <5M Listeners, >5% Growth)...
+   [SKIP] Bad Bunny: Bad Country (Puerto Rico)
+   [SKIP] Yoko Ono: Bad Country (USA)
+   [SKIP] Drake: Too Big (85.33065M)
+   [SKIP] Rihanna: Bad Country (USA)
+   [SKIP] Ranjith Govind: Bad Country (USA)
+   [SKIP] ciloqciliq: Bad Country (USA)
+   [SKIP] Héctor Lavoe: Bad Country (USA)
+   [SKIP] fakemink: Bad Country (USA)
+   [SKIP] Band Aid: Bad Country (USA)
+   [SKIP] Meet Bros.: Bad Country (USA)
+      Up & Comers: 0 artists (A&R Grade - English, <1.5M, Trending)
+      Arbitrage Signals: 150 artists
+      Viral: 150 artists
+
+[4/5] Validating all categories have 150+ artists...
+      ✓ global: 2479 artists
+      ✓ pop: 150 artists
+      ✓ hip_hop: 150 artists
+      ✓ r_and_b: 150 artists
+      ✓ country: 150 artists
+      ✓ afrobeats: 150 artists
+      ✓ latin: 150 artists
+      ✓ k_pop: 150 artists
+      ✓ indie: 150 artists
+      ✓ alternative: 150 artists
+      ✓ electronic: 150 artists
+      ✓ major: 150 artists
+      ⚠ up_and_comers only has 0 - NEEDS ATTENTION
+      ✓ arbitrage: 150 artists
+      ✓ viral: 150 artists
+
+[5/5] Saving rankings to JSON...
+
+======================================================================
+GENERATION COMPLETE
+======================================================================
+
+Total Rankings: 15 categories
+Total Entries: 4429
+Output: rankings.json (3734KB)
+
+🏆 TOP 10 GLOBAL (by Power Score):
+   #1 Bad Bunny: Power 988.8, Genre: Latin
+   #2 Yoko Ono: Power 962.0, Genre: Indie
+   #3 Drake: Power 960.5, Genre: Hip Hop
+   #4 Rihanna: Power 953.0, Genre: R&B
+   #5 Ranjith Govind: Power 950.0, Genre: K-Pop
+   #6 ciloqciliq: Power 949.8, Genre: Indie
+   #7 Héctor Lavoe: Power 948.9, Genre: K-Pop
+   #8 fakemink: Power 948.6, Genre: Indie
+   #9 Band Aid: Power 948.3, Genre: Rock
+   #10 Meet Bros.: Power 948.3, Genre: Indie
+
+🚀 TOP 10 ARBITRAGE SIGNALS:
+   #1 Ranjith Govind: Signal 100%, Conv 8.3%
+   #2 ciloqciliq: Signal 100%, Conv 6.6%
+   #3 Héctor Lavoe: Signal 100%, Conv 2.7%
+   #4 fakemink: Signal 100%, Conv 6.8%
+   #5 Meet Bros.: Signal 100%, Conv 3.4%
+   #6 Muhammad Sadiq: Signal 100%, Conv 8.4%
+   #7 IV OF SPADES: Signal 100%, Conv 7.2%
+   #8 Kevin AMF: Signal 100%, Conv 2.0%
+   #9 Richard Marx: Signal 100%, Conv 3.7%
+   #10 Yeri Mua: Signal 100%, Conv 1.8%
+
+⭐ TOP 10 UP & COMERS:
+
+✅ SUCCESS: Generated 4429 total ranking entries
