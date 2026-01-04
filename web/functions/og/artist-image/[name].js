@@ -1,5 +1,5 @@
 /**
- * SoundScout Dynamic Artist OG Image Generator
+ * STELAR Dynamic Artist OG Image Generator
  * =============================================
  * Generates SVG-based OG images for artist profiles.
  * 
@@ -13,7 +13,7 @@ export async function onRequest(context) {
 
     try {
         // Fetch rankings data
-        const rankingsResponse = await fetch('https://soundscout.pages.dev/rankings.json');
+        const rankingsResponse = await fetch('https://stelarmusic.pages.dev/rankings.json');
         const data = await rankingsResponse.json();
 
         // Find artist
@@ -30,7 +30,7 @@ export async function onRequest(context) {
         }
 
         if (!artist) {
-            return Response.redirect('https://soundscout.pages.dev/og-image.png', 302);
+            return Response.redirect('https://stelarmusic.pages.dev/og-image.png', 302);
         }
 
         // Generate SVG
@@ -45,7 +45,7 @@ export async function onRequest(context) {
 
     } catch (error) {
         console.error('Error generating OG image:', error);
-        return Response.redirect('https://soundscout.pages.dev/og-image.png', 302);
+        return Response.redirect('https://stelarmusic.pages.dev/og-image.png', 302);
     }
 }
 
@@ -58,7 +58,7 @@ function generateArtistSVG(artist) {
 
     const statusColors = {
         'Viral': '#A855F7',
-        'Breakout': '#FF3366',
+        'Breakout': '#00FF41',
         'Dominance': '#F59E0B',
         'Stable': '#64748B',
         'Conversion': '#22C55E'
@@ -81,14 +81,14 @@ function generateArtistSVG(artist) {
     <rect width="1200" height="630" fill="url(#bgGrad)"/>
     
     <!-- Accent Bar -->
-    <rect x="0" y="0" width="6" height="630" fill="#FF3366"/>
+    <rect x="0" y="0" width="6" height="630" fill="#00FF41"/>
     
-    <!-- SoundScout Branding -->
-    <text x="60" y="60" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#FF3366" letter-spacing="0.2em">SOUNDSCOUT</text>
+    <!-- STELAR Branding -->
+    <text x="60" y="60" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="900" fill="#00FF41" letter-spacing="0.2em">STELAR</text>
     
     <!-- Artist Initial Circle -->
     <circle cx="160" cy="315" r="100" fill="#1A1A1A" stroke="#333" stroke-width="2"/>
-    <text x="160" y="335" font-family="system-ui, -apple-system, sans-serif" font-size="56" font-weight="800" fill="#FF3366" text-anchor="middle">${initials}</text>
+    <text x="160" y="335" font-family="system-ui, -apple-system, sans-serif" font-size="56" font-weight="800" fill="#00FF41" text-anchor="middle">${initials}</text>
     
     <!-- Artist Name (Large) -->
     <text x="300" y="280" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="800" fill="#FFFFFF">${artist.name.length > 20 ? artist.name.slice(0, 20) + '...' : artist.name}</text>
@@ -106,7 +106,7 @@ function generateArtistSVG(artist) {
         <text x="0" y="32" font-family="ui-monospace, monospace" font-size="28" font-weight="700" fill="#FFFFFF">${formatNumber(artist.monthlyListeners)}</text>
         
         <text x="200" y="0" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="#666" letter-spacing="0.1em">POWER SCORE</text>
-        <text x="200" y="32" font-family="ui-monospace, monospace" font-size="28" font-weight="700" fill="#FF3366">${artist.powerScore}</text>
+        <text x="200" y="32" font-family="ui-monospace, monospace" font-size="28" font-weight="700" fill="#00FF41">${artist.powerScore}</text>
         
         <text x="360" y="0" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="#666" letter-spacing="0.1em">GROWTH</text>
         <text x="360" y="32" font-family="ui-monospace, monospace" font-size="28" font-weight="700" fill="#22C55E">+${artist.growthVelocity.toFixed(1)}%</text>
@@ -121,6 +121,6 @@ function generateArtistSVG(artist) {
     
     <!-- Footer -->
     <rect x="0" y="580" width="1200" height="50" fill="#0A0A0A"/>
-    <text x="1140" y="610" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#444" text-anchor="end">soundscout.app</text>
+    <text x="1140" y="610" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#444" text-anchor="end">stelarmusic.pages.dev</text>
 </svg>`;
 }

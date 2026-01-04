@@ -117,9 +117,14 @@
     @apply inline-block animate-marquee;
   }
 
-  /* Glass effect */
+  /* Glass effect - Apple Music Style */
   .glass {
-    @apply bg-terminal/80 backdrop-blur-xl border border-slate-800/50;
+    @apply bg-black/40 backdrop-blur-2xl border border-white/5;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+
+  .glass-header {
+    @apply sticky top-0 z-50 bg-black/60 backdrop-blur-3xl border-b border-white/5;
   }
 
   /* Chart area styling */
@@ -384,4 +389,36 @@
 
 .animate-fade-in {
   animation: fade-in 0.3s ease-out forwards;
+}
+
+/* Page Transition: Apple/Spotify Style */
+.page-transition-enter {
+  opacity: 0;
+  transform: scale(0.98) translateY(10px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  transition: opacity 400ms cubic-bezier(0.2, 0.8, 0.2, 1), transform 400ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Spring-like bounce */
+.spring-hover {
+  @apply transition-transform duration-300;
+  transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.spring-hover:hover {
+  transform: scale(1.02);
+}
+
+/* Vibrancy Glow */
+.vibrancy-glow {
+  position: absolute;
+  filter: blur(140px);
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 0;
+  transition: all 1s ease;
 }

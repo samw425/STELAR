@@ -1,5 +1,5 @@
 /**
- * SoundScout Old School - OG Meta Handler
+ * STELAR Old School - OG Meta Handler
  * Serves custom meta tags for /oldschool page to ensure rich social sharing
  */
 
@@ -12,9 +12,9 @@ export async function onRequest(context) {
         let html = await htmlResponse.text();
 
         // Create dynamic meta tags for Old School section
-        const title = "👑 Old School Legends | 149 Greatest Artists | SoundScout";
-        const description = "👑 149 legendary artists who shaped music history. Michael Jackson, Tupac, Queen, Nirvana, Bob Marley, Whitney Houston & more. Explore their legacy on SoundScout.";
-        const ogImage = `https://soundscout.pages.dev/og-image.png`;
+        const title = "👑 Old School Legends | 149 Greatest Artists | STELAR";
+        const description = "👑 149 legendary artists who shaped music history. Michael Jackson, Tupac, Queen, Nirvana, Bob Marley, Whitney Houston & more. Explore their legacy on STELAR.";
+        const ogImage = `https://stelarmusic.pages.dev/og-image.png`;
 
         // Update title
         html = html.replace(
@@ -43,7 +43,7 @@ export async function onRequest(context) {
         );
         html = html.replace(
             /<meta property="og:url" content="[^"]*"/g,
-            `<meta property="og:url" content="https://soundscout.pages.dev/oldschool"`
+            `<meta property="og:url" content="https://stelarmusic.pages.dev/oldschool"`
         );
 
         // Update Twitter tags

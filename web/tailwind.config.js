@@ -14,9 +14,9 @@ export default {
         surface: '#141418',
 
         // Accent Colors
-        accent: '#dc2626', // Neon Red - Primary
-        'accent-dim': 'rgba(220, 38, 38, 0.1)',
-        'accent-glow': 'rgba(220, 38, 38, 0.3)',
+        accent: '#00FF41', // Neon Terminal Green
+        'accent-dim': 'rgba(0, 255, 65, 0.1)',
+        'accent-glow': 'rgba(0, 255, 65, 0.3)',
 
         // Signal Colors
         signal: {

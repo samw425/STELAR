@@ -1,5 +1,5 @@
 /**
- * SoundScout Dynamic OG Image Generator (PNG)
+ * STELAR Dynamic OG Image Generator (PNG)
  * Uses workers-og for Twitter/Facebook compatible images
  */
 
@@ -59,7 +59,7 @@ export async function onRequest(context) {
         }
 
         if (!artist) {
-            return Response.redirect('https://soundscout.pages.dev/og-image.png', 302);
+            return Response.redirect('https://stelarmusic.pages.dev/og-image.png', 302);
         }
 
         // Format listeners
@@ -73,14 +73,14 @@ export async function onRequest(context) {
 
         // Simple HTML that workers-og can handle
         return new ImageResponse(
-            `<div style="display:flex;flex-direction:column;width:100%;height:100%;background:#111;padding:50px;font-family:sans-serif">
-                <div style="display:flex;color:white;font-size:32px;font-weight:bold">
-                    <span>SOUND</span><span style="color:#E50914">SCOUT</span>
+            `<div style="display:flex;flex-direction:column;width:100%;height:100%;background:#0B0C10;padding:50px;font-family:sans-serif">
+                <div style="display:flex;color:#00FF41;font-size:32px;font-weight:900;letter-spacing:0.1em">
+                    STELAR
                 </div>
                 <div style="display:flex;flex:1;align-items:center;margin-top:30px">
-                    <img src="${artist.avatar_url || 'https://soundscout.pages.dev/og-image.png'}" width="240" height="240" style="border-radius:120px;border:5px solid #E50914" />
+                    <img src="${artist.avatar_url || 'https://stelarmusic.pages.dev/og-image.png'}" width="240" height="240" style="border-radius:120px;border:5px solid #00FF41" />
                     <div style="display:flex;flex-direction:column;margin-left:50px">
-                        <div style="display:flex;background:#E50914;padding:8px 20px;border-radius:20px;margin-bottom:15px">
+                        <div style="display:flex;background:#00FF41;padding:8px 20px;border-radius:20px;margin-bottom:15px">
                             <span style="color:white;font-size:18px;font-weight:bold">${badge}</span>
                         </div>
                         <div style="display:flex;color:white;font-size:${artist.name.length > 14 ? 52 : 72}px;font-weight:900">${artist.name.toUpperCase()}</div>
@@ -92,7 +92,7 @@ export async function onRequest(context) {
                             </div>
                             <div style="display:flex;flex-direction:column">
                                 <span style="color:#666;font-size:14px">POWER</span>
-                                <span style="color:#E50914;font-size:36px;font-weight:bold">${artist.powerScore}</span>
+                                <span style="color:#00FF41;font-size:36px;font-weight:bold">${artist.powerScore}</span>
                             </div>
                         </div>
                     </div>
@@ -103,6 +103,6 @@ export async function onRequest(context) {
 
     } catch (error) {
         console.error('OG Error:', error);
-        return Response.redirect('https://soundscout.pages.dev/og-image.png', 302);
+        return Response.redirect('https://stelarmusic.pages.dev/og-image.png', 302);
     }
 }

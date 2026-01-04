@@ -1,8 +1,8 @@
 /**
- * SoundScout Artist Page Handler
+ * STELAR Artist Page Handler
  * ================================
  * Handles /artist/{name} URLs and injects dynamic OG meta tags.
- * Uses the main SoundScout OG image (PNG) since social platforms don't support SVG.
+ * Uses the main STELAR OG image (PNG) since social platforms don't support SVG.
  */
 
 export async function onRequest(context) {
@@ -84,16 +84,16 @@ export async function onRequest(context) {
         };
 
         // Use DYNAMIC OG image (PNG) - workers-og generates real PNG images with artist names
-        const ogImageUrl = `https://soundscout.pages.dev/og/artist/${artistSlug}`;
+        const ogImageUrl = `https://stelarmusic.pages.dev/og/artist/${artistSlug}`;
 
         // Dynamic text content - Make artist name PROMINENT
         const statusEmoji = isLegend ? '👑' : (artist.status === 'Viral' ? '🔥' : '🎵');
         const dynamicTitle = isLegend
-            ? `${artist.name} | Old School Legend | SoundScout`
-            : `${artist.name} | #${artist.rank} Global | SoundScout`;
+            ? `${artist.name} | Old School Legend | STELAR`
+            : `${artist.name} | #${artist.rank} Global | STELAR`;
         const dynamicDescription = isLegend
-            ? `👑 LEGEND: ${artist.name} • ${artist.genre} • ${formatNumber(artist.monthlyListeners)} Monthly Listeners • One of the greatest of all time | Discover on SoundScout`
-            : `${statusEmoji} ${artist.name} • Rank #${artist.rank} • ${formatNumber(artist.monthlyListeners)} Monthly Listeners • Power Score: ${artist.powerScore} • ${artist.status} | SoundScout`;
+            ? `👑 LEGEND: ${artist.name} • ${artist.genre} • ${formatNumber(artist.monthlyListeners)} Monthly Listeners • One of the greatest of all time | Discover on STELAR`
+            : `${statusEmoji} ${artist.name} • Rank #${artist.rank} • ${formatNumber(artist.monthlyListeners)} Monthly Listeners • Power Score: ${artist.powerScore} • ${artist.status} | STELAR`;
 
         // Replace meta tags
         html = html.replace(
@@ -130,7 +130,7 @@ export async function onRequest(context) {
         );
 
         // Add OG URL for the specific artist
-        const artistUrl = `https://soundscout.pages.dev/artist/${artistSlug}`;
+        const artistUrl = `https://stelarmusic.pages.dev/artist/${artistSlug}`;
         html = html.replace(
             /<meta property="og:url" content="[^"]*"/g,
             `<meta property="og:url" content="${artistUrl}"`

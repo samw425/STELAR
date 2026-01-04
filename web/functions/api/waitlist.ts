@@ -50,13 +50,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                from: 'SoundScout <onboarding@resend.dev>',
+                from: 'STELAR <onboarding@resend.dev>',
                 to: ['saziz4250@gmail.com'],
-                subject: `🎵 New SoundScout Waitlist Signup: ${name}`,
+                subject: `🎵 New STELAR Waitlist Signup: ${name}`,
                 html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #0f172a; color: #fff; border-radius: 12px;">
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #0B0C10; color: #fff; border-radius: 12px;">
             <div style="text-align: center; margin-bottom: 20px;">
-              <h1 style="color: #ef4444; margin: 0;">🎵 SoundScout</h1>
+              <h1 style="color: #00FF41; margin: 0; font-weight: 900; letter-spacing: 0.1em;">STELAR</h1>
               <p style="color: #94a3b8; margin: 5px 0;">A&R Intelligence Platform</p>
             </div>
             
@@ -74,13 +74,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
                 </tr>
                 <tr>
                   <td style="padding: 10px 0; color: #94a3b8;">Role</td>
-                  <td style="padding: 10px 0; color: #ef4444; font-weight: bold;">${role}</td>
+                  <td style="padding: 10px 0; color: #00FF41; font-weight: bold;">${role}</td>
                 </tr>
               </table>
             </div>
             
             <div style="text-align: center; color: #64748b; font-size: 12px;">
-              <p>This notification was sent from SoundScout Waitlist</p>
+              <p>This notification was sent from STELAR Waitlist</p>
               <p>Timestamp: ${new Date().toISOString()}</p>
             </div>
           </div>
