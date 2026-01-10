@@ -83,13 +83,14 @@ export async function onRequest(context) {
                 <!-- STELAR ((o)) Broadcast Emblem -->
                 <div style="display:flex;margin-bottom:40px;${image ? 'margin-left:500px;' : ''}">
                     <svg width="100" height="100" viewBox="0 0 48 48" fill="none">
-                        <circle cx="24" cy="24" r="5" fill="#FF4500"/>
-                        <!-- Inner Arcs -->
-                        <path d="M18 18 A12 12 0 0 0 18 30" stroke="#FF4500" stroke-width="3" stroke-linecap="round" fill="none" />
-                        <path d="M30 18 A12 12 0 0 1 30 30" stroke="#FF4500" stroke-width="3" stroke-linecap="round" fill="none" />
-                        <!-- Outer Arcs -->
-                        <path d="M12 12 A20 20 0 0 0 12 36" stroke="#FF4500" stroke-width="3" stroke-linecap="round" fill="none" />
-                        <path d="M36 12 A20 20 0 0 1 36 36" stroke="#FF4500" stroke-width="3" stroke-linecap="round" fill="none" />
+                        <!-- Center dot -->
+                        <circle cx="24" cy="24" r="4" fill="#FF4500"/>
+                        <!-- Left arcs -->
+                        <path d="M16 16 Q8 24 16 32" stroke="#FF4500" stroke-width="3" fill="none" stroke-linecap="round"/>
+                        <path d="M10 10 Q-2 24 10 38" stroke="#FF4500" stroke-width="3" fill="none" stroke-linecap="round"/>
+                        <!-- Right arcs -->
+                        <path d="M32 16 Q40 24 32 32" stroke="#FF4500" stroke-width="3" fill="none" stroke-linecap="round"/>
+                        <path d="M38 10 Q50 24 38 38" stroke="#FF4500" stroke-width="3" fill="none" stroke-linecap="round"/>
                     </svg>
                 </div>
 
