@@ -336,17 +336,17 @@ export async function onRequest(context) {
             </iframe>
         </div>
         ` : `
-        <div class="fallback-card">
-            <a href="${youtubeWatchUrl}" target="_blank" class="play-btn">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
-            </a>
-            <h3>Watch Full Video</h3>
-            <p>Opens on YouTube</p>
+        <!-- Fallback: Client-Side Search Embed -->
+        <div class="video-wrapper">
+            <iframe 
+                src="https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(artistName + ' ' + trackName + ' official audio')}"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen>
+            </iframe>
         </div>
         `}
         
         <div class="buttons">
-            <a href="${youtubeWatchUrl}" target="_blank" class="btn btn-yt">▶ Open on YouTube</a>
             <button onclick="navigator.clipboard.writeText(window.location.href).then(()=>alert('Link copied!'))" class="btn btn-share">📋 Share Track</button>
         </div>
     </main>
