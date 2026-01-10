@@ -63,7 +63,8 @@ export async function onRequest(context) {
         console.error('Error fetching artist image:', e);
     }
 
-    const ogImageUrl = `https://stelarmusic.pages.dev/api/og?type=track&artist=${encodeURIComponent(artistName)}&song=${encodeURIComponent(trackName)}${artistImage ? `&image=${encodeURIComponent(artistImage)}` : ''}`;
+    const baseUrl = url.origin;
+    const ogImageUrl = `${baseUrl}/api/og?type=track&artist=${encodeURIComponent(artistName)}&song=${encodeURIComponent(trackName)}${artistImage ? `&image=${encodeURIComponent(artistImage)}` : ''}`;
 
     const html = `<!DOCTYPE html>
 <html lang="en">

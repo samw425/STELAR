@@ -616,63 +616,92 @@ class StelarAlgorithm:
     
     @staticmethod
     def calculate_power_score(
-        streams_millions: float,
-        daily_millions: float,
-        tiktok: int,
-        instagram: int,
-        youtube: int,
-        chart_position: int = 0
+        monthly_listeners_millions: float,
+        chart_position: int = 0,
+        is_viral: bool = False,
+        is_trending: bool = False
     ) -> float:
         """
-        POWER SCORE (0-1000)
-        ====================
-        Our proprietary composite ranking score.
-        
-        Components:
-        - Streaming Power (35%): Total Spotify reach
-        - Daily Momentum (25%): Current velocity
-        - Social Reach (20%): TikTok + Instagram
-        - Discovery Index (10%): YouTube presence
-        - Chart Bonus (10%): Billboard/chart positions
+        POWER SCORE (0-1000) - THE PULSE ENGINE
+        =======================================
+        As defined in PROPRIETARY_ALGORITHM.py
         """
-        # 1. STREAMING POWER (0-700) - HEAVILY WEIGHTED
-        # We use a logarithmic-like scale that rewards extreme dominance
-        if streams_millions >= 100:
-            # Taylor Swift (113M), The Weeknd (120M) tier
-            stream_score = 650 + (min(streams_millions, 150) - 100)
-        elif streams_millions >= 70:
-            # Bad Bunny (82M), Ariana Grande (95M) tier
-            stream_score = 550 + (streams_millions - 70) * 3
-        elif streams_millions >= 30:
-            stream_score = 300 + (streams_millions - 30) * 6
+        # 1. BASE_SCORE (from Monthly Listeners)
+        m = monthly_listeners_millions
+        if m >= 100:
+            base_score = 1000
+        elif m >= 50:
+            base_score = 800 + (m - 50) / 0.25 # (m-50M) / 250k
+        elif m >= 10:
+            base_score = 500 + (m - 10) / 0.133333 # (m-10M) / 133.3k
+        elif m >= 1:
+            base_score = 200 + (m - 1) / 0.03 # (m-1M) / 30k
         else:
-            stream_score = (streams_millions / 30) * 300
-
-        # 2. DAILY MOMENTUM (0-150)
-        if daily_millions >= 40:
-            daily_score = 150
-        else:
-            daily_score = (daily_millions / 40) * 150
-
-        # 3. SOCIAL & CHART BONUS (0-150)
-        total_social = tiktok + instagram
-        social_score = min(100, (total_social / 100_000_000) * 100)
-        
-        chart_score = 0
-        if chart_position > 0 and chart_position <= 100:
-            chart_score = 50 - (chart_position / 2)
+            base_score = max(50, m * 200) # m / 5000 * 1000
             
-        total = stream_score + daily_score + social_score + chart_score
-        
-        # PENALTY: Small Artists in Global Reach
-        if streams_millions < 15:
-             total *= 0.6
-             
-        # PENALTY: Stagnant/Declining Legacy
-        if daily_millions < 1.0 and streams_millions > 30:
-             total *= 0.7
-
+        # 2. CHART_BONUS
+        chart_bonus = 0
+        if 1 <= chart_position <= 10:
+            chart_bonus += 300
+        elif 11 <= chart_position <= 50:
+            chart_bonus += 150
+        elif 51 <= chart_position <= 100:
+            chart_bonus += 100
+            
+        if is_viral:
+            chart_bonus += 250
+        if is_trending:
+            chart_bonus += 200
+            
+        total = base_score + chart_bonus
         return round(min(total, 1000), 1)
+
+    @staticmethod
+    def calculate_ignition_score(
+        viral_rank: int = 0,
+        is_trending: bool = False,
+        monthly_velocity: float = 0,
+        is_independent: bool = False,
+        monthly_listeners: int = 0
+    ) -> float:
+        """
+        IGNITION SCORE (0-100) - THE LAUNCHPAD ENGINE
+        ============================================
+        As defined in PROPRIETARY_ALGORITHM.py
+        """
+        # 1. VIRAL_SIGNAL (0-30)
+        viral_signal = 0
+        if 1 <= viral_rank <= 50:
+            viral_signal = (51 - viral_rank) * 0.6
+            
+        # 2. HEAT_SIGNAL (0-25)
+        heat_signal = 25 if is_trending else 0
+        
+        # 3. VELOCITY_BONUS (0-25)
+        velocity_bonus = 0
+        if monthly_velocity >= 100:
+            velocity_bonus = 25
+        elif monthly_velocity >= 50:
+            velocity_bonus = 20
+        elif monthly_velocity >= 20:
+            velocity_bonus = 15
+        elif monthly_velocity > 0:
+            velocity_bonus = monthly_velocity * 0.5
+            
+        # 4. DISCOVERY_BONUS (0-20)
+        discovery_bonus = 0
+        if is_independent:
+            discovery_bonus += 10
+            
+        if monthly_listeners < 100_000:
+            discovery_bonus += 10
+        elif monthly_listeners < 500_000:
+            discovery_bonus += 7
+        elif monthly_listeners < 1_000_000:
+            discovery_bonus += 4
+            
+        total = viral_signal + heat_signal + velocity_bonus + discovery_bonus
+        return round(min(total, 100), 1)
     
     @staticmethod
     def calculate_conversion_score(
@@ -1086,20 +1115,37 @@ def generate_complete_rankings():
         social = generate_social_followers(name, streams, daily)
         
         # Calculate all proprietary scores
-        power_score = algo.calculate_power_score(
-            streams, daily,
-            social['tiktok'], social['instagram'], social['youtube'],
-            artist['rank']
-        )
+        # We need to determine if viral/trending for bonuses
+        is_trending = artist.get('youtube_trending', False) or random.random() < 0.05
+        is_viral = artist.get('spotify_viral', False) or random.random() < 0.05
+        
+        # Use REAL monthly listeners from Kworb (not estimated!)
+        m_listeners = artist.get('monthly_listeners', int(streams * 1_000_000 / 50))
+        m_millions = m_listeners / 1_000_000
         
         # Use REAL daily listener change from Kworb for accurate growth velocity
         growth_velocity = algo.calculate_growth_velocity(
             daily, streams,
-            daily_listener_change, monthly_listeners
+            daily_listener_change, m_listeners
+        )
+        
+        power_score = algo.calculate_power_score(
+            monthly_listeners_millions=m_millions,
+            chart_position=artist['rank'],
+            is_viral=is_viral,
+            is_trending=is_trending
+        )
+        
+        ignition_score = algo.calculate_ignition_score(
+            viral_rank=artist.get('viral_rank', 0),
+            is_trending=is_trending,
+            monthly_velocity=growth_velocity,
+            is_independent=not is_major,
+            monthly_listeners=m_listeners
         )
         
         conversion_score = algo.calculate_conversion_score(
-            monthly_listeners,
+            m_listeners,
             social['tiktok'], social['instagram']
         )
         
@@ -1854,7 +1900,8 @@ if __name__ == "__main__":
 
         # Global Full Catalog
         global_rankings = list(master_artists.values())
-        global_rankings.sort(key=lambda x: x['powerScore'], reverse=True)
+        # TIE BREAKER: Use Monthly Listeners if Power Scores tie
+        global_rankings.sort(key=lambda x: (x['powerScore'], x['monthlyListeners']), reverse=True)
         for i, p in enumerate(global_rankings): p['rank'] = i + 1
 
         # ---------------------------------------------------------
