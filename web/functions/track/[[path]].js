@@ -29,8 +29,9 @@ export async function onRequest(context) {
     // Instead, we use the 'search' listType which dynamically finds
     // and plays the best AVAILABLE integerable video.
 
-    const youtubeSearchQuery = encodeURIComponent(`${artistName} ${trackName} official music video`);
-    const youtubeEmbedUrl = `https://www.youtube.com/embed?listType=search&list=${youtubeSearchQuery}&autoplay=1&mute=0&rel=0&modestbranding=1`;
+    const origin = new URL(context.request.url).origin;
+    const youtubeSearchQuery = encodeURIComponent(`${artistName} ${trackName} lyrics`);
+    const youtubeEmbedUrl = `https://www.youtube.com/embed?listType=search&list=${youtubeSearchQuery}&autoplay=1&mute=0&rel=0&modestbranding=1&origin=${origin}&playsinline=1`;
     const videoId = true; // Always force render of video wrapper
 
     // ---------------------------------------------------------
