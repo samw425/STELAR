@@ -22,47 +22,16 @@ export async function onRequest(context) {
     const trackName = trackSlug.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
     // ---------------------------------------------------------
-    // STRATEGY: HYBRID (API + FALLBACK)
+    // STRATEGY: CLIENT-SIDE SEARCH EMBED (RESTORED)
     // ---------------------------------------------------------
-    // 1. Attempt to find an OFFICIAL, EMBEDDABLE video via YouTube Data API.
-    // 2. If valid ID found, use it.
-    // 3. If not found or API fails, fallback to 'Lyric Search -vevo' (Guaranteed).
+    // We use the 'search' listType. This is dynamic and resilient.
+    // The YouTube Player finds the best available video for this query.
+    // This bypasses VEVO domain restrictions entirely.
 
     const origin = new URL(context.request.url).origin;
-    let finalSrc = '';
-    // Define query globally so it's available for the "Watch on YouTube" button
-    let youtubeSearchQuery = encodeURIComponent(`${artistName} ${trackName} lyrics -vevo`);
+    const youtubeSearchQuery = encodeURIComponent(`${artistName} ${trackName}`);
+    const finalSrc = `https://www.youtube.com/embed?listType=search&list=${youtubeSearchQuery}&autoplay=1&mute=0&rel=0&modestbranding=1&origin=${origin}&playsinline=1`;
 
-    // User Provided Key
-    const API_KEY = context.env.YOUTUBE_API_KEY || "AIzaSyD1meCV-e-TW2_JDHJdZ_ODfQlMDeyW1EI";
-
-    try {
-        // SMART API STRATEGY:
-        // We search for "Lyrics -VEVO" via the API.
-        // This forces Google to give us the ID of the best available FAN upload.
-        // Fan uploads are 100% embeddable. Official ones are often blocked.
-        const apiQuery = encodeURIComponent(`${artistName} ${trackName} lyrics -vevo`);
-        const apiUrl = `https://www.googleapis.com/youtube/v3/search?part=id&q=${apiQuery}&type=video&videoEmbeddable=true&maxResults=1&key=${API_KEY}`;
-
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-
-        if (data.items && data.items.length > 0) {
-            const videoId = data.items[0].id.videoId;
-            // Success: Precise ID found
-            finalSrc = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&rel=0&modestbranding=1&origin=${origin}&playsinline=1`;
-        }
-    } catch (err) {
-        // API failed silently, proceed to fallback
-        console.error("YouTube API Error:", err);
-    }
-
-    if (!finalSrc) {
-        // Fallback: Use the robust Client-Side Lyric Search (UGC Only)
-        // This guarantees playback if the API fails or returns nothing.
-        const fallbackQuery = encodeURIComponent(`${artistName} ${trackName} lyrics -vevo`);
-        finalSrc = `https://www.youtube.com/embed?listType=search&list=${fallbackQuery}&autoplay=1&mute=0&rel=0&modestbranding=1&origin=${origin}&playsinline=1`;
-    }
 
     // ---------------------------------------------------------
     // FETCH ARTIST IMAGE FOR OG (Unchanged)
@@ -121,12 +90,14 @@ export async function onRequest(context) {
     <meta property="og:url" content="${url.href}">
     <meta property="og:site_name" content="STELAR">
     
-    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:card" content="player">
     <meta name="twitter:site" content="@stelarmusic">
     <meta name="twitter:title" content="▶ ${trackName} — ${artistName}">
     <meta name="twitter:description" content="Listen on STELAR">
     <meta name="twitter:image" content="${ogImageUrl}">
-    <meta name="twitter:image:src" content="${ogImageUrl}">
+    <meta name="twitter:player" content="${finalSrc}">
+    <meta name="twitter:player:width" content="480">
+    <meta name="twitter:player:height" content="270">
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -327,6 +298,17 @@ export async function onRequest(context) {
             <button onclick="navigator.clipboard.writeText(window.location.href).then(()=>alert('Link copied!'))" class="btn btn-share">📋 Share Track</button>
             <a href="https://www.youtube.com/results?search_query=${youtubeSearchQuery}" target="_blank" class="btn btn-share" style="background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.4);">▶ Watch on YouTube</a>
         </div>
+        
+        <!-- EXPLORE MORE SECTION - Increases Site Stickiness -->
+        <section style="margin-top: 60px; padding: 40px 20px; background: rgba(255,255,255,0.02); border-radius: 16px; text-align: center;">
+            <h3 style="font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.3em; color: #888; margin-bottom: 24px;">Explore More on STELAR</h3>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;">
+                <a href="/" style="padding: 12px 24px; background: rgba(255,69,0,0.1); border: 1px solid rgba(255,69,0,0.3); border-radius: 100px; color: #FF4500; text-decoration: none; font-weight: 600; font-size: 13px;">🔥 Top 50 Rankings</a>
+                <a href="/launchpad" style="padding: 12px 24px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; color: white; text-decoration: none; font-weight: 600; font-size: 13px;">🚀 The Launchpad</a>
+                <a href="/artist/${artistSlug.replace(/ /g, '-').toLowerCase()}" style="padding: 12px 24px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; color: white; text-decoration: none; font-weight: 600; font-size: 13px;">👤 ${artistName}'s Profile</a>
+            </div>
+            <p style="margin-top: 20px; color: #666; font-size: 13px;">Discover trending artists and new music on STELAR</p>
+        </section>
     </main>
     
     <footer class="footer">
