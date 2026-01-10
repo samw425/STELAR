@@ -22,18 +22,41 @@ export async function onRequest(context) {
     const trackName = trackSlug.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
     // ---------------------------------------------------------
-    // STRATEGY: CLIENT-SIDE SEARCH EMBED
+    // STRATEGY: HYBRID (API + FALLBACK)
     // ---------------------------------------------------------
-    // We do NOT use the YouTube Data API here because it often returns
-    // video IDs that are restricted from embedding (e.g. VEVO).
-    // Instead, we use the 'search' listType which dynamically finds
-    // and plays the best AVAILABLE integerable video.
+    // 1. Attempt to find an OFFICIAL, EMBEDDABLE video via YouTube Data API.
+    // 2. If valid ID found, use it.
+    // 3. If not found or API fails, fallback to 'Lyric Search -vevo' (Guaranteed).
 
-    // Simplest possible embed string to maximize compatibility
-    // We add "-vevo" to EXPLICITLY filter out Official VEVO Lyric Videos which are often blocked.
-    // This forces usage of Fan/UGC content only.
-    const youtubeSearchQuery = encodeURIComponent(`${artistName} ${trackName} lyrics -vevo`);
-    const finalSrc = `https://www.youtube.com/embed?listType=search&list=${youtubeSearchQuery}&autoplay=1&mute=0&rel=0&modestbranding=1&origin=${origin}&playsinline=1`;
+    const origin = new URL(context.request.url).origin;
+    let finalSrc = '';
+
+    // User Provided Key
+    const API_KEY = context.env.YOUTUBE_API_KEY || "AIzaSyD1meCV-e-TW2_JDHJdZ_ODfQlMDeyW1EI";
+
+    try {
+        const apiQuery = encodeURIComponent(`${artistName} ${trackName} official music video`);
+        const apiUrl = `https://www.googleapis.com/youtube/v3/search?part=id&q=${apiQuery}&type=video&videoEmbeddable=true&maxResults=1&key=${API_KEY}`;
+
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        if (data.items && data.items.length > 0) {
+            const videoId = data.items[0].id.videoId;
+            // Success: Precise ID found
+            finalSrc = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&rel=0&modestbranding=1&origin=${origin}&playsinline=1`;
+        }
+    } catch (err) {
+        // API failed silently, proceed to fallback
+        console.error("YouTube API Error:", err);
+    }
+
+    if (!finalSrc) {
+        // Fallback: Use the robust Client-Side Lyric Search (UGC Only)
+        // This guarantees playback if the API fails or returns nothing.
+        const fallbackQuery = encodeURIComponent(`${artistName} ${trackName} lyrics -vevo`);
+        finalSrc = `https://www.youtube.com/embed?listType=search&list=${fallbackQuery}&autoplay=1&mute=0&rel=0&modestbranding=1&origin=${origin}&playsinline=1`;
+    }
 
     // ---------------------------------------------------------
     // FETCH ARTIST IMAGE FOR OG (Unchanged)
