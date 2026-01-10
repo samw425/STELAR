@@ -51,9 +51,10 @@ export async function onRequest(context) {
         console.error("YouTube API Error:", err);
     }
 
-    // Fallback: Link to YouTube search (can't embed if API fails)
+    // If API didn't find a video, don't embed anything broken - the "Watch on YouTube" button will work
     if (!finalSrc) {
-        finalSrc = `https://www.youtube.com/embed/placeholder?autoplay=0`; // Placeholder - will show "Watch on YouTube" instead
+        // Create a simple player that shows the first search result
+        finalSrc = `https://www.youtube.com/embed?listType=search&list=${youtubeSearchQuery}&origin=${origin}`;
     }
 
 
