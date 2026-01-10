@@ -2037,31 +2037,34 @@ export default function App() {
                                                                     </div>
 
                                                                     {/* STREAMING SIGNALS */}
-                                                                    <div className="flex items-center gap-3">
+                                                                    <div className="flex flex-wrap items-center gap-3">
                                                                         <a
                                                                             href={`/track/${release.artist.toLowerCase().replace(/\s+/g, '-')}/${release.name.toLowerCase().replace(/\s+/g, '-')}`}
-                                                                            className="flex-1 px-4 py-3 bg-accent text-black hover:bg-white rounded-full text-[9px] font-black uppercase tracking-widest text-center transition-all"
+                                                                            className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-full bg-accent hover:bg-white text-black font-black text-[10px] uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(255,69,0,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]"
                                                                         >
-                                                                            Watch
+                                                                            <PlayCircle className="w-3.5 h-3.5" /> Watch Video
                                                                         </a>
-                                                                        <a
-                                                                            href={`https://open.spotify.com/search/${encodeURIComponent(release.artist + ' ' + release.name)}`}
-                                                                            target="_blank"
-                                                                            rel="noopener noreferrer"
-                                                                            onClick={(e) => e.stopPropagation()}
-                                                                            className="flex-1 px-4 py-3 bg-white/5 hover:bg-[#1DB954] text-white hover:text-black rounded-full text-[9px] font-black uppercase tracking-widest text-center transition-all"
-                                                                        >
-                                                                            Spotify
-                                                                        </a>
-                                                                        <a
-                                                                            href={`https://www.youtube.com/results?search_query=${encodeURIComponent(release.artist + ' ' + release.name + ' album')}`}
-                                                                            target="_blank"
-                                                                            rel="noopener noreferrer"
-                                                                            onClick={(e) => e.stopPropagation()}
-                                                                            className="flex-1 px-4 py-3 bg-white/5 hover:bg-[#FF0000] text-white rounded-full text-[9px] font-black uppercase tracking-widest text-center transition-all"
-                                                                        >
-                                                                            YouTube
-                                                                        </a>
+
+                                                                        <div className="flex w-full gap-3">
+                                                                            <a
+                                                                                href={`https://open.spotify.com/search/${encodeURIComponent(release.artist + ' ' + release.name)}`}
+                                                                                target="_blank"
+                                                                                rel="noopener noreferrer"
+                                                                                onClick={(e) => e.stopPropagation()}
+                                                                                className="flex-1 px-4 py-3 bg-white/5 hover:bg-[#1DB954] text-white hover:text-black rounded-full text-[9px] font-black uppercase tracking-widest text-center transition-all flex items-center justify-center gap-2 border border-white/10"
+                                                                            >
+                                                                                <Music className="w-3.5 h-3.5" /> Spotify
+                                                                            </a>
+                                                                            <a
+                                                                                href={`https://www.youtube.com/results?search_query=${encodeURIComponent(release.artist + ' ' + release.name + ' album')}`}
+                                                                                target="_blank"
+                                                                                rel="noopener noreferrer"
+                                                                                onClick={(e) => e.stopPropagation()}
+                                                                                className="flex-1 px-4 py-3 bg-white/5 hover:bg-[#FF0000] text-white rounded-full text-[9px] font-black uppercase tracking-widest text-center transition-all flex items-center justify-center gap-2 border border-white/10"
+                                                                            >
+                                                                                <Youtube className="w-3.5 h-3.5" /> YouTube
+                                                                            </a>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             ))}
@@ -2351,6 +2354,45 @@ const TopTracks = ({ artistName }: { artistName: string }) => {
         }
     };
 
+    // Load tracks with fallback to search
+    useEffect(() => {
+        if (!artistName) return;
+        setLoading(true);
+        setTracks([]);
+
+        const fetchTracks = async () => {
+            try {
+                // Try ID lookup first if we have a numeric ID (iTunes ID)
+                let data = null;
+                if (artist?.id && /^\d+$/.test(artist.id)) {
+                    const res = await fetch(`https://itunes.apple.com/lookup?id=${artist.id}&entity=song&limit=50`);
+                    data = await res.json();
+                }
+
+                // If no ID or lookup failed/returned empty, try search by name
+                if (!data || !data.results || data.results.length === 0) {
+                    // console.log('Falling back to search for:', artistName);
+                    const searchRes = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(artistName)}&entity=song&limit=50`);
+                    data = await searchRes.json();
+                }
+
+                if (data && data.results) {
+                    // Filter out non-song results (wrappers)
+                    const songs = data.results.filter((r: any) => r.kind === 'song');
+                    setTracks(songs);
+                    // Update display limit based on results
+                    setVisibleTracks(songs.slice(0, 10)); // Initial 10
+                }
+            } catch (err) {
+                console.error('Failed to load tracks:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTracks();
+    }, [artistName, artist?.id]); // Re-run if name changes
+
     const openYouTubeSearch = (e: React.MouseEvent, term: string) => {
         e.stopPropagation();
         window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(term)}`, '_blank');
@@ -2373,63 +2415,70 @@ const TopTracks = ({ artistName }: { artistName: string }) => {
                 {visibleTracks.map((track, i) => (
                     <div
                         key={track.trackId}
-                        className="flex items-center justify-between py-10 group hover:bg-white/[0.01] transition-colors rounded-xl px-6 -mx-6"
+                        className="flex flex-col md:flex-row items-start md:items-center justify-between py-8 md:py-6 group hover:bg-white/[0.01] transition-colors rounded-2xl px-4 md:px-6 -mx-4 md:-mx-6 mb-2 border-b border-dashed border-white/5 md:border-none"
                     >
                         <div
-                            className="flex-1 flex items-center gap-8 cursor-pointer"
+                            className="w-full md:flex-1 flex items-center gap-6 cursor-pointer mb-6 md:mb-0"
                             onClick={() => togglePlay(track.previewUrl)}
                         >
-                            <div className="relative w-20 h-20 group/play">
+                            <div className="relative w-16 h-16 md:w-20 md:h-20 shrink-0 group/play">
                                 <img
                                     src={track.artworkUrl100?.replace('100x100', '200x200') || `https://ui-avatars.com/api/?name=${encodeURIComponent(track.trackName || 'Track')}&background=1a1a2e&color=FF4500&size=80`}
                                     alt={track.trackName}
-                                    className={`w-full h-full rounded-2xl object-cover grayscale transition-all duration-700 ${playing === track.previewUrl ? 'grayscale-0 scale-105 shadow-2xl' : 'group-hover/play:grayscale-0 group-hover/play:scale-105'}`}
+                                    className={`w-full h-full rounded-xl object-cover grayscale transition-all duration-700 ${playing === track.previewUrl ? 'grayscale-0 scale-105 shadow-2xl' : 'group-hover/play:grayscale-0 group-hover/play:scale-105'}`}
                                 />
-                                <div className={`absolute inset-0 bg-black/40 rounded-2xl flex items-center justify-center transition-opacity ${playing === track.previewUrl ? 'opacity-100' : 'opacity-0 group-hover/play:opacity-100'}`}>
+                                <div className={`absolute inset-0 bg-black/40 rounded-xl flex items-center justify-center transition-opacity ${playing === track.previewUrl ? 'opacity-100' : 'opacity-0 group-hover/play:opacity-100'}`}>
                                     {playing === track.previewUrl ?
                                         <div className="w-2 h-2 bg-accent rounded-full animate-ping" /> :
-                                        <Play className="w-6 h-6 text-white fill-current" />}
+                                        <Play className="w-5 h-5 text-white fill-current" />}
                                 </div>
                             </div>
-                            <div className="min-w-0">
-                                <div className="text-xl font-black text-white uppercase tracking-tighter truncate group-hover:text-accent transition-colors">{track.trackName}</div>
-                                <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">Intercept #{i + 1}</div>
+                            <div className="min-w-0 pr-4">
+                                <div className="text-lg md:text-xl font-black text-white uppercase tracking-tighter truncate group-hover:text-accent transition-colors leading-tight">{track.trackName}</div>
+                                <div className="text-[9px] text-slate-500 font-black uppercase tracking-widest mt-1.5 flex items-center gap-2">
+                                    <span className="text-accent/50">Intercept #{i + 1}</span>
+                                    <span className="w-0.5 h-0.5 bg-slate-600 rounded-full"></span>
+                                    <span>{new Date(track.releaseDate).getFullYear()}</span>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-6">
-                            <button
-                                onClick={(e) => openYouTubeSearch(e, `${artistName} ${track.trackName}`)}
-                                className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 hover:border-[#FF0000] hover:bg-[#FF0000] text-slate-500 hover:text-white transition-all uppercase text-[9px] font-black tracking-wider"
-                                title="Search Full Song on YouTube"
-                            >
-                                <Youtube className="w-4 h-4" /> YouTube
-                            </button>
-                            <button
-                                onClick={() => window.open(`https://open.spotify.com/search/${encodeURIComponent(artistName + ' ' + track.trackName)}`, '_blank')}
-                                className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 hover:border-[#1DB954] hover:bg-[#1DB954] text-slate-500 hover:text-black transition-all uppercase text-[9px] font-black tracking-wider"
-                                title="Search on Spotify"
-                            >
-                                <Music className="w-4 h-4" /> Spotify
-                            </button>
+                        <div className="w-full md:w-auto flex flex-row items-center gap-3">
                             <a
                                 href={`/track/${artistName.toLowerCase().replace(/\s+/g, '-')}/${track.trackName.toLowerCase().replace(/\s+/g, '-')}`}
-                                className="flex items-center gap-2 px-4 py-2 rounded-full border border-accent hover:bg-accent text-accent hover:text-white transition-all uppercase text-[9px] font-black tracking-wider"
-                                title="Watch Full Video on STELAR"
+                                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-accent hover:bg-white text-black font-black text-[10px] uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(255,69,0,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] md:min-w-[140px]"
+                                title="Watch Full Video"
                             >
-                                <PlayCircle className="w-4 h-4" /> Watch
+                                <PlayCircle className="w-3.5 h-3.5" /> Watch
                             </a>
+
                             <button
                                 onClick={() => {
                                     const trackUrl = `${window.location.origin}/track/${artistName.toLowerCase().replace(/\s+/g, '-')}/${track.trackName.toLowerCase().replace(/\s+/g, '-')}`;
                                     navigator.clipboard.writeText(trackUrl).then(() => {
-                                        alert('Track link copied! Share this song anywhere.');
+                                        alert('Track link copied!');
                                     });
                                 }}
-                                className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 hover:border-white/30 hover:bg-white/5 text-slate-500 hover:text-white transition-all uppercase text-[9px] font-black tracking-wider"
-                                title="Copy Shareable Link"
+                                className="px-3 py-3 rounded-full border border-white/10 hover:bg-white/10 text-slate-400 hover:text-white transition-all"
+                                title="Share"
                             >
-                                <Share2 className="w-4 h-4" /> Share
+                                <Share2 className="w-4 h-4" />
+                            </button>
+
+                            <button
+                                onClick={() => window.open(`https://open.spotify.com/search/${encodeURIComponent(artistName + ' ' + track.trackName)}`, '_blank')}
+                                className="px-3 py-3 rounded-full border border-white/10 hover:border-[#1DB954] hover:bg-[#1DB954] text-slate-400 hover:text-white transition-all"
+                                title="Spotify"
+                            >
+                                <Music className="w-4 h-4" />
+                            </button>
+
+                            <button
+                                onClick={(e) => openYouTubeSearch(e, `${artistName} ${track.trackName}`)}
+                                className="px-3 py-3 rounded-full border border-white/10 hover:border-[#FF0000] hover:bg-[#FF0000] text-slate-400 hover:text-white transition-all"
+                                title="YouTube"
+                            >
+                                <Youtube className="w-4 h-4" />
                             </button>
                         </div>
                     </div>

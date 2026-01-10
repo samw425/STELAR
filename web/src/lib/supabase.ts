@@ -100,7 +100,8 @@ export async function fetchRankingsData(): Promise<RankingsData | null> {
     // 3. Start new fetch
     activeFetchPromise = (async () => {
         try {
-            const response = await fetch('/rankings.json');
+            // Cache-busting: Force fresh load with timestamp
+            const response = await fetch(`/rankings.json?t=${Date.now()}`);
             if (!response.ok) {
                 console.error('Failed to fetch rankings:', response.status);
                 activeFetchPromise = null; // Clear on failure
