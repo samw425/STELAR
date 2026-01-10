@@ -2304,7 +2304,7 @@ const TopTracks = ({ artistName }: { artistName: string }) => {
     const [loading, setLoading] = useState(true);
     const [playing, setPlaying] = useState<string | null>(null);
     const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
-    const [displayLimit, setDisplayLimit] = useState(10);
+    const [displayLimit] = useState(10);
 
     // Derived state for visible tracks
     const visibleTracks = tracks.slice(0, displayLimit);
