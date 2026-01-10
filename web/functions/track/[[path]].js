@@ -30,9 +30,9 @@ export async function onRequest(context) {
     // and plays the best AVAILABLE integerable video.
 
     // Simplest possible embed string to maximize compatibility
-    // "Lyrics" search targets Fan/UGC videos which are virtually NEVER blocked by VEVO.
-    // This is the safest fallback to guarantee playback.
-    const youtubeSearchQuery = encodeURIComponent(`${artistName} ${trackName} lyrics`);
+    // We add "-vevo" to EXPLICITLY filter out Official VEVO Lyric Videos which are often blocked.
+    // This forces usage of Fan/UGC content only.
+    const youtubeSearchQuery = encodeURIComponent(`${artistName} ${trackName} lyrics -vevo`);
     const finalSrc = `https://www.youtube.com/embed?listType=search&list=${youtubeSearchQuery}&autoplay=1&mute=0&rel=0&modestbranding=1&origin=${origin}&playsinline=1`;
 
     // ---------------------------------------------------------
