@@ -45,6 +45,7 @@ export async function onRequest(context) {
     const POPULAR_TRACKS = {
         'lady gaga rain on me': 'AoAm4om0wTs',
         'ariana grande rain on me': 'AoAm4om0wTs',
+        'ariana grande god is a woman': 'kHLHSlExFis',
         'billie eilish birds of a feather': 'ovOIK8f6vN8',
         'sabrina carpenter espresso': 'eVli-tstM5E',
         'sabrina carpenter please please please': 'cF1Na4AIecM',
