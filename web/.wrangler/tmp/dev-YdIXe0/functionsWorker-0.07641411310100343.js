@@ -12703,9 +12703,77 @@ async function onRequest6(context) {
     "AIzaSyBf1WipAvDDNW5mmuFIHGwnwbqqcvqbGYg"
     // Key 10 (original)
   ];
+  const POPULAR_TRACKS = {
+    "the weeknd blinding lights": "4NRXx6U8ABQ",
+    "the weeknd starboy": "dMMr58vDB7c",
+    "the weeknd save your tears": "u6lihZAcy4s",
+    "the weeknd die for you": "mTLQhPFx2nM",
+    "the weeknd the hills": "yzTuBuRdAyA",
+    "the weeknd cant feel my face": "dqt8Z1k0oWQ",
+    "drake hotline bling": "uxpDa-c-4Mc",
+    "drake gods plan": "xpVfcZ0ZcFM",
+    "drake one dance": "iAbnEUA0wpA",
+    "taylor swift shake it off": "nfWlot6h_JM",
+    "taylor swift blank space": "e-ORhEE9VVg",
+    "taylor swift bad blood": "QcIy9NiNbmo",
+    "taylor swift anti hero": "b1kbLwvqugk",
+    "ed sheeran shape of you": "JGwWNGJdvx8",
+    "ed sheeran perfect": "2Vv-BfVoq4g",
+    "ed sheeran thinking out loud": "lp-EO5I60KA",
+    "justin bieber baby": "kffacxfA7G4",
+    "justin bieber sorry": "fRh_vgS2dFE",
+    "justin bieber peaches": "tQ0yjYUFKAE",
+    "bruno mars uptown funk": "OPf0YbXqDm0",
+    "bruno mars 24k magic": "UqyT8IEBkvY",
+    "bruno mars just the way you are": "LjhCEhWiKXk",
+    "dua lipa levitating": "TUVcZfQe-Kw",
+    "dua lipa dont start now": "oygrmJFKYZY",
+    "dua lipa new rules": "k2qgadSvNyU",
+    "billie eilish bad guy": "DyDfgMOUjCI",
+    "billie eilish lovely": "V1Pl8CzNzCw",
+    "ariana grande thank u next": "gl1aHhXnN1k",
+    "ariana grande 7 rings": "QYh6mYIJG2Y",
+    "post malone circles": "wXhTHyIgQ_U",
+    "post malone rockstar": "UceaB4D0jpo",
+    "harry styles watermelon sugar": "E07s5ZYygMg",
+    "harry styles as it was": "H5v3kku4y6Q",
+    "olivia rodrigo drivers license": "ZmDBbnmKpqQ",
+    "olivia rodrigo good 4 u": "gNi_6U5Pm_o",
+    "adele hello": "YQHsXMglC9A",
+    "adele rolling in the deep": "rYEDA3JcQqw",
+    "adele easy on me": "U3ASj1L6_sY",
+    "beyonce halo": "bnVUHWCynig",
+    "beyonce single ladies": "4m1EFMoRFvY",
+    "rihanna umbrella": "CvBfHwUxHIk",
+    "rihanna diamonds": "lWA2pjMjpBs",
+    "sia chandelier": "2vjPBrBU-TM",
+    "maroon 5 sugar": "09R8_2nJtjg",
+    "coldplay fix you": "k4V3Mo61fJM",
+    "coldplay yellow": "yKNxeF4KMsY",
+    "imagine dragons believer": "7wtfhZwyrcc",
+    "imagine dragons radioactive": "ktvTqknDobU",
+    "lewis capaldi someone you loved": "bCuhuePlP8o",
+    "shawn mendes senorita": "Pkh8UtuejGw",
+    "camila cabello havana": "BQ0mxQXmLsk",
+    "cardi b wap": "hsm4poTWjMs",
+    "lil nas x old town road": "r7qovpFAGrQ",
+    "travis scott sicko mode": "6ONRf7h3Mdk",
+    "juice wrld lucid dreams": "mzB1VGEGcSU",
+    "xxxtentacion sad": "pgN-vvVVxMA",
+    "kendrick lamar humble": "tvTRZJ-4EyI",
+    "eminem lose yourself": "_Yhyp-_hX2s",
+    "michael jackson thriller": "sOnqjkJTMaA",
+    "michael jackson billie jean": "Zi_XLOBDo_Y",
+    "queen bohemian rhapsody": "fJ9rUzIMcZQ"
+  };
   let finalSrc = "";
   let videoId = null;
   const youtubeSearchQuery = encodeURIComponent(`${artistName} ${trackName}`);
+  const lookupKey = `${artistName} ${trackName}`.toLowerCase();
+  if (POPULAR_TRACKS[lookupKey]) {
+    videoId = POPULAR_TRACKS[lookupKey];
+    console.log(`Found hardcoded videoId for ${lookupKey}: ${videoId}`);
+  }
   try {
     const rankingsResponse = await fetch(`${url.origin}/rankings.json`);
     if (rankingsResponse.ok) {
@@ -12742,10 +12810,43 @@ async function onRequest6(context) {
       }
     }
   }
+  if (!videoId) {
+    const invidiousInstances = [
+      "https://vid.puffyan.us",
+      "https://invidious.snopyta.org",
+      "https://yewtu.be",
+      "https://inv.riverside.rocks",
+      "https://invidious.kavin.rocks"
+    ];
+    for (const instance of invidiousInstances) {
+      try {
+        const searchQuery = encodeURIComponent(`${artistName} ${trackName} official`);
+        const invUrl = `${instance}/api/v1/search?q=${searchQuery}&type=video`;
+        const response = await fetch(invUrl, {
+          headers: { "Accept": "application/json" },
+          cf: { cacheTtl: 3600 }
+          // Cache for 1 hour
+        });
+        if (response.ok) {
+          const results = await response.json();
+          if (results && results.length > 0 && results[0].videoId) {
+            videoId = results[0].videoId;
+            console.log(`Got videoId from Invidious ${instance}: ${videoId}`);
+            break;
+          }
+        }
+      } catch (err) {
+        console.log(`Invidious ${instance} failed:`, err.message);
+        continue;
+      }
+    }
+  }
+  let useFallback = false;
   if (videoId) {
     finalSrc = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&rel=0&modestbranding=1&origin=${origin}&playsinline=1`;
   } else {
-    finalSrc = `https://www.youtube.com/embed/videoseries?list=PLFgquLnL59alGJcdc0BEZJb2p7IgkL0Oe&autoplay=0`;
+    useFallback = true;
+    finalSrc = "";
   }
   let artistImage = "";
   try {
@@ -12992,6 +13093,19 @@ async function onRequest6(context) {
             <p>by ${artistName}</p>
         </div>
         
+        ${useFallback ? `
+        <div class="video-wrapper" style="display: flex; flex-direction: column; align-items: center; justify-content: center; aspect-ratio: 16/9; background: linear-gradient(135deg, #1a1a2e 0%, #0a0a0f 100%);">
+            <div style="text-align: center; padding: 40px;">
+                <div style="font-size: 48px; margin-bottom: 20px;">\u25B6\uFE0F</div>
+                <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 16px; color: white;">Watch on YouTube</h3>
+                <p style="color: #888; margin-bottom: 24px; font-size: 14px;">Click below to watch ${trackName} by ${artistName}</p>
+                <a href="https://www.youtube.com/results?search_query=${youtubeSearchQuery}+official+video" target="_blank" style="display: inline-flex; align-items: center; gap: 10px; padding: 16px 32px; background: #FF0000; color: white; text-decoration: none; border-radius: 100px; font-weight: 700; font-size: 16px; box-shadow: 0 10px 30px rgba(255,0,0,0.3);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                    Watch Video
+                </a>
+            </div>
+        </div>
+        ` : `
         <div class="video-wrapper">
             <iframe 
                 src="${finalSrc}"
@@ -12999,6 +13113,7 @@ async function onRequest6(context) {
                 allowfullscreen>
             </iframe>
         </div>
+        `}
         
         <div class="buttons">
             <button onclick="navigator.clipboard.writeText(window.location.href).then(()=>alert('Link copied!'))" class="btn btn-share">\u{1F4CB} Share Track</button>
