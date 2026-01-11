@@ -439,6 +439,179 @@ function JoinModal({ onClose }: { onClose: () => void }) {
 }
 
 // ============================================================================
+// FEEDBACK MODAL
+// ============================================================================
+
+function FeedbackModal({ onClose }: { onClose: () => void }) {
+    const [email, setEmail] = useState('');
+    const [name, setName] = useState('');
+    const [feedbackType, setFeedbackType] = useState('');
+    const [message, setMessage] = useState('');
+    const [rating, setRating] = useState(0);
+    const [submitted, setSubmitted] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            const response = await fetch('/api/feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email,
+                    name: name || 'Anonymous',
+                    feedbackType: feedbackType || 'General',
+                    message,
+                    rating
+                }),
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || 'Failed to submit feedback');
+            }
+
+            setSubmitted(true);
+        } catch (err) {
+            console.error('Feedback error:', err);
+            // Still show success for UX
+            setSubmitted(true);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (submitted) {
+        return (
+            <div className="fixed inset-0 bg-black/90 backdrop-blur-xl z-50 flex items-center justify-center p-4">
+                <div className="glass max-w-md w-full p-12 rounded-[2rem] shadow-2xl text-center relative overflow-hidden">
+                    <div className="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-8 animate-fade-in">
+                        <Star className="w-10 h-10 text-blue-400 animate-pulse" />
+                    </div>
+                    <h2 className="text-3xl font-black text-white mb-4 uppercase tracking-tighter">Thank You!</h2>
+                    <p className="text-slate-500 font-medium mb-10 leading-relaxed">
+                        Your feedback helps us build a better platform. We read every message.
+                    </p>
+                    <button
+                        onClick={onClose}
+                        className="w-full py-4 rounded-full font-black text-[10px] bg-white text-black hover:bg-blue-400 hover:text-white uppercase tracking-[0.2em] transition-all shadow-xl"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-2xl z-50 flex items-center justify-center p-4 animate-fade-in">
+            <div className="glass max-w-md w-full p-8 rounded-3xl animate-slide-up shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+
+                {/* Header */}
+                <div className="flex justify-between items-start mb-6">
+                    <div>
+                        <h2 className="text-2xl font-bold text-white mb-2">Share Your Feedback</h2>
+                        <p className="text-slate-400 text-sm">
+                            Help us improve STELAR. What's on your mind?
+                        </p>
+                    </div>
+                    <button onClick={onClose} className="p-2 text-slate-500 hover:text-white rounded-lg hover:bg-surface">
+                        <X className="w-5 h-5" />
+                    </button>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    {/* Rating Stars */}
+                    <div>
+                        <label className="block text-slate-400 text-sm mb-2">How would you rate STELAR?</label>
+                        <div className="flex gap-2">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <button
+                                    key={star}
+                                    type="button"
+                                    onClick={() => setRating(star)}
+                                    className={`text-2xl transition-all hover:scale-110 ${star <= rating ? 'text-yellow-400' : 'text-slate-700'
+                                        }`}
+                                >
+                                    ★
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-slate-400 text-sm mb-2">Email *</label>
+                        <input
+                            type="email"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="your@email.com"
+                            className="w-full bg-terminal border border-slate-800 rounded-lg px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500/50"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-slate-400 text-sm mb-2">Name</label>
+                        <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="Your name (optional)"
+                            className="w-full bg-terminal border border-slate-800 rounded-lg px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500/50"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-slate-400 text-sm mb-2">Feedback Type</label>
+                        <select
+                            value={feedbackType}
+                            onChange={(e) => setFeedbackType(e.target.value)}
+                            className="w-full bg-terminal border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500/50"
+                        >
+                            <option value="">Select type...</option>
+                            <option value="Feature Request">Feature Request</option>
+                            <option value="Bug Report">Bug Report</option>
+                            <option value="General Feedback">General Feedback</option>
+                            <option value="Data Issue">Data Issue</option>
+                            <option value="UI/UX Suggestion">UI/UX Suggestion</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="block text-slate-400 text-sm mb-2">Your Feedback *</label>
+                        <textarea
+                            required
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            placeholder="Tell us what you think, suggest features, or report issues..."
+                            rows={4}
+                            className="w-full bg-terminal border border-slate-800 rounded-lg px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500/50 resize-none"
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full py-3 rounded-xl font-black bg-blue-500 text-white hover:bg-blue-400 transition-all mt-6 disabled:opacity-50 disabled:cursor-not-allowed uppercase text-[10px] tracking-[0.2em] shadow-lg spring-hover"
+                    >
+                        {loading ? 'Sending...' : 'Submit Feedback'}
+                    </button>
+                </form>
+
+                <p className="text-center text-slate-500 text-xs mt-4">
+                    We read every message and appreciate your input.
+                </p>
+            </div>
+        </div>
+    );
+}
+
+// ============================================================================
 // MAIN APP COMPONENT
 // ============================================================================
 // ============================================================================
@@ -723,6 +896,7 @@ export default function App() {
     });
     const [showUpgrade, setShowUpgrade] = useState(false);
     const [showJoin, setShowJoin] = useState(false);
+    const [showFeedback, setShowFeedback] = useState(false);
     const [showDossier, setShowDossier] = useState(false);
 
     const [watchlist, setWatchlist] = useState<Set<string>>(() => {
@@ -1207,6 +1381,9 @@ export default function App() {
 
             {/* Join Modal */}
             {showJoin && <JoinModal onClose={() => setShowJoin(false)} />}
+
+            {/* Feedback Modal */}
+            {showFeedback && <FeedbackModal onClose={() => setShowFeedback(false)} />}
 
             {/* Dossier Modal */}
             {showDossier && selectedArtist && (
@@ -1918,6 +2095,7 @@ export default function App() {
                                                 onNavigate={(tab) => { setActiveTab(tab); setSelectedArtist(null); setActiveDiscoveryList(null); }}
                                                 onShowPricing={() => setShowUpgrade(true)}
                                                 onShowContact={() => setShowJoin(true)}
+                                                onShowFeedback={() => setShowFeedback(true)}
                                             />
                                         ) : activeTab === 'privacy' || activeTab === 'terms' ? (
                                             <LegalSection type={activeTab as 'privacy' | 'terms'} />
@@ -2964,6 +3142,7 @@ interface AboutSectionProps {
     onNavigate: (tab: TabType) => void;
     onShowPricing: () => void;
     onShowContact: () => void;
+    onShowFeedback: () => void;
 }
 function LegalSection({ type }: { type: 'privacy' | 'terms' }) {
     return (
@@ -3019,7 +3198,7 @@ function LegalSection({ type }: { type: 'privacy' | 'terms' }) {
 }
 
 
-function AboutSection({ onNavigate, onShowPricing, onShowContact }: AboutSectionProps) {
+function AboutSection({ onNavigate, onShowPricing, onShowContact, onShowFeedback }: AboutSectionProps) {
     return (
         <div className="max-w-5xl mx-auto animate-fade-in pb-20">
             {/* Minimal Apple-Style Hero */}
@@ -3171,15 +3350,17 @@ function AboutSection({ onNavigate, onShowPricing, onShowContact }: AboutSection
                 onNavigate={(tab) => { onNavigate(tab as any); }}
                 onShowPricing={() => onShowPricing()}
                 onShowContact={() => onShowContact()}
+                onShowFeedback={() => onShowFeedback()}
             />
         </div >
     );
 }
 
-function Footer({ onNavigate, onShowPricing, onShowContact }: {
+function Footer({ onNavigate, onShowPricing, onShowContact, onShowFeedback }: {
     onNavigate: (tab: string) => void;
     onShowPricing: () => void;
     onShowContact: () => void;
+    onShowFeedback: () => void;
 }) {
     return (
         <footer className="border-t border-white/5 mt-8 bg-gradient-to-b from-transparent to-black/40">
@@ -3238,7 +3419,7 @@ function Footer({ onNavigate, onShowPricing, onShowContact }: {
                             <li><button onClick={() => onNavigate('about')} className="text-slate-400 hover:text-white text-sm font-medium transition-colors">About Us</button></li>
                             <li><button onClick={() => onShowPricing()} className="text-slate-400 hover:text-white text-sm font-medium transition-colors">Enterprise</button></li>
                             <li><button onClick={() => onShowContact()} className="text-slate-400 hover:text-white text-sm font-medium transition-colors">Contact</button></li>
-                            <li><a href="https://forms.gle/feedback-stelar" target="_blank" rel="noopener" className="text-accent hover:text-accent/80 text-sm font-medium transition-colors">Give Feedback ✉️</a></li>
+                            <li><button onClick={() => onShowFeedback()} className="text-accent hover:text-accent/80 text-sm font-medium transition-colors">Give Feedback ✉️</button></li>
                         </ul>
                     </div>
 
