@@ -22,38 +22,74 @@ export async function onRequest(context) {
     const trackName = trackSlug.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
     // ---------------------------------------------------------
-    // STRATEGY: YOUTUBE DATA API (listType=search is DEPRECATED as of Nov 2020)
+    // STRATEGY: YOUTUBE API WITH KEY ROTATION + CACHE
     // ---------------------------------------------------------
-    // We MUST use the YouTube Data API to search for videos.
-    // The old listType=search embed no longer works.
-    // We search for "official video" to get Fan/UGC uploads that are always embeddable.
+    // 1. First check rankings.json cache for pre-stored video IDs
+    // 2. If not cached, try API with multiple keys (rotation on quota error)
+    // 3. Fallback to search embed if all else fails
 
     const origin = new URL(context.request.url).origin;
-    const API_KEY = context.env.YOUTUBE_API_KEY || "AIzaSyBf1WipAvDDNW5mmuFIHGwnwbqqcvqbGYg";
+
+    // Multiple API keys for rotation when quota is exceeded
+    const API_KEYS = [
+        "AIzaSyB8muKwu3jyAer6LLZGbfexRz12PR78LpY",  // Key 3 (newest)
+        "AIzaSyBf1WipAvDDNW5mmuFIHGwnwbqqcvqbGYg",  // Key 2
+        "AIzaSyD1meCV-e-TW2_JDHJdZ_ODfQlMDeyW1EI"   // Key 1 (original)
+    ];
 
     let finalSrc = '';
+    let videoId = null;
     const youtubeSearchQuery = encodeURIComponent(`${artistName} ${trackName}`);
 
-    // Try to find an embeddable video via API
+    // STEP 1: Check cache in rankings.json first (no API call needed)
     try {
-        const apiQuery = encodeURIComponent(`${artistName} ${trackName} official video`);
-        const apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${apiQuery}&type=video&maxResults=1&key=${API_KEY}`;
-
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-
-        if (data.items && data.items.length > 0) {
-            // Get the first embeddable video
-            const videoId = data.items[0].id.videoId;
-            finalSrc = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&rel=0&modestbranding=1&origin=${origin}&playsinline=1`;
+        const rankingsResponse = await fetch(`${url.origin}/rankings.json`);
+        if (rankingsResponse.ok) {
+            const rankingsData = await rankingsResponse.json();
+            const allArtists = Object.values(rankingsData.rankings || {}).flat();
+            const cachedArtist = allArtists.find(a =>
+                a.name?.toLowerCase() === artistName.toLowerCase()
+            );
+            if (cachedArtist?.youtubeVideoId) {
+                videoId = cachedArtist.youtubeVideoId;
+            }
         }
-    } catch (err) {
-        console.error("YouTube API Error:", err);
+    } catch (cacheErr) {
+        console.log("Cache lookup failed:", cacheErr);
     }
 
-    // If API didn't find a video, don't embed anything broken - the "Watch on YouTube" button will work
-    if (!finalSrc) {
-        // Create a simple player that shows the first search result
+    // STEP 2: If not cached, try API with key rotation
+    if (!videoId) {
+        for (const apiKey of API_KEYS) {
+            try {
+                const apiQuery = encodeURIComponent(`${artistName} ${trackName} official video`);
+                const apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${apiQuery}&type=video&maxResults=1&key=${apiKey}`;
+
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                // Check for quota error - try next key
+                if (data.error?.errors?.[0]?.reason === 'quotaExceeded') {
+                    console.log(`Quota exceeded for key ending in ...${apiKey.slice(-6)}, trying next`);
+                    continue;
+                }
+
+                if (data.items && data.items.length > 0) {
+                    videoId = data.items[0].id.videoId;
+                    break; // Success, stop trying keys
+                }
+            } catch (err) {
+                console.error("YouTube API Error:", err);
+                continue; // Try next key
+            }
+        }
+    }
+
+    // STEP 3: Build embed URL or fallback
+    if (videoId) {
+        finalSrc = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&rel=0&modestbranding=1&origin=${origin}&playsinline=1`;
+    } else {
+        // Fallback to search embed (deprecated but better than nothing)
         finalSrc = `https://www.youtube.com/embed?listType=search&list=${youtubeSearchQuery}&origin=${origin}`;
     }
 
