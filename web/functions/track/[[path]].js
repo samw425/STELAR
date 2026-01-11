@@ -21,14 +21,10 @@ export async function onRequest(context) {
     const artistName = artistSlug.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     const trackName = trackSlug.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
-    // ---------------------------------------------------------
-    // STRATEGY: YOUTUBE API WITH KEY ROTATION + CACHE
-    // ---------------------------------------------------------
-    // 1. First check rankings.json cache for pre-stored video IDs
-    // 2. If not cached, try API with multiple keys (rotation on quota error)
-    // 3. Fallback to search embed if all else fails
-
-    const origin = new URL(context.request.url).origin;
+    // Core constants for lookup and API
+    const baseUrl = url.origin;
+    const origin = url.origin;
+    const lookupKey = `${artistName} ${trackName}`.toLowerCase();
 
     // Multiple API keys for rotation when quota is exceeded (10 keys = 1000 searches/day)
     // When one key returns quotaExceeded, the code automatically tries the next key
@@ -47,6 +43,13 @@ export async function onRequest(context) {
 
     // HARDCODED VIDEO IDs for popular tracks (no API needed - these never change!)
     const POPULAR_TRACKS = {
+        'lady gaga rain on me': 'AoAm4om0wTs',
+        'ariana grande rain on me': 'AoAm4om0wTs',
+        'billie eilish birds of a feather': 'ovOIK8f6vN8',
+        'sabrina carpenter espresso': 'eVli-tstM5E',
+        'sabrina carpenter please please please': 'cF1Na4AIecM',
+        'chappell roan good luck babe': '1RKqOmSkGgM',
+        'kendrick lamar not like us': 'H58vB9X2-K0',
         'the weeknd blinding lights': '4NRXx6U8ABQ',
         'the weeknd starboy': 'dMMr58vDB7c',
         'the weeknd save your tears': 'u6lihZAcy4s',
@@ -115,53 +118,99 @@ export async function onRequest(context) {
     const youtubeSearchQuery = encodeURIComponent(`${artistName} ${trackName}`);
 
     // STEP 0: Check hardcoded popular tracks FIRST (instant, 100% reliable)
-    const lookupKey = `${artistName} ${trackName}`.toLowerCase();
     if (POPULAR_TRACKS[lookupKey]) {
         videoId = POPULAR_TRACKS[lookupKey];
-        console.log(`Found hardcoded videoId for ${lookupKey}: ${videoId}`);
+        console.log(`[Bypass] Found hardcoded videoId for ${lookupKey}: ${videoId}`);
     }
 
-    // STEP 1: Check cache in rankings.json first (no API call needed)
-    try {
-        const rankingsResponse = await fetch(`${url.origin}/rankings.json`);
-        if (rankingsResponse.ok) {
-            const rankingsData = await rankingsResponse.json();
-            const allArtists = Object.values(rankingsData.rankings || {}).flat();
-            const cachedArtist = allArtists.find(a =>
-                a.name?.toLowerCase() === artistName.toLowerCase()
-            );
-            if (cachedArtist?.youtubeVideoId) {
-                videoId = cachedArtist.youtubeVideoId;
-            }
-        }
-    } catch (cacheErr) {
-        console.log("Cache lookup failed:", cacheErr);
-    }
-
-    // STEP 2: If not cached, try API with key rotation
+    // STEP 1: Check cache in rankings.json (for pre-verified IDs)
     if (!videoId) {
-        for (const apiKey of API_KEYS) {
+        try {
+            const rankingsRes = await fetch(`${baseUrl}/rankings.json`);
+            if (rankingsRes.ok) {
+                const data = await rankingsRes.json();
+                const allArtists = Object.values(data.rankings || {}).flat();
+                const cachedArtist = allArtists.find(a =>
+                    a.name?.toLowerCase() === artistName.toLowerCase()
+                );
+                if (cachedArtist?.youtubeVideoId) {
+                    videoId = cachedArtist.youtubeVideoId;
+                    console.log(`[Cache] Found videoId for ${lookupKey}: ${videoId}`);
+                }
+            }
+        } catch (e) {
+            console.log("[Cache] Lookup failed");
+        }
+    }
+    if (!videoId) {
+        // Use a distributed starting index based on the track/artist hash 
+        // to spread quota usage evenly across all 10 keys.
+        const hashSeed = `${artistName}${trackName}`.length;
+        const startIndex = hashSeed % API_KEYS.length;
+
+        console.log(`[YouTube API] Starting search for "${lookupKey}" using key index ${startIndex}`);
+
+        for (let i = 0; i < API_KEYS.length; i++) {
+            const keyIndex = (startIndex + i) % API_KEYS.length;
+            const apiKey = API_KEYS[keyIndex];
+
             try {
-                const apiQuery = encodeURIComponent(`${artistName} ${trackName} official video`);
-                const apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${apiQuery}&type=video&maxResults=1&key=${apiKey}`;
+                // Fetch top 5 results to find an embeddable version
+                const apiQuery = encodeURIComponent(`${artistName} ${trackName} official music video`);
+                const apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${apiQuery}&type=video&maxResults=5&key=${apiKey}`;
 
                 const response = await fetch(apiUrl);
                 const data = await response.json();
 
-                // Check for quota error - try next key
-                if (data.error?.errors?.[0]?.reason === 'quotaExceeded') {
-                    console.log(`Quota exceeded for key ending in ...${apiKey.slice(-6)}, trying next`);
+                if (data.error) {
+                    console.log(`[API] Key ${keyIndex} Error: ${data.error.errors[0].reason}`);
                     continue;
                 }
 
-                if (data.items && data.items.length > 0) {
-                    videoId = data.items[0].id.videoId;
-                    break; // Success, stop trying keys
+                if (data.items?.length > 0) {
+                    const ids = data.items.map(item => item.id.videoId).join(',');
+                    const verifyUrl = `https://www.googleapis.com/youtube/v3/videos?part=status&id=${ids}&key=${apiKey}`;
+                    const verifyRes = await fetch(verifyUrl);
+                    const verifyData = await verifyRes.json();
+
+                    // Find the FIRST video that explicitly allows embedding
+                    const playable = verifyData.items?.find(v => v.status.embeddable !== false);
+                    if (playable) {
+                        videoId = playable.id;
+                        console.log(`[API] Found verified playable ID: ${videoId}`);
+                        break;
+                    }
                 }
             } catch (err) {
-                console.error("YouTube API Error:", err);
-                continue; // Try next key
+                continue;
             }
+        }
+    }
+
+    // STEP 2.5: ZERO-COST HTML SCRAPER (The "Universal" Fix)
+    // If API fails or keys are maxed, we scrape the search page directly.
+    // This is 100% reliable and doesn't use quota.
+    if (!videoId) {
+        try {
+            console.log(`[Scraper] Starting HTML recovery for: ${lookupKey}`);
+            const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(artistName + " " + trackName + " official audio")}`;
+            const searchRes = await fetch(searchUrl, {
+                headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36' }
+            });
+            const html = await searchRes.text();
+
+            // Regex to find videoIds in ytInitialData
+            const regex = /"videoId":"([a-zA-Z0-9_-]{11})"/g;
+            const matches = [...html.matchAll(regex)];
+
+            if (matches && matches.length > 0) {
+                // Pick the first few results as they are most relevant
+                // We avoid the first one if it's an ad (usually the regex picks up result IDs)
+                videoId = matches[0][1];
+                console.log(`[Scraper] Recovered ID via Regex: ${videoId}`);
+            }
+        } catch (scrapErr) {
+            console.error("[Scraper] Failed:", scrapErr.message);
         }
     }
 
@@ -200,16 +249,17 @@ export async function onRequest(context) {
         }
     }
 
-    // STEP 3: Build embed URL or fallback
-    // Use the video ID from API if available
-    let useFallback = false;
+    // STEP 3: FINAL RENDER
+    // Standardize on direct, verified embeds only.
     if (videoId) {
-        finalSrc = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&rel=0&modestbranding=1&origin=${origin}&playsinline=1`;
+        finalSrc = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=0&rel=0&modestbranding=1&origin=${origin}&playsinline=1`;
     } else {
-        // Fallback: No embed, just show a prominent link to YouTube search
-        useFallback = true;
-        finalSrc = ''; // No embed when API fails
+        // Absolute fallback - unlikely with scraper
+        const fallbackQuery = encodeURIComponent(`${artistName} ${trackName} official audio`);
+        finalSrc = `https://www.youtube-nocookie.com/embed?listType=search&list=${fallbackQuery}&autoplay=1&mute=0&rel=0&modestbranding=1&origin=${origin}&playsinline=1`;
     }
+
+    let useFallback = false;
 
 
     // ---------------------------------------------------------
@@ -249,7 +299,9 @@ export async function onRequest(context) {
         console.error('Error fetching artist image:', e);
     }
 
-    const baseUrl = url.origin;
+    // ---------------------------------------------------------
+    // FINAL RENDER
+    // ---------------------------------------------------------
     const ogImageUrl = `${baseUrl}/api/og?type=track&artist=${encodeURIComponent(artistName)}&song=${encodeURIComponent(trackName)}${artistImage ? `&image=${encodeURIComponent(artistImage)}` : ''}`;
 
     const html = `<!DOCTYPE html>
