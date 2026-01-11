@@ -2304,24 +2304,6 @@ const TopTracks = ({ artistName }: { artistName: string }) => {
     const [loading, setLoading] = useState(true);
     const [playing, setPlaying] = useState<string | null>(null);
     const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
-    const [displayLimit] = useState(10);
-
-    // Derived state for visible tracks
-    const visibleTracks = tracks.slice(0, displayLimit);
-
-    const togglePlay = (url: string) => {
-        if (playing === url) {
-            audio?.pause();
-            setPlaying(null);
-        } else {
-            if (audio) audio.pause();
-            const newAudio = new Audio(url);
-            newAudio.play();
-            setAudio(newAudio);
-            setPlaying(url);
-            newAudio.onended = () => setPlaying(null);
-        }
-    };
 
     useEffect(() => {
         const fetchTracks = async () => {
@@ -2343,11 +2325,7 @@ const TopTracks = ({ artistName }: { artistName: string }) => {
                     data = await res.json();
                 }
 
-                if (data && data.results) {
-                    // Filter out non-song results
-                    const songs = data.results.filter((r: any) => r.kind === 'song');
-                    setTracks(songs);
-                }
+                setTracks(data.results || []);
             } catch (e) {
                 console.error("Failed to fetch tracks", e);
                 setTracks([]);
@@ -2358,6 +2336,62 @@ const TopTracks = ({ artistName }: { artistName: string }) => {
 
         fetchTracks();
     }, [artistName]);
+
+    const [showAll] = useState(true); // SHOW 50 BY DEFAULT AS REQUESTED
+    const visibleTracks = showAll ? tracks : tracks.slice(0, 5);
+
+    const togglePlay = (url: string) => {
+        if (playing === url) {
+            audio?.pause();
+            setPlaying(null);
+        } else {
+            if (audio) audio.pause();
+            const newAudio = new Audio(url);
+            newAudio.play();
+            setAudio(newAudio);
+            setPlaying(url);
+            newAudio.onended = () => setPlaying(null);
+        }
+    };
+
+    // Load tracks with fallback to search
+    useEffect(() => {
+        if (!artistName) return;
+        setLoading(true);
+        setTracks([]);
+
+        const fetchTracks = async () => {
+            try {
+                // Try ID lookup first if we have a numeric ID (iTunes ID)
+                let data = null;
+                if (artist?.id && /^\d+$/.test(artist.id)) {
+                    const res = await fetch(`https://itunes.apple.com/lookup?id=${artist.id}&entity=song&limit=50`);
+                    data = await res.json();
+                }
+
+                // If no ID or lookup failed/returned empty, try search by name
+                if (!data || !data.results || data.results.length === 0) {
+                    // console.log('Falling back to search for:', artistName);
+                    const searchRes = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(artistName)}&entity=song&limit=50`);
+                    data = await searchRes.json();
+                }
+
+                if (data && data.results) {
+                    // Filter out non-song results (wrappers)
+                    const songs = data.results.filter((r: any) => r.kind === 'song');
+                    setTracks(songs);
+                    // Update display limit based on results
+                    setVisibleTracks(songs.slice(0, 10)); // Initial 10
+                }
+            } catch (err) {
+                console.error('Failed to load tracks:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTracks();
+    }, [artistName, artist?.id]); // Re-run if name changes
 
     const openYouTubeSearch = (e: React.MouseEvent, term: string) => {
         e.stopPropagation();
@@ -3284,7 +3318,7 @@ function Footer({ onNavigate, onShowPricing, onShowContact }: {
                     </div>
 
                     <div className="flex flex-col md:items-end gap-2">
-                        <span className="text-slate-500 text-xs font-medium">© 2026 STELAR Intelligence Inc. <span className="text-slate-700 ml-2">v4.0.1</span></span>
+                        <span className="text-slate-500 text-xs font-medium">© 2026 STELAR Intelligence Inc.</span>
                         <div className="flex items-center gap-2">
                             <span className="text-[10px] text-slate-600 font-black uppercase tracking-widest">Backed by</span>
                             <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">SEQUOIA</span>
