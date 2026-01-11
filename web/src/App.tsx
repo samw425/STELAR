@@ -34,34 +34,15 @@ import {
     Cpu,
     Ticket,
     Clock,
-    PlayCircle,
-    Flame
+    PlayCircle
 } from 'lucide-react';
 import { PowerIndexArtist, searchAllArtists, fetchRankingsData } from './lib/supabase';
+import { Analytics } from '@vercel/analytics/react';
 import { LandingPage } from './components/LandingPage';
 
 // ============================================================================
-// UTILITY FUNCTIONS & ANALYTICS
+// UTILITY FUNCTIONS
 // ============================================================================
-
-// Custom analytics tracker (pluggable for Zaraz, GA, or custom backend)
-const trackEvent = (name: string, properties: any = {}) => {
-    // 1. Log to console for debugging
-    console.log(`[STELAR ANALYTICS] ${name}:`, properties);
-
-    // 2. Dispatch to Cloudflare Zaraz if present
-    if (typeof (window as any).zaraz !== 'undefined') {
-        (window as any).zaraz.track(name, properties);
-    }
-
-    // 3. Dispatch to standard DataLayer (Google Analytics / GTM)
-    if (typeof (window as any).dataLayer !== 'undefined') {
-        (window as any).dataLayer.push({
-            event: name,
-            ...properties
-        });
-    }
-};
 
 const formatNumber = (num: number | undefined | null): string => {
     if (num === undefined || num === null) return '0';
@@ -130,7 +111,7 @@ const getInitials = (name: string): string => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 };
 
-type TabType = 'the-pulse' | 'old-school' | 'sonic-signals' | 'locked-roster' | 'the-launchpad' | 'new-releases' | 'live-tours' | 'hot-500' | 'about' | 'privacy' | 'terms';
+type TabType = 'the-pulse' | 'old-school' | 'sonic-signals' | 'locked-roster' | 'the-launchpad' | 'new-releases' | 'live-tours' | 'about' | 'privacy' | 'terms';
 
 // ============================================================================
 // ONBOARDING COMPONENT
@@ -386,9 +367,9 @@ function JoinModal({ onClose }: { onClose: () => void }) {
                 {/* Header */}
                 <div className="flex justify-between items-start mb-6">
                     <div>
-                        <h2 className="text-2xl font-bold text-white mb-2">Be The First To Know</h2>
+                        <h2 className="text-2xl font-bold text-white mb-2">Join the Waitlist</h2>
                         <p className="text-slate-400 text-sm">
-                            New features dropping soon. Join the waitlist for early access and exclusive updates.
+                            Get early access to premium features and exclusive market insights.
                         </p>
                     </div>
                     <button onClick={onClose} className="p-2 text-slate-500 hover:text-white rounded-lg hover:bg-surface">
@@ -451,179 +432,6 @@ function JoinModal({ onClose }: { onClose: () => void }) {
 
                 <p className="text-center text-slate-500 text-xs mt-4">
                     We respect your privacy. No spam, ever.
-                </p>
-            </div>
-        </div>
-    );
-}
-
-// ============================================================================
-// FEEDBACK MODAL
-// ============================================================================
-
-function FeedbackModal({ onClose }: { onClose: () => void }) {
-    const [email, setEmail] = useState('');
-    const [name, setName] = useState('');
-    const [feedbackType, setFeedbackType] = useState('');
-    const [message, setMessage] = useState('');
-    const [rating, setRating] = useState(0);
-    const [submitted, setSubmitted] = useState(false);
-    const [loading, setLoading] = useState(false);
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
-
-        try {
-            const response = await fetch('/api/feedback', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email,
-                    name: name || 'Anonymous',
-                    feedbackType: feedbackType || 'General',
-                    message,
-                    rating
-                }),
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Failed to submit feedback');
-            }
-
-            setSubmitted(true);
-        } catch (err) {
-            console.error('Feedback error:', err);
-            // Still show success for UX
-            setSubmitted(true);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    if (submitted) {
-        return (
-            <div className="fixed inset-0 bg-black/90 backdrop-blur-xl z-50 flex items-center justify-center p-4">
-                <div className="glass max-w-md w-full p-12 rounded-[2rem] shadow-2xl text-center relative overflow-hidden">
-                    <div className="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-8 animate-fade-in">
-                        <Star className="w-10 h-10 text-blue-400 animate-pulse" />
-                    </div>
-                    <h2 className="text-3xl font-black text-white mb-4 uppercase tracking-tighter">Thank You!</h2>
-                    <p className="text-slate-500 font-medium mb-10 leading-relaxed">
-                        Your feedback helps us build a better platform. We read every message.
-                    </p>
-                    <button
-                        onClick={onClose}
-                        className="w-full py-4 rounded-full font-black text-[10px] bg-white text-black hover:bg-blue-400 hover:text-white uppercase tracking-[0.2em] transition-all shadow-xl"
-                    >
-                        Close
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
-    return (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-2xl z-50 flex items-center justify-center p-4 animate-fade-in">
-            <div className="glass max-w-md w-full p-8 rounded-3xl animate-slide-up shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
-
-                {/* Header */}
-                <div className="flex justify-between items-start mb-6">
-                    <div>
-                        <h2 className="text-2xl font-bold text-white mb-2">Share Your Feedback</h2>
-                        <p className="text-slate-400 text-sm">
-                            Help us improve STELAR. What's on your mind?
-                        </p>
-                    </div>
-                    <button onClick={onClose} className="p-2 text-slate-500 hover:text-white rounded-lg hover:bg-surface">
-                        <X className="w-5 h-5" />
-                    </button>
-                </div>
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    {/* Rating Stars */}
-                    <div>
-                        <label className="block text-slate-400 text-sm mb-2">How would you rate STELAR?</label>
-                        <div className="flex gap-2">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                                <button
-                                    key={star}
-                                    type="button"
-                                    onClick={() => setRating(star)}
-                                    className={`text-2xl transition-all hover:scale-110 ${star <= rating ? 'text-yellow-400' : 'text-slate-700'
-                                        }`}
-                                >
-                                    ★
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="block text-slate-400 text-sm mb-2">Email *</label>
-                        <input
-                            type="email"
-                            required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="your@email.com"
-                            className="w-full bg-terminal border border-slate-800 rounded-lg px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500/50"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-slate-400 text-sm mb-2">Name</label>
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            placeholder="Your name (optional)"
-                            className="w-full bg-terminal border border-slate-800 rounded-lg px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500/50"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-slate-400 text-sm mb-2">Feedback Type</label>
-                        <select
-                            value={feedbackType}
-                            onChange={(e) => setFeedbackType(e.target.value)}
-                            className="w-full bg-terminal border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500/50"
-                        >
-                            <option value="">Select type...</option>
-                            <option value="Feature Request">Feature Request</option>
-                            <option value="Bug Report">Bug Report</option>
-                            <option value="General Feedback">General Feedback</option>
-                            <option value="Data Issue">Data Issue</option>
-                            <option value="UI/UX Suggestion">UI/UX Suggestion</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label className="block text-slate-400 text-sm mb-2">Your Feedback *</label>
-                        <textarea
-                            required
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            placeholder="Tell us what you think, suggest features, or report issues..."
-                            rows={4}
-                            className="w-full bg-terminal border border-slate-800 rounded-lg px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500/50 resize-none"
-                        />
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full py-3 rounded-xl font-black bg-blue-500 text-white hover:bg-blue-400 transition-all mt-6 disabled:opacity-50 disabled:cursor-not-allowed uppercase text-[10px] tracking-[0.2em] shadow-lg spring-hover"
-                    >
-                        {loading ? 'Sending...' : 'Submit Feedback'}
-                    </button>
-                </form>
-
-                <p className="text-center text-slate-500 text-xs mt-4">
-                    We read every message and appreciate your input.
                 </p>
             </div>
         </div>
@@ -915,7 +723,6 @@ export default function App() {
     });
     const [showUpgrade, setShowUpgrade] = useState(false);
     const [showJoin, setShowJoin] = useState(false);
-    const [showFeedback, setShowFeedback] = useState(false);
     const [showDossier, setShowDossier] = useState(false);
 
     const [watchlist, setWatchlist] = useState<Set<string>>(() => {
@@ -1142,17 +949,10 @@ export default function App() {
 
                 // Extract slug carefully, handling trailing slashes or query params
                 const slugSegment = path.split('/artist/')[1];
-                const trackSegment = path.split('/track/')[1];
+                if (!slugSegment) return;
 
-                let slug = '';
-                if (slugSegment) {
-                    slug = slugSegment.split('/')[0].split('?')[0];
-                } else if (trackSegment) {
-                    // For /track/artist-name/track-name, the artist slug is the first part
-                    slug = trackSegment.split('/')[0].split('?')[0];
-                }
-
-                if (!slug) return;
+                // Remove any trailing slash or query params if they leaked in (though path shouldn't have query)
+                const slug = slugSegment.split('/')[0].split('?')[0];
 
                 if (slug) {
                     const artistName = decodeURIComponent(slug.replace(/-/g, ' ')).toLowerCase();
@@ -1236,11 +1036,6 @@ export default function App() {
                 setActiveTab('the-launchpad');
             }
 
-            // Handle /hot500 deep link
-            if (path === '/hot500' || path === '/hot500/' || path === '/hot-500' || path === '/hot-500/') {
-                setActiveTab('hot-500');
-            }
-
             // Handle /releases deep link
             if (path === '/releases' || path === '/releases/') {
                 setActiveTab('new-releases');
@@ -1261,34 +1056,16 @@ export default function App() {
     }, []);
 
     const [searchResults, setSearchResults] = useState<PowerIndexArtist[]>([]);
-    const [songSearchResults, setSongSearchResults] = useState<any[]>([]);
 
     useEffect(() => {
         if (!searchQuery.trim()) {
             setSearchResults([]);
-            setSongSearchResults([]);
             return;
         }
 
         const debounce = setTimeout(async () => {
-            // TRACK SEARCH QUERY
-            trackEvent('search', { query: searchQuery });
-
-            // Search artists (existing)
-            const artistResults = await searchAllArtists(searchQuery);
-            setSearchResults(artistResults);
-
-            // Search songs from iTunes (PROXIED)
-            try {
-                const songRes = await fetch(`/api/itunes?term=${encodeURIComponent(searchQuery)}&entity=song&limit=10`);
-                const songData = await songRes.json();
-                if (songData.results) {
-                    setSongSearchResults(songData.results.filter((r: any) => r.kind === 'song'));
-                }
-            } catch (e) {
-                console.error('Song search error:', e);
-                setSongSearchResults([]);
-            }
+            const results = await searchAllArtists(searchQuery);
+            setSearchResults(results);
         }, 300);
 
         return () => clearTimeout(debounce);
@@ -1431,9 +1208,6 @@ export default function App() {
             {/* Join Modal */}
             {showJoin && <JoinModal onClose={() => setShowJoin(false)} />}
 
-            {/* Feedback Modal */}
-            {showFeedback && <FeedbackModal onClose={() => setShowFeedback(false)} />}
-
             {/* Dossier Modal */}
             {showDossier && selectedArtist && (
                 <DossierModal
@@ -1445,7 +1219,7 @@ export default function App() {
             )}
 
             <div className="min-h-screen bg-black text-white selection:bg-[#FF4500] selection:text-white font-sans overflow-x-hidden">
-
+                <Analytics />    {/* GLOBAL VIBRANCY GLOW */}
                 <div
                     className="vibrancy-glow fixed inset-0 w-full h-full"
                     style={{
@@ -1559,19 +1333,6 @@ export default function App() {
                                         {activeTab === 'new-releases' && <div className="w-1.5 h-1.5 rounded-full bg-accent" />}
                                     </button>
 
-                                    {/* HOT 500 TAB */}
-                                    <button
-                                        onClick={() => { setActiveTab('hot-500'); setSelectedArtist(null); setActiveDiscoveryList(null); setMobileMenuOpen(false); window.history.pushState({}, '', '/hot500'); }}
-                                        className={`w-full flex items-center justify-between px-6 py-4 rounded-xl font-bold text-xs uppercase tracking-widest transition-all
-                                            ${activeTab === 'hot-500' ? 'text-white' : 'text-slate-600 hover:text-white'}`}
-                                    >
-                                        <div className="flex items-center gap-4">
-                                            <Flame className={`w-5 h-5 ${activeTab === 'hot-500' ? 'text-orange-500' : 'text-slate-800'}`} />
-                                            <span>Hot 500</span>
-                                        </div>
-                                        {activeTab === 'hot-500' && <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />}
-                                    </button>
-
                                     <button
                                         onClick={() => { setActiveTab('live-tours'); setSelectedArtist(null); setActiveDiscoveryList(null); setMobileMenuOpen(false); window.history.pushState({}, '', '/tours'); }}
                                         className={`w-full flex items-center justify-between px-6 py-4 rounded-xl font-bold text-xs uppercase tracking-widest transition-all
@@ -1606,15 +1367,6 @@ export default function App() {
                                             <span>How It Works</span>
                                         </div>
                                         {activeTab === 'about' && <div className="w-1.5 h-1.5 rounded-full bg-accent" />}
-                                    </button>
-                                    <button
-                                        onClick={() => setShowFeedback(true)}
-                                        className="w-full flex items-center justify-between px-6 py-4 rounded-xl font-bold text-xs uppercase tracking-widest text-slate-600 hover:text-white transition-all"
-                                    >
-                                        <div className="flex items-center gap-4">
-                                            <MessageSquare className="w-5 h-5 text-slate-800" />
-                                            <span>Send Feedback</span>
-                                        </div>
                                     </button>
                                 </nav>
                             </div>
@@ -1664,8 +1416,8 @@ export default function App() {
                                         <Sparkles className="w-4 h-4 text-black" />
                                     </div>
                                     <div className="text-left flex-1 min-w-0">
-                                        <div className="text-xs font-black text-white uppercase">Join The Waitlist</div>
-                                        <div className="text-[9px] text-accent font-bold">New features coming soon →</div>
+                                        <div className="text-xs font-black text-white uppercase">STELAR PRO</div>
+                                        <div className="text-[9px] text-accent font-bold">Join Waitlist</div>
                                     </div>
                                     <ChevronRight className="w-4 h-4 text-accent group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
                                 </div>
@@ -1691,9 +1443,8 @@ export default function App() {
                                                 activeTab === 'sonic-signals' ? 'Sonic Signals' :
                                                     activeTab === 'the-launchpad' ? 'The Launchpad' :
                                                         activeTab === 'new-releases' ? 'New Releases' :
-                                                            activeTab === 'hot-500' ? 'The Hot 500' :
-                                                                activeTab === 'about' ? 'How It Works' :
-                                                                    'STELAR Engine'}
+                                                            activeTab === 'about' ? 'How It Works' :
+                                                                'STELAR Engine'}
                                     </h1>
                                     <div className="flex items-center gap-4 text-[9px] font-bold uppercase tracking-wider">
                                         <span className="text-accent flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></div> Live Data</span>
@@ -1719,16 +1470,6 @@ export default function App() {
                                     placeholder="SEARCH 3000+ ARTISTS..."
                                     className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs text-white uppercase tracking-widest focus:bg-white/10 focus:border-accent/40 focus:ring-1 focus:ring-accent/20 transition-all outline-none placeholder:text-slate-700 shadow-inner"
                                 />
-                            </div>
-
-                            {/* JOIN WAITLIST - TOP RIGHT */}
-                            <div className="hidden lg:flex items-center gap-4 ml-6">
-                                <button
-                                    onClick={() => setShowJoin(true)}
-                                    className="px-6 py-2 bg-white text-black text-[10px] font-black uppercase tracking-[0.2em] rounded-full hover:bg-accent hover:text-white transition-all shadow-lg active:scale-95"
-                                >
-                                    Join Waitlist
-                                </button>
                             </div>
                         </header>
 
@@ -1915,45 +1656,6 @@ export default function App() {
                                                     <div className="text-center py-20 border border-dashed border-slate-800 rounded-3xl mb-8">
                                                         <div className="text-slate-500 uppercase tracking-[0.3em] text-[10px] font-black">
                                                             No matches found in global catalog
-                                                        </div>
-                                                    </div>
-                                                )}
-
-                                                {/* SONG SEARCH RESULTS */}
-                                                {songSearchResults.length > 0 && (
-                                                    <div className="mb-8">
-                                                        <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-6 flex items-center gap-3">
-                                                            <div className="w-1 h-4 bg-blue-500 rounded-full" />
-                                                            Songs Found
-                                                        </h3>
-                                                        <div className="divide-y divide-white/5">
-                                                            {songSearchResults.map((song: any, idx: number) => (
-                                                                <a
-                                                                    key={`${song.trackId}-${idx}`}
-                                                                    href={`/track/${encodeURIComponent(song.artistName.toLowerCase().replace(/\s+/g, '-'))}/${encodeURIComponent(song.trackName.toLowerCase().replace(/\s+/g, '-'))}`}
-                                                                    className="flex items-center gap-4 py-4 group hover:bg-white/[0.02] transition-colors rounded-lg px-3 -mx-3"
-                                                                >
-                                                                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-800 flex-shrink-0">
-                                                                        <img
-                                                                            src={song.artworkUrl100}
-                                                                            alt={song.trackName}
-                                                                            className="w-full h-full object-cover"
-                                                                        />
-                                                                    </div>
-                                                                    <div className="flex-1 min-w-0">
-                                                                        <div className="font-bold text-white text-sm group-hover:text-blue-400 transition-colors truncate">
-                                                                            {song.trackName}
-                                                                        </div>
-                                                                        <div className="text-[10px] text-slate-500 font-medium truncate">
-                                                                            {song.artistName}
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="text-[9px] text-slate-600 font-mono uppercase">
-                                                                        {song.primaryGenreName}
-                                                                    </div>
-                                                                    <ChevronRight className="w-4 h-4 text-slate-700 group-hover:text-white transition-colors flex-shrink-0" />
-                                                                </a>
-                                                            ))}
                                                         </div>
                                                     </div>
                                                 )}
@@ -2216,10 +1918,7 @@ export default function App() {
                                                 onNavigate={(tab) => { setActiveTab(tab); setSelectedArtist(null); setActiveDiscoveryList(null); }}
                                                 onShowPricing={() => setShowUpgrade(true)}
                                                 onShowContact={() => setShowJoin(true)}
-                                                onShowFeedback={() => setShowFeedback(true)}
                                             />
-                                        ) : activeTab === 'hot-500' ? (
-                                            <Hot500Section />
                                         ) : activeTab === 'privacy' || activeTab === 'terms' ? (
                                             <LegalSection type={activeTab as 'privacy' | 'terms'} />
                                         ) : activeTab === 'new-releases' ? (
@@ -2339,12 +2038,12 @@ export default function App() {
 
                                                                     {/* STREAMING SIGNALS */}
                                                                     <div className="flex flex-wrap items-center gap-3">
-                                                                        <button
-                                                                            onClick={() => window.location.href = `/track/${release.artist.toLowerCase().replace(/\s+/g, '-')}/${release.name.toLowerCase().replace(/\s+/g, '-')}`}
+                                                                        <a
+                                                                            href={`/track/${release.artist.toLowerCase().replace(/\s+/g, '-')}/${release.name.toLowerCase().replace(/\s+/g, '-')}`}
                                                                             className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-full bg-accent hover:bg-white text-black font-black text-[10px] uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(255,69,0,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]"
                                                                         >
                                                                             <PlayCircle className="w-3.5 h-3.5" /> Watch Video
-                                                                        </button>
+                                                                        </a>
 
                                                                         <div className="flex w-full gap-3">
                                                                             <a
@@ -2589,6 +2288,7 @@ export default function App() {
                     </main >
                 </div >
             </div >
+            <Analytics />
         </>
     );
 }
@@ -2604,7 +2304,7 @@ const TopTracks = ({ artistName }: { artistName: string }) => {
     const [loading, setLoading] = useState(true);
     const [playing, setPlaying] = useState<string | null>(null);
     const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
-    const [displayLimit] = useState(50);
+    const [displayLimit] = useState(10);
 
     // Derived state for visible tracks
     const visibleTracks = tracks.slice(0, displayLimit);
@@ -2633,43 +2333,21 @@ const TopTracks = ({ artistName }: { artistName: string }) => {
                     .replace(/\s*\(.*\)$/, '')
                     .trim();
 
-                // STRATEGY 1: Get artist ID first, then fetch all their songs (PROXIED)
-                const artistRes = await fetch(`/api/itunes?term=${encodeURIComponent(cleanName)}&entity=musicArtist&limit=1`);
-                const artistData = await artistRes.json();
+                // 2. PRIMARY FETCH
+                let res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(cleanName)}&entity=song&limit=50`);
+                let data = await res.json();
 
-                let allSongs: any[] = [];
-
-                if (artistData.results && artistData.results.length > 0) {
-                    const artistId = artistData.results[0].artistId;
-                    // Fetch all songs by this artist using lookup API (returns up to 200)
-                    const songsRes = await fetch(`/api/itunes?id=${artistId}&entity=song&limit=200`);
-                    const songsData = await songsRes.json();
-
-                    if (songsData.results) {
-                        // First result is the artist, rest are songs
-                        allSongs = songsData.results.filter((r: any) => r.wrapperType === 'track' && r.kind === 'song');
-                    }
+                // 3. FALLBACK: Try original name if search failed or returned too few results
+                if ((!data.results || data.results.length < 1) && cleanName !== artistName) {
+                    res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(artistName)}&entity=song&limit=50`);
+                    data = await res.json();
                 }
 
-                // FALLBACK: If artist lookup didn't work or returned too few, try search (PROXIED)
-                if (allSongs.length < 10) {
-                    const searchRes = await fetch(`/api/itunes?term=${encodeURIComponent(cleanName)}&entity=song&limit=200`);
-                    const searchData = await searchRes.json();
-                    if (searchData.results && searchData.results.length > allSongs.length) {
-                        allSongs = searchData.results.filter((r: any) => r.kind === 'song');
-                    }
+                if (data && data.results) {
+                    // Filter out non-song results
+                    const songs = data.results.filter((r: any) => r.kind === 'song');
+                    setTracks(songs);
                 }
-
-                // FINAL FALLBACK: Try with original name (PROXIED)
-                if (allSongs.length < 10 && cleanName !== artistName) {
-                    const fallbackRes = await fetch(`/api/itunes?term=${encodeURIComponent(artistName)}&entity=song&limit=200`);
-                    const fallbackData = await fallbackRes.json();
-                    if (fallbackData.results && fallbackData.results.length > allSongs.length) {
-                        allSongs = fallbackData.results.filter((r: any) => r.kind === 'song');
-                    }
-                }
-
-                setTracks(allSongs);
             } catch (e) {
                 console.error("Failed to fetch tracks", e);
                 setTracks([]);
@@ -2732,13 +2410,13 @@ const TopTracks = ({ artistName }: { artistName: string }) => {
                         </div>
 
                         <div className="w-full md:w-auto flex flex-row items-center gap-3">
-                            <button
-                                onClick={() => window.location.href = `/track/${artistName.toLowerCase().replace(/\s+/g, '-')}/${track.trackName.toLowerCase().replace(/\s+/g, '-')}`}
+                            <a
+                                href={`/track/${artistName.toLowerCase().replace(/\s+/g, '-')}/${track.trackName.toLowerCase().replace(/\s+/g, '-')}`}
                                 className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-accent hover:bg-white text-black font-black text-[10px] uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(255,69,0,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] md:min-w-[140px]"
                                 title="Watch Full Video"
                             >
                                 <PlayCircle className="w-3.5 h-3.5" /> Watch
-                            </button>
+                            </a>
 
                             <button
                                 onClick={() => {
@@ -3286,200 +2964,7 @@ interface AboutSectionProps {
     onNavigate: (tab: TabType) => void;
     onShowPricing: () => void;
     onShowContact: () => void;
-    onShowFeedback: () => void;
 }
-
-// ============================================================================
-// HOT 500 SECTION - TOP TRENDING SONGS
-// ============================================================================
-
-function Hot500Section() {
-    const [songs, setSongs] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [displayLimit, setDisplayLimit] = useState(50);
-
-    useEffect(() => {
-        const fetchHotSongs = async () => {
-            setLoading(true);
-            try {
-                // Fetch from multiple iTunes RSS feeds to get a TRUE Global 500
-                const feeds = [
-                    'https://itunes.apple.com/us/rss/topsongs/limit=100/json',
-                    'https://itunes.apple.com/gb/rss/topsongs/limit=100/json',
-                    'https://itunes.apple.com/jp/rss/topsongs/limit=100/json',
-                    'https://itunes.apple.com/ca/rss/topsongs/limit=100/json',
-                    'https://itunes.apple.com/au/rss/topsongs/limit=100/json',
-                ];
-
-                const allSongs: any[] = [];
-                const seenIds = new Set();
-
-                for (const feed of feeds) {
-                    try {
-                        const res = await fetch(feed);
-                        const data = await res.json();
-                        if (data.feed?.entry) {
-                            for (const entry of data.feed.entry) {
-                                const id = entry.id?.attributes?.['im:id'];
-                                if (!seenIds.has(id)) {
-                                    seenIds.add(id);
-                                    allSongs.push({
-                                        id: id || Math.random().toString(),
-                                        name: entry['im:name']?.label || 'Unknown',
-                                        artist: entry['im:artist']?.label || 'Unknown',
-                                        artwork: entry['im:image']?.[2]?.label || entry['im:image']?.[0]?.label,
-                                        link: entry.link?.attributes?.href,
-                                        category: entry.category?.attributes?.label || 'Music'
-                                    });
-                                }
-                            }
-                        }
-                    } catch (e) {
-                        console.error('Feed error:', e);
-                    }
-                }
-
-                // If we still need more to hit 500 (due to overlap), top up with trending search
-                const searchTerms = ['2025 hits', 'trending songs', 'viral hits', 'new music'];
-                for (const term of searchTerms) {
-                    try {
-                        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=song&limit=50`);
-                        const data = await res.json();
-                        if (data.results) {
-                            for (const song of data.results) {
-                                if (!seenIds.has(song.trackId)) {
-                                    seenIds.add(song.trackId);
-                                    allSongs.push({
-                                        id: song.trackId,
-                                        name: song.trackName,
-                                        artist: song.artistName,
-                                        artwork: song.artworkUrl100?.replace('100x100', '200x200'),
-                                        category: song.primaryGenreName
-                                    });
-                                }
-                            }
-                        }
-                    } catch (e) {
-                        console.error('Search error:', e);
-                    }
-                }
-
-                setSongs(allSongs.slice(0, 500));
-            } catch (e) {
-                console.error('Failed to fetch hot songs:', e);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchHotSongs();
-    }, []);
-
-    if (loading) {
-        return (
-            <div className="max-w-6xl mx-auto py-20 text-center">
-                <Flame className="w-12 h-12 text-orange-500 mx-auto mb-6 animate-pulse" />
-                <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                    Loading The Hot 500...
-                </div>
-            </div>
-        );
-    }
-
-    return (
-        <div className="max-w-6xl mx-auto pb-20 animate-fade-in">
-            {/* HERO HEADER */}
-            <div className="text-center pt-8 pb-16">
-                <div className="inline-flex items-center gap-4 mb-8">
-                    <div className="px-3 py-1 bg-orange-500/10 border border-orange-500/20 rounded-full flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-                        <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest">Live Signal Active</span>
-                    </div>
-                    <div className="text-slate-600 font-bold text-[10px] uppercase tracking-[0.2em]">
-                        Global Streaming Data • {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </div>
-                </div>
-
-                <h1 className="text-7xl md:text-9xl font-black text-white tracking-tighter leading-none mb-6 uppercase italic">
-                    The Hot 500
-                </h1>
-
-                <p className="text-slate-400 text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed font-medium">
-                    The absolute definitive ranking of the world's most influential songs in this exact moment.
-                    <br />
-                    <span className="text-slate-600 italic">Tracking 500 real-time signals across global streaming indices.</span>
-                </p>
-            </div>
-
-            {/* STATS BAR */}
-            <div className="flex justify-center gap-12 mb-12 py-6 border-y border-white/5">
-                <div className="text-center">
-                    <div className="text-3xl font-black text-white">24/7</div>
-                    <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Active</div>
-                </div>
-            </div>
-
-            {/* SONGS GRID */}
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                {songs.slice(0, displayLimit).map((song, index) => (
-                    <a
-                        key={song.id}
-                        href={`/track/${encodeURIComponent(song.artist.toLowerCase().replace(/\s+/g, '-'))}/${encodeURIComponent(song.name.toLowerCase().replace(/\s+/g, '-'))}`}
-                        onClick={() => trackEvent('hot_500_song_click', { song: song.name, artist: song.artist, rank: index + 1 })}
-                        className="group cursor-pointer"
-                    >
-                        <div className="relative mb-3">
-                            <div className="absolute -top-2 -left-2 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-[10px] font-black text-black z-10">
-                                {index + 1}
-                            </div>
-                            <div className="aspect-square rounded-xl overflow-hidden bg-slate-800">
-                                <img
-                                    src={song.artwork}
-                                    alt={song.name}
-                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                    onError={(e) => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(song.name)}&background=1a1a2e&color=FF4500&size=200`; }}
-                                />
-                            </div>
-                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
-                                <PlayCircle className="w-12 h-12 text-white" />
-                            </div>
-                        </div>
-                        <div className="font-bold text-white text-sm truncate group-hover:text-orange-500 transition-colors">
-                            {song.name}
-                        </div>
-                        <div className="text-[10px] text-slate-500 truncate font-medium">
-                            {song.artist}
-                        </div>
-                    </a>
-                ))}
-            </div>
-
-            {/* SHOW MORE */}
-            {displayLimit < songs.length && (
-                <div className="text-center mt-12">
-                    <button
-                        onClick={() => setDisplayLimit(prev => prev + 50)}
-                        className="px-12 py-4 bg-white/5 border border-white/10 hover:border-orange-500/50 hover:bg-white/10 text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-full transition-all"
-                    >
-                        Load More Signals
-                    </button>
-                </div>
-            )}
-
-            {/* BOTTOM CTA */}
-            <div className="text-center mt-20 pt-12 border-t border-white/5">
-                <p className="text-slate-500 text-sm mb-6">
-                    Signals refresh automatically every hour.
-                </p>
-                <div className="inline-flex items-center gap-2 text-orange-500 font-bold text-[10px] uppercase tracking-[0.3em]">
-                    <Flame className="w-4 h-4" />
-                    The Global Signal Never Sleeps
-                </div>
-            </div>
-        </div>
-    );
-}
-
 function LegalSection({ type }: { type: 'privacy' | 'terms' }) {
     return (
         <div className="max-w-4xl mx-auto animate-fade-in pb-20 pt-12 px-6">
@@ -3534,7 +3019,7 @@ function LegalSection({ type }: { type: 'privacy' | 'terms' }) {
 }
 
 
-function AboutSection({ onNavigate, onShowPricing, onShowContact, onShowFeedback }: AboutSectionProps) {
+function AboutSection({ onNavigate, onShowPricing, onShowContact }: AboutSectionProps) {
     return (
         <div className="max-w-5xl mx-auto animate-fade-in pb-20">
             {/* Minimal Apple-Style Hero */}
@@ -3686,23 +3171,21 @@ function AboutSection({ onNavigate, onShowPricing, onShowContact, onShowFeedback
                 onNavigate={(tab) => { onNavigate(tab as any); }}
                 onShowPricing={() => onShowPricing()}
                 onShowContact={() => onShowContact()}
-                onShowFeedback={() => onShowFeedback()}
             />
         </div >
     );
 }
 
-function Footer({ onNavigate, onShowPricing, onShowContact, onShowFeedback }: {
+function Footer({ onNavigate, onShowPricing, onShowContact }: {
     onNavigate: (tab: string) => void;
     onShowPricing: () => void;
     onShowContact: () => void;
-    onShowFeedback: () => void;
 }) {
     return (
-        <footer className="border-t border-white/5 mt-8 bg-gradient-to-b from-transparent to-black/40">
+        <footer className="border-t border-white/5 mt-32 bg-gradient-to-b from-transparent to-black/40">
             <div className="max-w-7xl mx-auto px-6">
                 {/* Main Footer Content */}
-                <div className="py-12 grid grid-cols-2 md:grid-cols-12 gap-8 border-b border-white/5">
+                <div className="py-24 grid grid-cols-2 md:grid-cols-12 gap-12 border-b border-white/5">
                     {/* Brand Column (Span 4) */}
                     <div className="col-span-2 md:col-span-4 pr-12">
                         <div className="flex items-center gap-3 mb-8">
@@ -3755,7 +3238,7 @@ function Footer({ onNavigate, onShowPricing, onShowContact, onShowFeedback }: {
                             <li><button onClick={() => onNavigate('about')} className="text-slate-400 hover:text-white text-sm font-medium transition-colors">About Us</button></li>
                             <li><button onClick={() => onShowPricing()} className="text-slate-400 hover:text-white text-sm font-medium transition-colors">Enterprise</button></li>
                             <li><button onClick={() => onShowContact()} className="text-slate-400 hover:text-white text-sm font-medium transition-colors">Contact</button></li>
-                            <li><button onClick={() => onShowFeedback()} className="text-accent hover:text-accent/80 text-sm font-medium transition-colors">Give Feedback ✉️</button></li>
+                            <li><a href="mailto:careers@stelarmusic.com" className="text-slate-400 hover:text-white text-sm font-medium transition-colors">Careers</a></li>
                         </ul>
                     </div>
 
