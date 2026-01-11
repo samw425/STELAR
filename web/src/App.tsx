@@ -367,9 +367,9 @@ function JoinModal({ onClose }: { onClose: () => void }) {
                 {/* Header */}
                 <div className="flex justify-between items-start mb-6">
                     <div>
-                        <h2 className="text-2xl font-bold text-white mb-2">Join the Waitlist</h2>
+                        <h2 className="text-2xl font-bold text-white mb-2">Get 50% Off Launch Pricing</h2>
                         <p className="text-slate-400 text-sm">
-                            Get early access to premium features and exclusive market insights.
+                            Join the waitlist for early access + half-price STELAR Pro when we launch.
                         </p>
                     </div>
                     <button onClick={onClose} className="p-2 text-slate-500 hover:text-white rounded-lg hover:bg-surface">
@@ -1417,7 +1417,7 @@ export default function App() {
                                     </div>
                                     <div className="text-left flex-1 min-w-0">
                                         <div className="text-xs font-black text-white uppercase">STELAR PRO</div>
-                                        <div className="text-[9px] text-accent font-bold">Join Waitlist</div>
+                                        <div className="text-[9px] text-accent font-bold">Join Waitlist → Get 50% Off Launch</div>
                                     </div>
                                     <ChevronRight className="w-4 h-4 text-accent group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
                                 </div>
@@ -3238,7 +3238,7 @@ function Footer({ onNavigate, onShowPricing, onShowContact }: {
                             <li><button onClick={() => onNavigate('about')} className="text-slate-400 hover:text-white text-sm font-medium transition-colors">About Us</button></li>
                             <li><button onClick={() => onShowPricing()} className="text-slate-400 hover:text-white text-sm font-medium transition-colors">Enterprise</button></li>
                             <li><button onClick={() => onShowContact()} className="text-slate-400 hover:text-white text-sm font-medium transition-colors">Contact</button></li>
-                            <li><a href="mailto:careers@stelarmusic.com" className="text-slate-400 hover:text-white text-sm font-medium transition-colors">Careers</a></li>
+                            <li><a href="https://forms.gle/feedback-stelar" target="_blank" rel="noopener" className="text-accent hover:text-accent/80 text-sm font-medium transition-colors">Give Feedback ✉️</a></li>
                         </ul>
                     </div>
 

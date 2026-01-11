@@ -53,15 +53,27 @@ export async function onRequest(context) {
 
         if (artist) {
             // 5. Inject OG Tags
-            // We'll replace the default meta tags in the HTML string
-
             const title = `${artist.name} | STELAR Rank #${artist.rank || '??'}`;
             const description = `Check out ${artist.name} on STELAR — Top 50 songs, streaming stats, and market intel. Power Score: ${artist.powerScore}.`;
 
-            // Generate Dynamic OG Image using local /api/og endpoint
+            // Search for image in Old School if not in main
+            let imageUrl = artist.avatar_url;
+            if (!imageUrl) {
+                try {
+                    const osResponse = await fetch(`${url.origin}/oldschool.json`);
+                    if (osResponse.ok) {
+                        const osData = await osResponse.json();
+                        const osArtist = (osData.artists || []).find(a => normalize(a.name) === normalize(artist.name));
+                        if (osArtist) imageUrl = osArtist.avatar_url;
+                    }
+                } catch (e) { }
+            }
+
+            // Generate Dynamic OG Image
             const ogUrl = new URL(`${url.origin}/api/og`);
+            ogUrl.searchParams.set('type', 'artist'); // Explicitly set type
             ogUrl.searchParams.set('name', artist.name);
-            ogUrl.searchParams.set('image', artist.avatar_url || '');
+            ogUrl.searchParams.set('image', imageUrl || '');
             const image = ogUrl.toString();
 
             // Replace Title
