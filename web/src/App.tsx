@@ -1284,7 +1284,7 @@ export default function App() {
                                     >
                                         <div className="flex items-center gap-4">
                                             <Globe className={`w-5 h-5 ${activeTab === 'the-pulse' ? 'text-accent' : 'text-slate-800'}`} />
-                                            <span>The Pulse</span>
+                                            <span>HOT 500</span>
                                         </div>
                                         {activeTab === 'the-pulse' && <div className="w-1.5 h-1.5 rounded-full bg-accent" />}
                                     </button>
@@ -1574,7 +1574,7 @@ export default function App() {
                                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                                                 <div>
                                                     <h1 className="text-4xl font-black text-white mb-2 uppercase tracking-tighter flex items-center gap-3">
-                                                        THE PULSE
+                                                        HOT 500
                                                         <div className="flex items-center gap-1.5 ml-2">
                                                             <div className="w-2 h-2 rounded-full bg-[#FF4500] animate-pulse shadow-[0_0_10px_rgba(255,95,21,0.5)]"></div>
                                                             <span className="text-[10px] text-[#FF4500] font-mono uppercase tracking-widest">Signal Feed</span>
